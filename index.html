@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SOMA — Holding the Wave</title>
+  <meta name="description" content="SOMA companion app prototype — a tactile product-service system for people living with Binge Eating Disorder. Master's thesis, Politecnico di Bari.">
+  <meta name="theme-color" content="#F5F2EB">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="stage" id="stage">
+
+    <!-- LEFT: virtual SOMA object (stands in for the physical prototype) -->
+    <aside class="side side-left" id="devicePanel" aria-label="SOMA device simulator"></aside>
+
+    <!-- CENTER: the phone -->
+    <main class="phone-wrap">
+      <div class="phone" id="phone">
+        <div class="island" aria-hidden="true"></div>
+        <div class="statusbar" id="statusbar"></div>
+        <div class="screen" id="app"></div>
+        <div class="toast-layer" id="toasts" aria-live="polite"></div>
+      </div>
+      <p class="caption" id="caption"></p>
+    </main>
+
+    <!-- RIGHT: what the (simulated) on-device AI is hearing -->
+    <aside class="side side-right" id="aiPanel" aria-label="SOMA AI live console"></aside>
+  </div>
+
+  <!-- Mobile: device + AI live in a bottom sheet -->
+  <button class="fab" id="fab" aria-label="Open SOMA object and AI console">
+    <span class="fab-pebble"></span>
+  </button>
+  <div class="sheet" id="sheet" aria-hidden="true">
+    <div class="sheet-backdrop" data-sheet-close></div>
+    <div class="sheet-body">
+      <div class="sheet-grip" data-sheet-close></div>
+      <div class="sheet-tabs">
+        <button class="sheet-tab is-on" data-sheet-tab="device"></button>
+        <button class="sheet-tab" data-sheet-tab="ai"></button>
+      </div>
+      <div class="sheet-content" id="sheetContent"></div>
+    </div>
+  </div>
+
+  <!-- Printable therapist report (filled when the user asks for a PDF) -->
+  <div id="printArea" aria-hidden="true"></div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/device.js"></script>
+  <script src="js/screens.js"></script>
+  <script src="js/session.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "SOMA — Holding the Wave",
+  "short_name": "Soma",
+  "description": "Companion app for SOMA, a tactile product-service system for people living with Binge Eating Disorder. Thesis prototype — Politecnico di Bari.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F2EB",
+  "theme_color": "#F5F2EB",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
