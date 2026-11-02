@@ -127,10 +127,18 @@
     <div class="scr">
       ${obDots(1)}
       ${head(withDr(), paired ? L('Soma is yours.', 'Soma è tuo.') : L('Pair your Soma', 'Associa il tuo Soma'), L('set up together, in session', 'configurato insieme, in seduta'))}
-      <div class="pair-visual ${paired ? 'is-paired' : ''}" id="pairVisual">
+      ${!paired ? `
+      <div class="pair-photo">
+        <img src="assets/img/hand-hold.jpg" alt="A hand holding SOMA in the palm">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle cx="100" cy="100" r="94" fill="none" stroke="var(--track)" stroke-width="4"/>
+          <circle cx="100" cy="100" r="94" fill="none" stroke="var(--amber)" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 100 100)" id="pairArc"/>
+        </svg>
+      </div>` : ''}
+      <div class="pair-visual ${paired ? 'is-paired' : 'is-hidden'}" id="pairVisual">
         <svg viewBox="0 0 200 200" class="pair-svg" aria-hidden="true">
           <circle cx="100" cy="100" r="86" fill="none" stroke="var(--track)" stroke-width="3"/>
-          <circle cx="100" cy="100" r="86" fill="none" stroke="var(--amber)" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${paired ? 0 : 100}" transform="rotate(-90 100 100)" id="pairArc"/>
+          <circle cx="100" cy="100" r="86" fill="none" stroke="var(--amber)" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0" transform="rotate(-90 100 100)" ${paired ? 'id="pairArc"' : ''}/>
           <circle cx="100" cy="100" r="52" fill="none" stroke="${S.color().hex}" stroke-width="20" id="pairRim"/>
           <circle cx="100" cy="100" r="40" fill="#FBF8F2"/>
           ${[...Array(22)].map((_, i) => { const a = i / 22 * Math.PI * 2; return `<circle cx="${(100 + Math.cos(a) * 31).toFixed(1)}" cy="${(100 + Math.sin(a) * 31).toFixed(1)}" r="1.6" fill="#8A8D86"/>`; }).join('')}
@@ -316,6 +324,11 @@
   S.screens.practice = () => `
     <div class="scr scr-tab">
       ${head(L('Practice', 'Pratica'), L('Skills for calm water.', 'Abilità per acque calme.'))}
+      <button class="card guide-entry" data-action="guide">
+        <img src="assets/img/g-squeeze.jpg" alt="">
+        <span class="grow"><span class="eyebrow">Your SOMA</span><b>How to use SOMA</b><small>10 gestures, what they do and what they are for</small></span>
+        <span class="chev">${I('chev')}</span>
+      </button>
       <div class="skill-grid">
         ${S.SKILLS.map(s => `
           <button class="skill ${s.prescribed ? 'is-rx' : ''}" data-action="skill" data-skill="${s.id}">
@@ -463,6 +476,7 @@
         <div class="card-row">${S.miniPebble(36)}<div class="grow"><b>SOMA · ${S.color().en}</b><div class="muted small">${st().paired ? 'Connected' : 'Not paired'} · battery ${S.device.battery}% · firmware 1.2.0</div></div></div>
         <div class="swatches small">${S.COLORS.map(col => `<button class="swatch ${col.id === st().color ? 'is-on' : ''}" style="--c:${col.hex}" data-action="color" data-color="${col.id}" aria-label="${col.en}"><span></span></button>`).join('')}</div>
         <label class="row toggle-row"><span class="row-text"><span class="row-title">Voice guidance</span><span class="row-sub">double-tap the dial to switch</span></span><input type="checkbox" class="switch" data-setting="voice" ${st().voice ? 'checked' : ''}></label>
+        <button class="row link-row" data-action="guide"><span class="row-text"><span class="row-title">How to use SOMA</span><span class="row-sub">gestures and what they are for</span></span>${I('chev')}</button>
         <label class="row toggle-row"><span class="row-text"><span class="row-title">Daily practice reminder</span><span class="row-sub">every day at ${st().practiceTime}</span></span><input type="checkbox" class="switch" data-setting="reminders" ${st().reminders ? 'checked' : ''}></label>
       </section>
 
@@ -498,6 +512,35 @@
       </section>
     </div>`;
   };
+
+  /* ================= HOW TO USE SOMA ================= */
+  S.guideBack = 'practice';
+  S.screens.guide = () => `
+    <div class="scr scr-guide">
+      ${head('Your SOMA', 'How to use SOMA', 'What the hand does, how SOMA answers, what it is for.', 'guide-back')}
+      <figure class="guide-hero"><img src="assets/img/hands-float.jpg" alt="SOMA floating between two hands"></figure>
+      <section class="card guide-basics">
+        <div><b>Hold it</b><span>SOMA listens only while you hold it. When it rests, it stays silent.</span></div>
+        <div><b>Press the dial for 2 s</b><span>Guidance starts, without opening the app.</span></div>
+        <div><b>Turn it face down</b><span>Guidance stops, gently.</span></div>
+      </section>
+      <div class="list-label">Gestures</div>
+      <ul class="gesture-list">
+        ${S.device.GESTURES.map(g => `
+          <li>
+            <button class="g-card" data-action="try-gesture" data-g="${g.id}">
+              <span class="g-thumb">${g.img ? `<img src="assets/img/${g.img}.jpg" alt="${esc(g.en)}" loading="lazy">` : I('rest')}</span>
+              <span class="g-text"><b>${esc(g.en)}</b><span>${esc(g.fbEn)}</span><em>${esc(g.forEn)}</em></span>
+              <span class="g-try">Try</span>
+            </button>
+          </li>`).join('')}
+      </ul>
+      <div class="list-label">Among the things you carry</div>
+      <div class="carry">
+        ${[1, 2, 3].map(i => `<img src="assets/img/everyday-${i}.jpg" alt="SOMA clipped to a bag" loading="lazy">`).join('')}
+      </div>
+      <p class="tiny">Soft silicone base · bio-based polycarbonate shell · 2200 K amber light ring · Qi2 wireless charging dish.</p>
+    </div>`;
 
   /* ================= MESSAGES (care team) ================= */
   S.screens.message = () => {
