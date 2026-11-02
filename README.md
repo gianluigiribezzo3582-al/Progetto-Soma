@@ -58,3 +58,17 @@ assets/               logo e icona
 ```
 
 Per modificare un testo, cercalo in `js/` e cambia la versione inglese e/o quella italiana nella stessa chiamata `L(...)`.
+
+## Immagini (segnaposto)
+
+Le foto in `assets/img/` sono **estratte dal PDF della tesi** e sono a bassa risoluzione (240–600 px). Per sostituirle basta salvare gli originali con **lo stesso nome file**:
+
+| File | Contenuto | Dove compare |
+|---|---|---|
+| `hand-hold.jpg` | mano che tiene SOMA nel palmo | associazione, gesto *Hold* |
+| `hands-float.jpg` | SOMA tra due mani | guida *How to use SOMA* |
+| `g-squeeze.jpg`, `g-press.jpg`, `g-double.jpg`, `g-trace.jpg`, `g-rubB.jpg`, `g-rotate.jpg`, `g-rock.jpg`, `g-phone.jpg` | le foto dei gesti (pag. 38) | guida ai gesti |
+| `everyday-1/2/3.jpg` | SOMA appeso alla borsa | guida, "Among the things you carry" |
+| `colours.jpg` | i sei colori | (di riserva) |
+
+L'oggetto interattivo resta disegnato in vettoriale (`js/device.js`), perché deve cambiare colore, lato e luce.

@@ -12,17 +12,17 @@
   };
 
   D.GESTURES = [
-    { id: 'hold',     en: 'Hold',            it: 'Tieni',            fbEn: 'Soft silicone, comforting contact.',      fbIt: 'Silicone morbido, contatto rassicurante.' },
-    { id: 'squeeze',  en: 'Squeeze & release', it: 'Stringi e rilascia', fbEn: 'Elastic silicone, gentle resistance.', fbIt: 'Silicone elastico, resistenza delicata.' },
-    { id: 'rotate',   en: 'Rotate',          it: 'Ruota',            fbEn: 'Rounded edges, smooth rotation.',          fbIt: 'Bordi arrotondati, rotazione fluida.' },
-    { id: 'trace',    en: 'Trace the dots',  it: 'Segui i puntini',  fbEn: 'Raised dots guide the fingertips.',        fbIt: 'I puntini in rilievo guidano i polpastrelli.' },
-    { id: 'rubA',     en: 'Rub side A',      it: 'Strofina lato A',  fbEn: 'Dotted surface, repeated stimulation.',    fbIt: 'Superficie a puntini, stimolo ripetuto.' },
-    { id: 'rubB',     en: 'Rub side B',      it: 'Strofina lato B',  fbEn: '3D ripples, varied tactile feedback.',     fbIt: 'Onde 3D, feedback tattile variato.' },
-    { id: 'press',    en: 'Press & hold 2 s', it: 'Premi 2 s',       fbEn: 'Starts the guided breathing sequence.',    fbIt: 'Avvia la sequenza di respiro guidato.' },
-    { id: 'rock',     en: 'Rock',            it: 'Dondola',          fbEn: 'Curved body, rhythmic rocking.',           fbIt: 'Corpo curvo, dondolio ritmico.' },
-    { id: 'double',   en: 'Double tap',      it: 'Doppio tocco',     fbEn: 'Voice guidance on / off.',                 fbIt: 'Guida vocale on / off.' },
-    { id: 'phone',    en: 'Tap phone on SOMA', it: 'Avvicina il telefono', fbEn: 'Temporary app pause.',               fbIt: 'Pausa temporanea delle app.' },
-    { id: 'facedown', en: 'Turn face down',  it: 'Capovolgi',        fbEn: 'Stops the guidance, gently.',              fbIt: 'Interrompe la guida, con delicatezza.' }
+    { id: 'hold',     en: 'Hold',            it: 'Tieni',            fbEn: 'Soft silicone, comforting contact.',      fbIt: 'Silicone morbido, contatto rassicurante.' , forEn: 'Feel held. A calm anchor in your palm.', img: 'hand-hold' },
+    { id: 'squeeze',  en: 'Squeeze & release', it: 'Stringi e rilascia', fbEn: 'Elastic silicone, gentle resistance.', fbIt: 'Silicone elastico, resistenza delicata.' , forEn: 'Release tension; keeps the rhythm in Breathe.', img: 'g-squeeze' },
+    { id: 'rotate',   en: 'Rotate',          it: 'Ruota',            fbEn: 'Rounded edges, smooth rotation.',          fbIt: 'Bordi arrotondati, rotazione fluida.' , forEn: 'Follow the wave during Surf.', img: 'g-rotate' },
+    { id: 'trace',    en: 'Trace the dots',  it: 'Segui i puntini',  fbEn: 'Raised dots guide the fingertips.',        fbIt: 'I puntini in rilievo guidano i polpastrelli.' , forEn: 'Bring attention back to your fingertips.', img: 'g-trace' },
+    { id: 'rubA',     en: 'Rub side A',      it: 'Strofina lato A',  fbEn: 'Dotted surface, repeated stimulation.',    fbIt: 'Superficie a puntini, stimolo ripetuto.' , forEn: 'Soothe restlessness with a steady rhythm.', img: 'g-trace' },
+    { id: 'rubB',     en: 'Rub side B',      it: 'Strofina lato B',  fbEn: '3D ripples, varied tactile feedback.',     fbIt: 'Onde 3D, feedback tattile variato.' , forEn: 'Thumb on the ripples during Ground.', img: 'g-rubB' },
+    { id: 'press',    en: 'Press & hold 2 s', it: 'Premi 2 s',       fbEn: 'Starts the guided breathing sequence.',    fbIt: 'Avvia la sequenza di respiro guidato.' , forEn: 'Ask for guidance, any time, without opening the app.', img: 'g-press' },
+    { id: 'rock',     en: 'Rock',            it: 'Dondola',          fbEn: 'Curved body, rhythmic rocking.',           fbIt: 'Corpo curvo, dondolio ritmico.' , forEn: 'A slow, self-soothing rhythm.', img: 'g-rock' },
+    { id: 'double',   en: 'Double tap',      it: 'Doppio tocco',     fbEn: 'Voice guidance on / off.',                 fbIt: 'Guida vocale on / off.' , forEn: 'Stay discreet in public: touch only, no voice.', img: 'g-double' },
+    { id: 'phone',    en: 'Tap phone on SOMA', it: 'Avvicina il telefono', fbEn: 'Temporary app pause.',               fbIt: 'Pausa temporanea delle app.' , forEn: 'Interrupt automatic scrolling and delivery apps.', img: 'g-phone' },
+    { id: 'facedown', en: 'Turn face down',  it: 'Capovolgi',        fbEn: 'Stops the guidance, gently.',              fbIt: 'Interrompe la guida, con delicatezza.', forEn: 'End a session gently, whenever you want.', img: null }
   ];
 
   D.on = function (fn) { D.listeners.push(fn); };
@@ -37,7 +37,8 @@
     rings.forEach(([r, n, size], ri) => {
       for (let i = 0; i < n; i++) {
         const a = (i / n) * Math.PI * 2 + (ri % 2 ? Math.PI / n : 0);
-        s += `<circle cx="${(120 + Math.cos(a) * r).toFixed(1)}" cy="${(120 + Math.sin(a) * r).toFixed(1)}" r="${size}" class="dot" style="--i:${ri * 40 + i}"/>`;
+        const x = (120 + Math.cos(a) * r).toFixed(1), y = (120 + Math.sin(a) * r).toFixed(1);
+        s += `<circle cx="${(+x + size * 0.28).toFixed(1)}" cy="${(+y + size * 0.36).toFixed(1)}" r="${size}" class="dot-sh"/><circle cx="${x}" cy="${y}" r="${size}" class="dot" style="--i:${ri * 40 + i}"/>`;
       }
     });
     return s;
@@ -69,14 +70,25 @@
           <stop offset="45%" stop-color="#C9CCCF"/>
           <stop offset="100%" stop-color="#8E9398"/>
         </radialGradient>
+        <linearGradient id="rimHi-${u}" x1="0" y1="0" x2="0.3" y2="1">
+          <stop offset="0%" stop-color="#fff" stop-opacity=".32"/>
+          <stop offset="45%" stop-color="#fff" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#000" stop-opacity=".10"/>
+        </linearGradient>
+        <radialGradient id="faceSh-${u}" cx="50%" cy="50%" r="50%">
+          <stop offset="82%" stop-color="#000" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#000" stop-opacity=".10"/>
+        </radialGradient>
         <filter id="glow-${u}" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="4"/>
         </filter>
       </defs>
       <ellipse cx="120" cy="226" rx="86" ry="8" fill="rgba(0,0,0,.10)"/>
       <circle cx="120" cy="120" r="108" fill="url(#rimGrad-${u})" class="rim" data-zone="body"/>
+      <circle cx="120" cy="120" r="108" fill="url(#rimHi-${u})" pointer-events="none"/>
+      <circle cx="120" cy="120" r="86" fill="${c.deep}" opacity=".35" pointer-events="none"/>
       <circle cx="120" cy="120" r="84" fill="url(#faceGrad-${u})" data-zone="body"/>
-      <circle cx="120" cy="120" r="84" fill="none" stroke="rgba(0,0,0,.06)" stroke-width="2"/>
+      <circle cx="120" cy="120" r="84" fill="url(#faceSh-${u})" pointer-events="none"/>
       <g class="face-a" data-zone="body">${dotsA()}</g>
       <g class="face-b" data-zone="body">${ripplesB()}</g>
       <g class="dial-g" data-zone="dial">
@@ -84,6 +96,7 @@
         <circle cx="120" cy="120" r="19" class="ring" fill="none" stroke-width="3"/>
         <circle cx="120" cy="120" r="19" class="ring-progress" fill="none" stroke-width="3" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - D.pairProgress}" transform="rotate(-90 120 120)"/>
         <circle cx="120" cy="120" r="15" fill="url(#dialGrad-${u})" class="dial"/>
+        <g class="dial-brush" pointer-events="none">${[4, 6.5, 9, 11.5, 13.5].map((r, i) => `<circle cx="120" cy="120" r="${r}" fill="none" stroke="${i % 2 ? '#fff' : '#7E848A'}" stroke-opacity=".22" stroke-width=".6"/>`).join('')}<ellipse cx="115" cy="114" rx="6" ry="3.5" fill="#fff" opacity=".55" transform="rotate(-30 115 114)"/></g>
       </g>
     </svg>`;
   };
@@ -156,6 +169,14 @@
     if (id === 'squeeze' || id === 'hold') S.engine.grip(id === 'squeeze' ? 45 : 25);
     if (['rotate', 'trace', 'rubA', 'rubB', 'rock'].includes(id)) S.engine.grip(10);
     emit(id);
+  };
+
+  /* Show a gesture on the object without sending it to the app (used by the guide) */
+  D.preview = function (id) {
+    const anim = { hold: 'squeeze', squeeze: 'squeeze', rotate: 'rotate', trace: 'trace', rubA: 'rub', rubB: 'rub', rock: 'rock', double: 'tap2', phone: 'nfc', press: 'press', facedown: 'flip' }[id];
+    if (id === 'rubB' && D.side !== 'B') { D.side = 'B'; D.refresh(); }
+    if ((id === 'rubA' || id === 'trace') && D.side !== 'A') { D.side = 'A'; D.refresh(); }
+    if (anim) D.animate(anim, id === 'trace' ? 1600 : 1000);
   };
 
   /* Direct manipulation on the SVG */

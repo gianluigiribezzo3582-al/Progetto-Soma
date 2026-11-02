@@ -78,7 +78,8 @@
         me: L('Me · device, consent, settings set with the therapist', 'Io · dispositivo, consenso, impostazioni concordate'),
         morning: L('Morning after · plain words, one optional tap', 'Il mattino dopo · parole semplici, un tocco facoltativo'),
         report: L('Report · AI summary for the therapist, only agreed data', 'Report · sintesi IA per il terapeuta, solo dati concordati'),
-        message: 'Care team · secure messages with the therapist (not for emergencies)'
+        message: 'Care team · secure messages with the therapist (not for emergencies)',
+        guide: 'How to use SOMA · the gestures from “Movements of the hand”'
       }[view];
     }
     $('caption').textContent = c || '';
@@ -363,6 +364,13 @@
       setTimeout(() => { S.state.linked = true; S.save(); A.render(); }, 1100);
     },
     'tab-me': () => A.go('me'),
+    guide: () => { S.guideBack = TABS.includes(view) ? view : 'practice'; A.go('guide'); },
+    'guide-back': () => A.go(S.guideBack || 'practice'),
+    'try-gesture': (el) => {
+      const g = S.device.GESTURES.find(x => x.id === el.dataset.g);
+      S.device.preview(g.id);
+      A.toast(`<b>${g.en}</b> · ${g.fbEn}` + (isMobile() ? ' Open the SOMA object from the round button to try it.' : ' Watch the object on the left.'));
+    },
     message: () => A.go('message'),
     'send-message': () => {
       const t = $('msgText'); if (!t || !t.value.trim()) return;
