@@ -81,24 +81,51 @@
 
   S.screens.welcome = () => `
     <div class="scr scr-welcome">
-      <div class="lang-switch" role="group" aria-label="Language">
-        <button class="${S.lang === 'en' ? 'is-on' : ''}" data-action="lang" data-lang="en">EN</button>
-        <button class="${S.lang === 'it' ? 'is-on' : ''}" data-action="lang" data-lang="it">IT</button>
-      </div>
       <div class="welcome-mark">${S.logoMark('breathing')}</div>
       <h1 class="welcome-title">${L('Welcome to Soma', 'Ti diamo il benvenuto in Soma')}</h1>
       <p class="welcome-sub">${L('A space to pause, reconnect and take care of yourself.', 'Uno spazio per fermarti, riconnetterti e prenderti cura di te.')}</p>
       <div class="welcome-foot">
-        <button class="btn btn-primary btn-block" data-action="ob-next">${L('Begin, together in session', 'Inizia, insieme in seduta')}</button>
-        <p class="tiny">${L('Set up with your therapist. You can change everything later.', 'Si configura con chi ti segue in terapia. Puoi cambiare tutto in seguito.')}</p>
+        <button class="btn btn-primary btn-block" data-action="ob-next">Get started</button>
+        <p class="tiny">SOMA is prescribed and set up together with your care team.</p>
       </div>
     </div>`;
+
+  S.screens.code = () => {
+    const linked = st().linked;
+    return `
+    <div class="scr">
+      ${obDots(0)}
+      ${head('Step 1 of 5', linked ? 'Your care team' : 'Connect to your care team', linked ? 'Check that these details are right.' : 'Enter the activation code you received from your clinic.')}
+      ${linked ? `
+        <section class="card team-card">
+          <div class="team-top">
+            <div class="avatar dr">${'B'}</div>
+            <div><b>${esc(S.drName())}</b><span>Psychotherapist · CBT-E</span></div>
+          </div>
+          <div class="kv-mini">
+            <div><span>Clinic</span><b>${esc(st().clinic)}</b></div>
+            <div><span>Patient</span><b>${esc(st().name)} R.</b></div>
+            <div><span>Programme</span><b>Evening waves</b></div>
+          </div>
+        </section>
+        <p class="tiny left">${I('shield', 'ico-inline')} Only your care team can see what you choose to share.</p>
+        <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">This is my care team</button></div>
+      ` : `
+        <label class="field">
+          <span>Activation code</span>
+          <input id="actCode" class="code-input" value="BRI-4821" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Activation code">
+        </label>
+        <p class="tiny left">You can find it on the sheet your therapist gave you in session.</p>
+        <div class="foot"><button class="btn btn-primary btn-block" data-action="verify-code" id="verifyBtn">Continue</button></div>
+      `}
+    </div>`;
+  };
 
   S.screens.pair = () => {
     const paired = st().paired;
     return `
     <div class="scr">
-      ${obDots(0)}
+      ${obDots(1)}
       ${head(withDr(), paired ? L('Soma is yours.', 'Soma è tuo.') : L('Pair your Soma', 'Associa il tuo Soma'), L('set up together, in session', 'configurato insieme, in seduta'))}
       <div class="pair-visual ${paired ? 'is-paired' : ''}" id="pairVisual">
         <svg viewBox="0 0 200 200" class="pair-svg" aria-hidden="true">
@@ -129,7 +156,7 @@
     const c = st().consent;
     return `
     <div class="scr">
-      ${obDots(1)}
+      ${obDots(2)}
       ${head(withDr(), L('What we agree on', 'Su cosa siamo d’accordo'), L('you can change it at any session', 'puoi cambiarlo a ogni seduta'))}
       <div class="card list">
         ${toggle('autoStart', c.autoStart, L('Soma may start guiding by itself', 'Soma può iniziare a guidarti da solo'), L('when it recognises your waves', 'quando riconosce le tue onde'))}
@@ -149,7 +176,7 @@
 
   S.screens.programme = () => `
     <div class="scr">
-      ${obDots(2)}
+      ${obDots(3)}
       ${head(withDr(), L('Your programme', 'Il tuo programma'), L('“Evening waves” · prescribed today', '“Onde serali” · prescritto oggi'))}
       <ol class="prog-list">
         ${S.PROGRAMME.map((p, i) => `
@@ -164,7 +191,7 @@
 
   S.screens.listening = () => `
     <div class="scr">
-      ${obDots(3)}
+      ${obDots(4)}
       ${head(L('Weeks 1–3', 'Settimane 1–3'), L('Listening first.', 'Prima, ascoltare.'), L('why Soma stays quiet at first', 'perché all’inizio Soma resta in silenzio'))}
       <div class="phase-cards">
         <div class="phase-card ph-listen"><small>${L('weeks 1–3', 'settimane 1–3')}</small><b>${L('Listening', 'Ascolto')}</b><span>${L('learns what is normal for you', 'impara cosa è normale per te')}</span></div>
@@ -275,20 +302,14 @@
       ${ins.length ? `
       <section class="card insight">
         <div class="eyebrow">${I('spark', 'ico-inline')} ${L('Soma noticed', 'Soma ha notato')}</div>
-        ${ins.map(t => `<p>${t}</p>`).join('')}
+        ${ins.slice(0, 2).map(t => `<p>${t}</p>`).join('')}
       </section>` : ''}
 
       <section class="card card-row next-session">
         <span class="round-ico">${I('calendar')}</span>
         <div class="grow"><div class="eyebrow">${L('Next session', 'Prossima seduta')}</div><b>${esc(S.drName())} · ${L('Tue 18:30', 'Mar 18:30')}</b></div>
-        <button class="btn btn-soft btn-sm" data-action="report">${L('Report', 'Report')}</button>
+        <button class="btn btn-soft btn-sm" data-action="report">Prepare</button>
       </section>
-
-      <div class="presenter">
-        <span>${L('Presenter', 'Presentazione')}</span>
-        <button data-action="sim-wave">${L('Simulate a wave', 'Simula un’onda')}</button>
-        <button data-action="sim-stress">${L('Ordinary stress', 'Stress ordinario')}</button>
-      </div>
     </div>`;
   };
 
@@ -421,67 +442,76 @@
     <div class="scr scr-tab">
       <header class="me-head">
         <div class="avatar">${esc(st().name[0] || 'S')}</div>
-        <div><h1>${esc(st().name)}</h1><p class="sub">${esc(S.drName())} · ${esc(st().clinic)}</p></div>
+        <div><h1>${esc(st().name)} R.</h1><p class="sub">Patient · ${esc(st().clinic)}</p></div>
       </header>
 
-      <div class="list-label">SOMA</div>
-      <section class="card">
-        <div class="card-row">${S.miniPebble(36)}<div class="grow"><b>${L(S.color().en, S.color().it)}</b><div class="muted small">${st().paired ? L('Connected', 'Connesso') : L('Not paired', 'Non associato')} · ${L('battery', 'batteria')} ${S.device.battery}%</div></div></div>
-        <div class="swatches small">${S.COLORS.map(col => `<button class="swatch ${col.id === st().color ? 'is-on' : ''}" style="--c:${col.hex}" data-action="color" data-color="${col.id}" aria-label="${L(col.en, col.it)}"><span></span></button>`).join('')}</div>
-        <label class="row toggle-row"><span class="row-text"><span class="row-title">${L('Voice guidance', 'Guida vocale')}</span><span class="row-sub">${L('double-tap the dial to switch', 'doppio tocco sul dial per cambiare')}</span></span><input type="checkbox" class="switch" data-setting="voice" ${st().voice ? 'checked' : ''}></label>
-      </section>
-
-      <div class="list-label">${L('What we agreed on', 'Su cosa ci siamo accordati')}</div>
-      <section class="card list">
-        ${toggle('autoStart', c.autoStart, L('Soma may start guiding by itself', 'Soma può iniziare a guidarti da solo'))}
-        ${toggle('times', c.times, L('Share times and duration', 'Condividi orari e durata'))}
-        ${toggle('exercises', c.exercises, L('Share exercises completed', 'Condividi esercizi completati'))}
-        ${toggle('settle', c.settle, L('Share how quickly you settled', 'Condividi quanto in fretta il corpo si è calmato'))}
-        ${toggle('notes', c.notes, L('Share your notes', 'Condividi le tue note'))}
-        ${toggle('raw', c.raw, L('Share raw body signals', 'Condividi segnali corporei grezzi'))}
-      </section>
-
-      <div class="list-label">${L('Set with ' + S.drName(), 'Impostato con ' + S.drName())}</div>
-      <section class="card list kv">
-        <div class="row"><span>${L('Recognition sensitivity', 'Sensibilità del riconoscimento')}</span><b>${sens()}</b></div>
-        <div class="row"><span>${L('Quiet hours', 'Ore di silenzio')}</span><b>${se.quietFrom}–${se.quietTo}</b></div>
-        <div class="row"><span>${L('Max sessions per day', 'Max sessioni al giorno')}</span><b>${se.maxSessions}</b></div>
-        <div class="row"><span>${L('If distress stays high', 'Se il disagio resta alto')}</span><b>${L('suggest calling the clinic', 'suggerire di chiamare il centro')}</b></div>
-      </section>
-
-      <section class="card help-card">
-        <span class="round-ico">${I('lifebuoy')}</span>
-        <div><b>${L('If you feel unsafe right now', 'Se adesso non ti senti al sicuro')}</b>
-        <p>${L('Call 112, or the Italian eating disorders helpline SOS DCA 800 180 969 (free).', 'Chiama il 112, oppure il Numero Verde SOS Disturbi Alimentari 800 180 969 (gratuito).')}</p></div>
-      </section>
-
-      <div class="list-label">${L('Language', 'Lingua')}</div>
-      <div class="seg">
-        <button class="${S.lang === 'en' ? 'is-on' : ''}" data-action="lang" data-lang="en">English</button>
-        <button class="${S.lang === 'it' ? 'is-on' : ''}" data-action="lang" data-lang="it">Italiano</button>
-      </div>
-
-      <div class="list-label">${L('Presentation mode', 'Modalità presentazione')}</div>
-      <section class="card list">
-        <div class="row column">
-          <span class="row-title">${L('Jump to a moment of the journey', 'Salta a un momento del percorso')}</span>
-          <div class="seg seg-wrap">
-            ${[[2, L('Week 2 · Listening', 'Sett. 2 · Ascolto')], [5, L('Week 5 · Learning', 'Sett. 5 · Apprendimento')], [9, L('Week 9 · Guiding', 'Sett. 9 · Guida')]].map(([wk, l]) => `<button class="${st().week === wk ? 'is-on' : ''}" data-action="week" data-week="${wk}">${l}</button>`).join('')}
-          </div>
+      <div class="list-label">Care team</div>
+      <section class="card team-card">
+        <div class="team-top">
+          <div class="avatar dr">B</div>
+          <div class="grow"><b>${esc(S.drName())}</b><span>Psychotherapist · CBT-E</span></div>
         </div>
-        <button class="row link-row" data-action="sim-wave">${L('Simulate a wave now', 'Simula un’onda ora')}${I('chev')}</button>
-        <button class="row link-row" data-action="restart-ob">${L('Replay onboarding', 'Rivedi l’onboarding')}${I('chev')}</button>
-        <button class="row link-row danger" data-action="reset">${L('Reset the prototype', 'Azzera il prototipo')}${I('chev')}</button>
+        <div class="team-next">${I('calendar', 'ico-inline')} Next session · Tue 18:30 · in person</div>
+        <div class="team-actions">
+          <button class="btn btn-soft btn-sm" data-action="message">${I('note')} Message</button>
+          <button class="btn btn-soft btn-sm" data-action="call-clinic">${I('phone')} Call clinic</button>
+        </div>
       </section>
+
+      <div class="list-label">Your SOMA</div>
+      <section class="card">
+        <div class="card-row">${S.miniPebble(36)}<div class="grow"><b>SOMA · ${S.color().en}</b><div class="muted small">${st().paired ? 'Connected' : 'Not paired'} · battery ${S.device.battery}% · firmware 1.2.0</div></div></div>
+        <div class="swatches small">${S.COLORS.map(col => `<button class="swatch ${col.id === st().color ? 'is-on' : ''}" style="--c:${col.hex}" data-action="color" data-color="${col.id}" aria-label="${col.en}"><span></span></button>`).join('')}</div>
+        <label class="row toggle-row"><span class="row-text"><span class="row-title">Voice guidance</span><span class="row-sub">double-tap the dial to switch</span></span><input type="checkbox" class="switch" data-setting="voice" ${st().voice ? 'checked' : ''}></label>
+        <label class="row toggle-row"><span class="row-text"><span class="row-title">Daily practice reminder</span><span class="row-sub">every day at ${st().practiceTime}</span></span><input type="checkbox" class="switch" data-setting="reminders" ${st().reminders ? 'checked' : ''}></label>
+      </section>
+
+      <div class="list-label">What we agreed on</div>
+      <section class="card list">
+        ${toggle('autoStart', c.autoStart, 'Soma may start guiding by itself')}
+        ${toggle('times', c.times, 'Share times and duration')}
+        ${toggle('exercises', c.exercises, 'Share exercises completed')}
+        ${toggle('settle', c.settle, 'Share how quickly you settled')}
+        ${toggle('notes', c.notes, 'Share your notes')}
+        ${toggle('raw', c.raw, 'Share raw body signals')}
+      </section>
+
+      <div class="list-label">Set with ${esc(S.drName())}</div>
+      <section class="card list kv">
+        <div class="row"><span>Recognition sensitivity</span><b>${sens()}</b></div>
+        <div class="row"><span>Quiet hours</span><b>${se.quietFrom}–${se.quietTo}</b></div>
+        <div class="row"><span>Max sessions per day</span><b>${se.maxSessions}</b></div>
+        <div class="row"><span>If distress stays high</span><b>suggest calling the clinic</b></div>
+      </section>
+
+      <button class="card help-card" data-action="support">
+        <span class="round-ico">${I('lifebuoy')}</span>
+        <div><b>Get help now</b><p>If you feel unsafe or in crisis, contact your clinic or emergency services.</p></div>
+        <span class="chev">${I('chev')}</span>
+      </button>
 
       <section class="about">
         ${S.logoMark('about-mark')}
-        <p><b>SOMA — Holding the Wave</b><br>${L('A product-service system for people living with Binge Eating Disorder.', 'Un sistema prodotto-servizio per persone che convivono con il Disturbo da Alimentazione Incontrollata.')}</p>
-        <p>${L('Master’s thesis in Industrial Design · Care Ability – Sense Making Future · Politecnico di Bari, dArCoD · A.Y. 2025–2026', 'Tesi di Laurea Magistrale in Industrial Design · Care Ability – Sense Making Future · Politecnico di Bari, dArCoD · A.A. 2025–2026')}</p>
-        <p>Francesca Cognetti · Azzurra Francesca Doronzo · Alessandro Perna</p>
-        <p class="tiny">${L('Supervisors', 'Relatrici')}: Dott.ssa Piera Losciale · Prof.ssa Annalisa Di Roma · Prof.ssa Alessandra Scarcelli</p>
-        <p class="tiny">${L('Prototype for presentation: data and AI are simulated. Not a medical device. SOMA informs therapy, it does not replace it.', 'Prototipo dimostrativo: dati e IA sono simulati. Non è un dispositivo medico. SOMA informa la terapia, non la sostituisce.')}</p>
+        <p><b>SOMA</b> · version 1.0.0</p>
+        <p class="tiny">SOMA supports your therapy, it does not replace it. It is not an emergency service.</p>
       </section>
+    </div>`;
+  };
+
+  /* ================= MESSAGES (care team) ================= */
+  S.screens.message = () => {
+    const msgs = [{ from: 'dr', text: 'Hi Sara, I have added the “Evening waves” programme we discussed. Try the daily practice at 18:00 and we will look at how it went on Tuesday.', at: 'Mon 14 Oct · 17:02' }].concat(st().messages);
+    return `
+    <div class="scr scr-msg">
+      ${head('Care team', esc(S.drName()), 'Psychotherapist · ' + esc(st().clinic), 'tab-me')}
+      <div class="notice">${I('info', 'ico-inline')} Usually replies within 1 working day. Not for emergencies.</div>
+      <div class="thread">
+        ${msgs.map(m => `<div class="bubble ${m.from === 'me' ? 'me' : 'dr'}"><p>${esc(m.text)}</p><time>${esc(m.at)}</time></div>`).join('')}
+      </div>
+      <div class="composer">
+        <textarea id="msgText" rows="2" placeholder="Write a message…"></textarea>
+        <button class="icon-btn send" data-action="send-message" aria-label="Send">${I('send')}</button>
+      </div>
     </div>`;
   };
 
@@ -584,7 +614,7 @@
       <section class="rd-shared"><h4>${L('Shared by agreement', 'Condiviso per accordo')}</h4>
         <div class="rd-chips">${shared.map(([k, l]) => `<span class="${c[k] ? 'on' : 'off'}">${c[k] ? '✓' : '—'} ${l}</span>`).join('')}</div>
       </section>
-      <footer class="rd-foot">${L('SOMA informs therapy, it does not replace it. No single signal is interpreted as a binge-eating episode. Prototype — data simulated.', 'SOMA informa la terapia, non la sostituisce. Nessun singolo segnale è interpretato come un episodio di abbuffata. Prototipo — dati simulati.')}</footer>
+      <footer class="rd-foot">${L('SOMA informs therapy, it does not replace it. No single signal is interpreted as a binge-eating episode.', 'SOMA informa la terapia, non la sostituisce. Nessun singolo segnale è interpretato come un episodio di abbuffata. Prototipo — dati simulati.')}</footer>
     </article>`;
   };
 

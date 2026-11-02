@@ -131,6 +131,7 @@
           ${a.steps[a.idx] === 'intro' ? '<div class="segs"></div>' : segs(a)}
           <div class="dark-tools">
             <span class="hr-live" id="sessHr" title="${L('Heart rate (from SOMA)', 'Frequenza cardiaca (da SOMA)')}">${I('heart')} <b>${Math.round(S.engine.sig.hr)}</b></span>
+            <button class="icon-btn ghost" data-action="support" aria-label="Get help now">${I('lifebuoy')}</button>
             <button class="icon-btn ghost" data-action="voice" aria-label="${L('Voice', 'Voce')}">${I('voice', S.state.voice ? '' : 'off')}</button>
             ${a.steps[a.idx] !== 'rest' ? `<button class="icon-btn ghost" data-action="sess-stop" aria-label="${L('Stop', 'Ferma')}">${I('close')}</button>` : ''}
           </div>
