@@ -2,7 +2,7 @@
  * Nothing leaves the browser: everything lives in memory + localStorage.
  */
 (function () {
-  const KEY = 'soma-prototype-v2';
+  const KEY = 'soma-prototype-v3';
 
   /* ---------- Static content ---------- */
 
@@ -112,8 +112,11 @@
     const today = new Date();
     const h = buildHistory(today);
     return {
-      lang: (navigator.language || 'en').toLowerCase().startsWith('it') ? 'it' : 'en',
+      lang: 'en', // English only for now (Italian strings are kept in the code)
       onboarded: false,
+      linked: false,
+      reminders: true,
+      messages: [],
       onboardStep: 0,
       name: 'Sara',
       therapist: 'Dr. Bianchi',
@@ -145,7 +148,8 @@
   }
 
   S.state = load();
-  S.lang = S.state.lang;
+  S.state.lang = 'en';
+  S.lang = 'en';
 
   S.save = function () {
     try { localStorage.setItem(KEY, JSON.stringify(S.state)); } catch (e) { /* ignore */ }
@@ -154,7 +158,7 @@
   S.reset = function () {
     try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ }
     S.state = defaults();
-    S.lang = S.state.lang;
+    S.lang = 'en';
   };
 
   S.color = function () {

@@ -21,18 +21,20 @@ Non serve installare niente: è una webapp statica in HTML, CSS e JavaScript, se
 
 ## Il percorso da mostrare
 
-1. **Onboarding in seduta:** benvenuto, poi l'associazione (si tiene premuto per 3 s il pulsante o l'oggetto e l'anello si accende), la scelta del colore tra i sei toni, *What we agree on* (consensi), il programma "Evening waves" e *Listening first*.
+1. **Onboarding in seduta:** benvenuto, poi il **codice di attivazione** della clinica (già compilato: basta premere *Continue*) e la conferma del team di cura, poi l'associazione (si tiene premuto per 3 s il pulsante o l'oggetto e l'anello si accende), la scelta del colore tra i sei toni, *What we agree on* (consensi), il programma "Evening waves" e *Listening first*.
 2. **Oggi:** la fase del modello personale (ascolto, apprendimento, guida), la pratica quotidiana, *Soma noticed* con gli insight dell'IA e il pulsante *I need a moment*.
-3. **Simula un'onda** (dalla console IA o dalla scheda Oggi): la console mostra i segnali che salgono (FC, HRV, EDA, temperatura). L'indice supera la soglia concordata con il terapeuta e, alla settimana 9, Soma **parte da solo**: due impulsi, anello ambra, nessuna domanda.
+   **Io:** il team di cura (messaggi con il terapeuta, chiamata alla clinica), il dispositivo, i promemoria, i consensi e *Get help now*.
+3. **Simula un'onda** (dalla console IA): la console mostra i segnali che salgono (FC, HRV, EDA, temperatura). L'indice supera la soglia concordata con il terapeuta e, alla settimana 9, Soma **parte da solo**: due impulsi, anello ambra, nessuna domanda.
    - Il pulsante *Ordinary stress* mostra che il modello distingue un normale stress dalla "firma" di un'onda.
    - Alle settimane 2 e 5 Soma annota il momento ma non parte, perché sta ancora imparando.
-4. **Sequenza guidata (schermate scure):** Breathe (si stringe SOMA mentre il cerchio si gonfia), Ground (5-4-3-2-1), Surf (urge surfing; ruotando l'oggetto la curva avanza), Phone pause, Move, Rest: *"You stayed with yourself."*
+4. **Sequenza guidata (schermate scure)**, con il pulsante di aiuto sempre visibile in alto: Breathe (si stringe SOMA mentre il cerchio si gonfia), Ground (5-4-3-2-1), Surf (urge surfing; ruotando l'oggetto la curva avanza), Phone pause, Move, Rest: *"You stayed with yourself."*
 5. **Il mattino dopo:** parole semplici e un tocco facoltativo, non giudicante. Le risposte servono a far imparare il modello.
 6. **Onde:** grafici dell'andamento (onde guidate per settimana, tempo per calmarsi, orari, firma dell'onda, apprendimento del modello).
 7. **Report per il terapeuta:** si sceglie il periodo; l'IA "analizza" e scrive una sintesi in parole semplici con i punti da discutere in seduta. Include **solo i dati concordati**. Si può inviare (simulato) o salvare in PDF.
 
-Da **Io → Modalità presentazione** si salta alla settimana 2, 5 o 9, si rivede l'onboarding o si azzera il prototipo.
-La lingua (EN/IT) si cambia dalla schermata di benvenuto o da **Io**.
+I **comandi per la presentazione** sono fuori dal telefono, così l'app sembra quella reale: si trovano nel pannello "Demo controls" sotto la console IA (su telefono, nel pulsante rotondo → *AI & demo*). Da lì si salta alla settimana 2, 5 o 9, si apre il "mattino dopo", si rivede l'onboarding o si azzera la demo.
+
+Per ora l'app è **solo in inglese**. Le traduzioni italiane delle prime schermate sono rimaste nel codice, dentro `L('English', 'Italiano')`, ma non sono attive.
 
 ## Gesti dell'oggetto (dal capitolo "Movements of the hand")
 
