@@ -4,7 +4,7 @@
  */
 window.S = window.S || {};
 
-S.lang = 'en';
+S.lang = 'it';
 
 function L(en, it) {
   return S.lang === 'it' ? it : en;
