@@ -352,7 +352,7 @@
         S.reportDraft.stage = 'sent'; S.reportDraft.sentAt = Date.now();
         S.state.reports.push({ at: new Date().toISOString(), period: S.reportDraft.period });
         S.save(); A.render();
-        A.toast(L('Report delivered to ' + S.drName(), 'Report consegnato a ' + S.drName()));
+        A.toast('Report delivered to ' + S.drName() + ' <span class="sim">simulated</span>');
       }, 1400);
     },
     print: printReport,
@@ -368,10 +368,10 @@
       const t = $('msgText'); if (!t || !t.value.trim()) return;
       S.state.messages.push({ from: 'me', text: t.value.trim(), at: 'Today · ' + S.fmt.time(new Date()) });
       S.save(); A.render(); $('app').scrollTop = 99999;
-      A.toast('Sent to ' + S.drName() + '.');
+      A.toast('Sent to ' + S.drName() + '. <span class="sim">simulated</span>');
     },
-    'call-clinic': () => { A.closeModal(); A.toast('Calling ' + S.state.clinic + '…'); },
-    'call-112': () => { A.closeModal(); A.toast('Calling emergency services · 112…'); },
+    'call-clinic': () => { A.closeModal(); A.toast('Calling ' + S.state.clinic + '… <span class="sim">simulated call</span>'); },
+    'call-112': () => { A.closeModal(); A.toast('Calling emergency services · 112… <span class="sim">simulated call</span>'); },
     support: () => A.modal(`
       <div class="modal-ico">${S.icon('lifebuoy')}</div>
       <h3>Need support right now?</h3>

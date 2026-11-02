@@ -379,7 +379,7 @@
 
     return `
     <div class="scr scr-tab">
-      ${head(L('Waves', 'Onde'), L('How your waves are changing.', 'Come stanno cambiando le tue onde.'), L('Week 1 → week ' + w + '. Only what you agreed to keep.', 'Settimana 1 → settimana ' + w + '. Solo ciò che hai scelto di conservare.'))}
+      ${head(L('Waves', 'Onde'), L('How your waves are changing.', 'Come stanno cambiando le tue onde.'), L('Week 1 → week ' + w + '. Only what you agreed to keep.', 'Settimana 1 → settimana ' + w + '. Solo ciò che hai scelto di conservare.') + ' <span class="sim">' + L('demo data', 'dati demo') + '</span>')}
 
       <div class="tiles">
         <div class="tile"><small>${L('Guided waves', 'Onde guidate')}</small><b>${thisWeek}</b><span>${L('this week', 'questa settimana')}</span></div>
@@ -494,6 +494,7 @@
         ${S.logoMark('about-mark')}
         <p><b>SOMA</b> · version 1.0.0</p>
         <p class="tiny">SOMA supports your therapy, it does not replace it. It is not an emergency service.</p>
+        <p class="tiny">Demo build for the thesis presentation · Politecnico di Bari. Patient, care team, history and AI analysis are simulated.</p>
       </section>
     </div>`;
   };
@@ -614,7 +615,7 @@
       <section class="rd-shared"><h4>${L('Shared by agreement', 'Condiviso per accordo')}</h4>
         <div class="rd-chips">${shared.map(([k, l]) => `<span class="${c[k] ? 'on' : 'off'}">${c[k] ? '✓' : '—'} ${l}</span>`).join('')}</div>
       </section>
-      <footer class="rd-foot">${L('SOMA informs therapy, it does not replace it. No single signal is interpreted as a binge-eating episode.', 'SOMA informa la terapia, non la sostituisce. Nessun singolo segnale è interpretato come un episodio di abbuffata. Prototipo — dati simulati.')}</footer>
+      <footer class="rd-foot">${L('SOMA informs therapy, it does not replace it. No single signal is interpreted as a binge-eating episode. Demo report: patient and data are fictitious.', 'SOMA informa la terapia, non la sostituisce. Nessun singolo segnale è interpretato come un episodio di abbuffata. Prototipo — dati simulati.')}</footer>
     </article>`;
   };
 
