@@ -34,7 +34,7 @@ Non serve installare niente: è una webapp statica in HTML, CSS e JavaScript, se
 
 I **comandi per la presentazione** sono fuori dal telefono, così l'app sembra quella reale: si trovano nel pannello "Demo controls" sotto la console IA (su telefono, nel pulsante rotondo → *AI & demo*). Da lì si salta alla settimana 2, 5 o 9, si apre il "mattino dopo", si rivede l'onboarding o si azzera la demo.
 
-Per ora l'app è **solo in inglese**. Le traduzioni italiane delle prime schermate sono rimaste nel codice, dentro `L('English', 'Italiano')`, ma non sono attive.
+**Lingua:** l'app parte in **italiano**; l'inglese si attiva dal selettore IT/EN nella schermata di benvenuto o da **Io → Lingua**. La scelta viene ricordata. Tutti i testi sono scritti nel codice come `L('English', 'Italiano')`.
 
 ## Gesti dell'oggetto (dal capitolo "Movements of the hand")
 

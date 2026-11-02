@@ -77,16 +77,26 @@
     return `<div class="ob-dots" aria-hidden="true">${[0, 1, 2, 3, 4].map(k => `<i class="${k === i ? 'on' : k < i ? 'done' : ''}"></i>`).join('')}</div>`;
   }
 
+  /* Italian article before a percentage: l'8%, l'11%, l'80%, il 73% */
+  S.artPct = n => (/^(8|11|1$)/.test(String(n)) ? 'L’' : 'Il ') + n + '%';
+
   S.screens = {};
+
+  S.langSwitch = () => `
+    <div class="lang-switch" role="group" aria-label="${L('Language', 'Lingua')}">
+      <button class="${S.lang === 'it' ? 'is-on' : ''}" data-action="lang" data-lang="it">IT</button>
+      <button class="${S.lang === 'en' ? 'is-on' : ''}" data-action="lang" data-lang="en">EN</button>
+    </div>`;
 
   S.screens.welcome = () => `
     <div class="scr scr-welcome">
+      ${S.langSwitch()}
       <div class="welcome-mark">${S.logoMark('breathing')}</div>
       <h1 class="welcome-title">${L('Welcome to Soma', 'Ti diamo il benvenuto in Soma')}</h1>
       <p class="welcome-sub">${L('A space to pause, reconnect and take care of yourself.', 'Uno spazio per fermarti, riconnetterti e prenderti cura di te.')}</p>
       <div class="welcome-foot">
-        <button class="btn btn-primary btn-block" data-action="ob-next">Get started</button>
-        <p class="tiny">SOMA is prescribed and set up together with your care team.</p>
+        <button class="btn btn-primary btn-block" data-action="ob-next">${L('Get started', 'Inizia')}</button>
+        <p class="tiny">${L('SOMA is prescribed and set up together with your care team.', 'SOMA viene prescritto e configurato insieme al tuo team di cura.')}</p>
       </div>
     </div>`;
 
@@ -95,28 +105,28 @@
     return `
     <div class="scr">
       ${obDots(0)}
-      ${head('Step 1 of 5', linked ? 'Your care team' : 'Connect to your care team', linked ? 'Check that these details are right.' : 'Enter the activation code you received from your clinic.')}
+      ${head(L('Step 1 of 5', 'Passo 1 di 5'), linked ? L('Your care team', 'Il tuo team di cura') : L('Connect to your care team', 'Collegati al tuo team di cura'), linked ? L('Check that these details are right.', 'Controlla che questi dati siano corretti.') : L('Enter the activation code you received from your clinic.', 'Inserisci il codice di attivazione ricevuto dal tuo centro.'))}
       ${linked ? `
         <section class="card team-card">
           <div class="team-top">
-            <div class="avatar dr">${'B'}</div>
-            <div><b>${esc(S.drName())}</b><span>Psychotherapist · CBT-E</span></div>
+            <div class="avatar dr">B</div>
+            <div><b>${esc(S.drName())}</b><span>${L('Psychotherapist', 'Psicoterapeuta')} · CBT-E</span></div>
           </div>
           <div class="kv-mini">
-            <div><span>Clinic</span><b>${esc(st().clinic)}</b></div>
-            <div><span>Patient</span><b>${esc(st().name)} R.</b></div>
-            <div><span>Programme</span><b>Evening waves</b></div>
+            <div><span>${L('Clinic', 'Centro')}</span><b>${esc(st().clinic)}</b></div>
+            <div><span>${L('Patient', 'Paziente')}</span><b>${esc(st().name)} R.</b></div>
+            <div><span>${L('Programme', 'Programma')}</span><b>${L('Evening waves', 'Onde serali')}</b></div>
           </div>
         </section>
-        <p class="tiny left">${I('shield', 'ico-inline')} Only your care team can see what you choose to share.</p>
-        <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">This is my care team</button></div>
+        <p class="tiny left">${I('shield', 'ico-inline')} ${L('Only your care team can see what you choose to share.', 'Solo il tuo team di cura può vedere ciò che scegli di condividere.')}</p>
+        <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('This is my care team', 'È il mio team di cura')}</button></div>
       ` : `
         <label class="field">
-          <span>Activation code</span>
-          <input id="actCode" class="code-input" value="BRI-4821" autocomplete="off" spellcheck="false" inputmode="text" aria-label="Activation code">
+          <span>${L('Activation code', 'Codice di attivazione')}</span>
+          <input id="actCode" class="code-input" value="BRI-4821" autocomplete="off" spellcheck="false" inputmode="text" aria-label="${L('Activation code', 'Codice di attivazione')}">
         </label>
-        <p class="tiny left">You can find it on the sheet your therapist gave you in session.</p>
-        <div class="foot"><button class="btn btn-primary btn-block" data-action="verify-code" id="verifyBtn">Continue</button></div>
+        <p class="tiny left">${L('You can find it on the sheet your therapist gave you in session.', 'Lo trovi sul foglio che ti è stato consegnato in seduta.')}</p>
+        <div class="foot"><button class="btn btn-primary btn-block" data-action="verify-code" id="verifyBtn">${L('Continue', 'Continua')}</button></div>
       `}
     </div>`;
   };
@@ -251,7 +261,7 @@
     }
     if (h.length > 4) {
       const ev = h.filter(s => new Date(s.at).getHours() >= 20).length / h.length;
-      list.push(L(`${Math.round(ev * 100)}% of your waves began after 20:00, often after a long time on the phone.`, `Il ${Math.round(ev * 100)}% delle tue onde è iniziato dopo le 20:00, spesso dopo molto tempo al telefono.`));
+      list.push(L(`${Math.round(ev * 100)}% of your waves began after 20:00, often after a long time on the phone.`, `${S.artPct(Math.round(ev * 100))} delle tue onde è iniziato dopo le 20:00, spesso dopo molto tempo al telefono.`));
     }
     if (st().week >= 4) {
       const s = S.weekStats();
@@ -316,7 +326,7 @@
       <section class="card card-row next-session">
         <span class="round-ico">${I('calendar')}</span>
         <div class="grow"><div class="eyebrow">${L('Next session', 'Prossima seduta')}</div><b>${esc(S.drName())} · ${L('Tue 18:30', 'Mar 18:30')}</b></div>
-        <button class="btn btn-soft btn-sm" data-action="report">Prepare</button>
+        <button class="btn btn-soft btn-sm" data-action="report">${L('Prepare', 'Prepara')}</button>
       </section>
     </div>`;
   };
@@ -326,7 +336,7 @@
       ${head(L('Practice', 'Pratica'), L('Skills for calm water.', 'Abilità per acque calme.'))}
       <button class="card guide-entry" data-action="guide">
         <img src="assets/img/g-squeeze.jpg" alt="">
-        <span class="grow"><span class="eyebrow">Your SOMA</span><b>How to use SOMA</b><small>10 gestures, what they do and what they are for</small></span>
+        <span class="grow"><span class="eyebrow">${L('Your SOMA', 'Il tuo SOMA')}</span><b>${L('How to use SOMA', 'Come si usa SOMA')}</b><small>${L('10 gestures, what they do and what they are for', '10 gesti: cosa fanno e a cosa servono')}</small></span>
         <span class="chev">${I('chev')}</span>
       </button>
       <div class="skill-grid">
@@ -455,60 +465,66 @@
     <div class="scr scr-tab">
       <header class="me-head">
         <div class="avatar">${esc(st().name[0] || 'S')}</div>
-        <div><h1>${esc(st().name)} R.</h1><p class="sub">Patient · ${esc(st().clinic)}</p></div>
+        <div><h1>${esc(st().name)} R.</h1><p class="sub">${L('Patient', 'Paziente')} · ${esc(st().clinic)}</p></div>
       </header>
 
-      <div class="list-label">Care team</div>
+      <div class="list-label">${L('Care team', 'Team di cura')}</div>
       <section class="card team-card">
         <div class="team-top">
           <div class="avatar dr">B</div>
-          <div class="grow"><b>${esc(S.drName())}</b><span>Psychotherapist · CBT-E</span></div>
+          <div class="grow"><b>${esc(S.drName())}</b><span>${L('Psychotherapist', 'Psicoterapeuta')} · CBT-E</span></div>
         </div>
-        <div class="team-next">${I('calendar', 'ico-inline')} Next session · Tue 18:30 · in person</div>
+        <div class="team-next">${I('calendar', 'ico-inline')} ${L('Next session · Tue 18:30 · in person', 'Prossima seduta · mar 18:30 · in presenza')}</div>
         <div class="team-actions">
-          <button class="btn btn-soft btn-sm" data-action="message">${I('note')} Message</button>
-          <button class="btn btn-soft btn-sm" data-action="call-clinic">${I('phone')} Call clinic</button>
+          <button class="btn btn-soft btn-sm" data-action="message">${I('note')} ${L('Message', 'Messaggio')}</button>
+          <button class="btn btn-soft btn-sm" data-action="call-clinic">${I('phone')} ${L('Call clinic', 'Chiama il centro')}</button>
         </div>
       </section>
 
-      <div class="list-label">Your SOMA</div>
+      <div class="list-label">${L('Your SOMA', 'Il tuo SOMA')}</div>
       <section class="card">
-        <div class="card-row">${S.miniPebble(36)}<div class="grow"><b>SOMA · ${S.color().en}</b><div class="muted small">${st().paired ? 'Connected' : 'Not paired'} · battery ${S.device.battery}% · firmware 1.2.0</div></div></div>
-        <div class="swatches small">${S.COLORS.map(col => `<button class="swatch ${col.id === st().color ? 'is-on' : ''}" style="--c:${col.hex}" data-action="color" data-color="${col.id}" aria-label="${col.en}"><span></span></button>`).join('')}</div>
-        <label class="row toggle-row"><span class="row-text"><span class="row-title">Voice guidance</span><span class="row-sub">double-tap the dial to switch</span></span><input type="checkbox" class="switch" data-setting="voice" ${st().voice ? 'checked' : ''}></label>
-        <button class="row link-row" data-action="guide"><span class="row-text"><span class="row-title">How to use SOMA</span><span class="row-sub">gestures and what they are for</span></span>${I('chev')}</button>
-        <label class="row toggle-row"><span class="row-text"><span class="row-title">Daily practice reminder</span><span class="row-sub">every day at ${st().practiceTime}</span></span><input type="checkbox" class="switch" data-setting="reminders" ${st().reminders ? 'checked' : ''}></label>
+        <div class="card-row">${S.miniPebble(36)}<div class="grow"><b>SOMA · ${L(S.color().en, S.color().it)}</b><div class="muted small">${st().paired ? L('Connected', 'Connesso') : L('Not paired', 'Non associato')} · ${L('battery', 'batteria')} ${S.device.battery}% · firmware 1.2.0</div></div></div>
+        <div class="swatches small">${S.COLORS.map(col => `<button class="swatch ${col.id === st().color ? 'is-on' : ''}" style="--c:${col.hex}" data-action="color" data-color="${col.id}" aria-label="${L(col.en, col.it)}"><span></span></button>`).join('')}</div>
+        <label class="row toggle-row"><span class="row-text"><span class="row-title">${L('Voice guidance', 'Guida vocale')}</span><span class="row-sub">${L('double-tap the dial to switch', 'doppio tocco sul dial per cambiare')}</span></span><input type="checkbox" class="switch" data-setting="voice" ${st().voice ? 'checked' : ''}></label>
+        <button class="row link-row" data-action="guide"><span class="row-text"><span class="row-title">${L('How to use SOMA', 'Come si usa SOMA')}</span><span class="row-sub">${L('gestures and what they are for', 'i gesti e a cosa servono')}</span></span>${I('chev')}</button>
+        <label class="row toggle-row"><span class="row-text"><span class="row-title">${L('Daily practice reminder', 'Promemoria pratica quotidiana')}</span><span class="row-sub">${L('every day at ', 'ogni giorno alle ')}${st().practiceTime}</span></span><input type="checkbox" class="switch" data-setting="reminders" ${st().reminders ? 'checked' : ''}></label>
       </section>
 
-      <div class="list-label">What we agreed on</div>
+      <div class="list-label">${L('What we agreed on', 'Cosa abbiamo concordato')}</div>
       <section class="card list">
-        ${toggle('autoStart', c.autoStart, 'Soma may start guiding by itself')}
-        ${toggle('times', c.times, 'Share times and duration')}
-        ${toggle('exercises', c.exercises, 'Share exercises completed')}
-        ${toggle('settle', c.settle, 'Share how quickly you settled')}
-        ${toggle('notes', c.notes, 'Share your notes')}
-        ${toggle('raw', c.raw, 'Share raw body signals')}
+        ${toggle('autoStart', c.autoStart, L('Soma may start guiding by itself', 'Soma può iniziare a guidarti da solo'))}
+        ${toggle('times', c.times, L('Share times and duration', 'Condividi orari e durata'))}
+        ${toggle('exercises', c.exercises, L('Share exercises completed', 'Condividi gli esercizi completati'))}
+        ${toggle('settle', c.settle, L('Share how quickly you settled', 'Condividi quanto in fretta il corpo si è calmato'))}
+        ${toggle('notes', c.notes, L('Share your notes', 'Condividi le tue note'))}
+        ${toggle('raw', c.raw, L('Share raw body signals', 'Condividi i segnali corporei grezzi'))}
       </section>
 
-      <div class="list-label">Set with ${esc(S.drName())}</div>
+      <div class="list-label">${L('Set with ', 'Impostato con ')}${esc(S.drName())}</div>
       <section class="card list kv">
-        <div class="row"><span>Recognition sensitivity</span><b>${sens()}</b></div>
-        <div class="row"><span>Quiet hours</span><b>${se.quietFrom}–${se.quietTo}</b></div>
-        <div class="row"><span>Max sessions per day</span><b>${se.maxSessions}</b></div>
-        <div class="row"><span>If distress stays high</span><b>suggest calling the clinic</b></div>
+        <div class="row"><span>${L('Recognition sensitivity', 'Sensibilità del riconoscimento')}</span><b>${sens()}</b></div>
+        <div class="row"><span>${L('Quiet hours', 'Ore di silenzio')}</span><b>${se.quietFrom}–${se.quietTo}</b></div>
+        <div class="row"><span>${L('Max sessions per day', 'Massimo sessioni al giorno')}</span><b>${se.maxSessions}</b></div>
+        <div class="row"><span>${L('If distress stays high', 'Se il disagio resta alto')}</span><b>${L('suggest calling the clinic', 'suggerire di chiamare il centro')}</b></div>
       </section>
 
       <button class="card help-card" data-action="support">
         <span class="round-ico">${I('lifebuoy')}</span>
-        <div><b>Get help now</b><p>If you feel unsafe or in crisis, contact your clinic or emergency services.</p></div>
+        <div><b>${L('Get help now', 'Chiedi aiuto ora')}</b><p>${L('If you feel unsafe or in crisis, contact your clinic or emergency services.', 'Se non ti senti al sicuro o sei in crisi, contatta il tuo centro o i servizi di emergenza.')}</p></div>
         <span class="chev">${I('chev')}</span>
       </button>
 
+      <div class="list-label">${L('Language', 'Lingua')}</div>
+      <div class="seg">
+        <button class="${S.lang === 'it' ? 'is-on' : ''}" data-action="lang" data-lang="it">Italiano</button>
+        <button class="${S.lang === 'en' ? 'is-on' : ''}" data-action="lang" data-lang="en">English</button>
+      </div>
+
       <section class="about">
         ${S.logoMark('about-mark')}
-        <p><b>SOMA</b> · version 1.0.0</p>
-        <p class="tiny">SOMA supports your therapy, it does not replace it. It is not an emergency service.</p>
-        <p class="tiny">Demo build for the thesis presentation · Politecnico di Bari. Patient, care team, history and AI analysis are simulated.</p>
+        <p><b>SOMA</b> · ${L('version', 'versione')} 1.0.0</p>
+        <p class="tiny">${L('SOMA supports your therapy, it does not replace it. It is not an emergency service.', 'SOMA sostiene la tua terapia, non la sostituisce. Non è un servizio di emergenza.')}</p>
+        <p class="tiny">${L('Demo build for the thesis presentation · Politecnico di Bari. Patient, care team, history and AI analysis are simulated.', 'Versione demo per la presentazione della tesi · Politecnico di Bari. Paziente, team di cura, storico e analisi IA sono simulati.')}</p>
       </section>
     </div>`;
   };
@@ -517,44 +533,45 @@
   S.guideBack = 'practice';
   S.screens.guide = () => `
     <div class="scr scr-guide">
-      ${head('Your SOMA', 'How to use SOMA', 'What the hand does, how SOMA answers, what it is for.', 'guide-back')}
-      <figure class="guide-hero"><img src="assets/img/hands-float.jpg" alt="SOMA floating between two hands"></figure>
+      ${head(L('Your SOMA', 'Il tuo SOMA'), L('How to use SOMA', 'Come si usa SOMA'), L('What the hand does, how SOMA answers, what it is for.', 'Cosa fa la mano, come risponde SOMA, a cosa serve.'), 'guide-back')}
+      <figure class="guide-hero"><img src="assets/img/hands-float.jpg" alt="${L('SOMA floating between two hands', 'SOMA sospeso tra due mani')}"></figure>
       <section class="card guide-basics">
-        <div><b>Hold it</b><span>SOMA listens only while you hold it. When it rests, it stays silent.</span></div>
-        <div><b>Press the dial for 2 s</b><span>Guidance starts, without opening the app.</span></div>
-        <div><b>Turn it face down</b><span>Guidance stops, gently.</span></div>
+        <div><b>${L('Hold it', 'Tienilo in mano')}</b><span>${L('SOMA listens only while you hold it. When it rests, it stays silent.', 'SOMA ascolta solo mentre lo tieni in mano. Quando è appoggiato, resta in silenzio.')}</span></div>
+        <div><b>${L('Press the dial for 2 s', 'Premi il dial per 2 s')}</b><span>${L('Guidance starts, without opening the app.', 'Parte la guida, senza aprire l’app.')}</span></div>
+        <div><b>${L('Turn it face down', 'Capovolgilo')}</b><span>${L('Guidance stops, gently.', 'La guida si ferma, con delicatezza.')}</span></div>
       </section>
-      <div class="list-label">Gestures</div>
+      <div class="list-label">${L('Gestures', 'Gesti')}</div>
       <ul class="gesture-list">
         ${S.device.GESTURES.map(g => `
           <li>
             <button class="g-card" data-action="try-gesture" data-g="${g.id}">
-              <span class="g-thumb">${g.img ? `<img src="assets/img/${g.img}.jpg" alt="${esc(g.en)}" loading="lazy">` : I('rest')}</span>
-              <span class="g-text"><b>${esc(g.en)}</b><span>${esc(g.fbEn)}</span><em>${esc(g.forEn)}</em></span>
-              <span class="g-try">Try</span>
+              <span class="g-thumb">${g.img ? `<img src="assets/img/${g.img}.jpg" alt="${esc(L(g.en, g.it))}" loading="lazy">` : I('rest')}</span>
+              <span class="g-text"><b>${esc(L(g.en, g.it))}</b><span>${esc(L(g.fbEn, g.fbIt))}</span><em>${esc(L(g.forEn, g.forIt))}</em></span>
+              <span class="g-try">${L('Try', 'Prova')}</span>
             </button>
           </li>`).join('')}
       </ul>
-      <div class="list-label">Among the things you carry</div>
+      <div class="list-label">${L('Among the things you carry', 'Tra le cose che porti con te')}</div>
       <div class="carry">
-        ${[1, 2, 3].map(i => `<img src="assets/img/everyday-${i}.jpg" alt="SOMA clipped to a bag" loading="lazy">`).join('')}
+        ${[1, 2, 3].map(i => `<img src="assets/img/everyday-${i}.jpg" alt="${L('SOMA clipped to a bag', 'SOMA agganciato a una borsa')}" loading="lazy">`).join('')}
       </div>
-      <p class="tiny">Soft silicone base · bio-based polycarbonate shell · 2200 K amber light ring · Qi2 wireless charging dish.</p>
+      <p class="tiny">${L('Soft silicone base · bio-based polycarbonate shell · 2200 K amber light ring · Qi2 wireless charging dish.', 'Base in silicone morbido · guscio in policarbonato bio-based · anello luminoso ambra 2200 K · base di ricarica wireless Qi2.')}</p>
     </div>`;
 
   /* ================= MESSAGES (care team) ================= */
   S.screens.message = () => {
-    const msgs = [{ from: 'dr', text: 'Hi Sara, I have added the “Evening waves” programme we discussed. Try the daily practice at 18:00 and we will look at how it went on Tuesday.', at: 'Mon 14 Oct · 17:02' }].concat(st().messages);
+    const first = { from: 'dr', text: L('Hi Sara, I have added the “Evening waves” programme we discussed. Try the daily practice at 18:00 and we will look at how it went on Tuesday.', 'Ciao Sara, ho aggiunto il programma “Onde serali” di cui abbiamo parlato. Prova la pratica quotidiana alle 18:00 e martedì vediamo insieme com’è andata.'), at: L('Mon 14 Oct · 17:02', 'lun 14 ott · 17:02') };
+    const msgs = [first].concat(st().messages);
     return `
     <div class="scr scr-msg">
-      ${head('Care team', esc(S.drName()), 'Psychotherapist · ' + esc(st().clinic), 'tab-me')}
-      <div class="notice">${I('info', 'ico-inline')} Usually replies within 1 working day. Not for emergencies.</div>
+      ${head(L('Care team', 'Team di cura'), esc(S.drName()), L('Psychotherapist', 'Psicoterapeuta') + ' · ' + esc(st().clinic), 'tab-me')}
+      <div class="notice">${I('info', 'ico-inline')} ${L('Usually replies within 1 working day. Not for emergencies.', 'Di solito risponde entro 1 giorno lavorativo. Non per le emergenze.')}</div>
       <div class="thread">
         ${msgs.map(m => `<div class="bubble ${m.from === 'me' ? 'me' : 'dr'}"><p>${esc(m.text)}</p><time>${esc(m.at)}</time></div>`).join('')}
       </div>
       <div class="composer">
-        <textarea id="msgText" rows="2" placeholder="Write a message…"></textarea>
-        <button class="icon-btn send" data-action="send-message" aria-label="Send">${I('send')}</button>
+        <textarea id="msgText" rows="2" placeholder="${L('Write a message…', 'Scrivi un messaggio…')}"></textarea>
+        <button class="icon-btn send" data-action="send-message" aria-label="${L('Send', 'Invia')}">${I('send')}</button>
       </div>
     </div>`;
   };
@@ -625,11 +642,11 @@
       (c.exercises ? ` Daily practice was completed on ${d.prDays} of ${d.prMax} days.` : ''),
       `Nelle settimane ${d.from}–${d.to}, ${st().name} ha usato la guida di SOMA ${d.total} volte` + (c.times ? `, soprattutto la sera (inizio mediano ${d.mt || '–'})` : '') + '.' +
       (c.settle && first && last ? ` Il tempo mediano perché il corpo si calmasse è passato da ${Math.round(first)} a ${Math.round(last)} minuti.` : '') +
-      ` Nel ${pct(d.passed)}% dei mattini successivi, ${st().name} ha riferito che l'onda è passata; ${d.ate} volt${d.ate === 1 ? 'a' : 'e'} ha riferito di aver mangiato, senza giudizio.` +
+      ` ${/^(8|11|1$)/.test(String(pct(d.passed))) ? 'Nell’' : 'Nel '}${pct(d.passed)}% dei mattini successivi, ${st().name} ha riferito che l'onda è passata; ${d.ate} volt${d.ate === 1 ? 'a' : 'e'} ha riferito di aver mangiato, senza giudizio.` +
       (c.exercises ? ` La pratica quotidiana è stata svolta in ${d.prDays} giorni su ${d.prMax}.` : '')
     );
     const discuss = [
-      c.times ? L(`${pct(d.evening)}% of waves began after 20:00 and ${pct(d.weekday)}% on Mon–Thu. Would moving the daily practice closer to the evening help?`, `Il ${pct(d.evening)}% delle onde è iniziato dopo le 20:00 e il ${pct(d.weekday)}% tra lunedì e giovedì. Spostare la pratica quotidiana verso sera potrebbe aiutare?`) : null,
+      c.times ? L(`${pct(d.evening)}% of waves began after 20:00 and ${pct(d.weekday)}% on Mon–Thu. Would moving the daily practice closer to the evening help?`, `${S.artPct(pct(d.evening))} delle onde è iniziato dopo le 20:00 e ${S.artPct(pct(d.weekday)).toLowerCase()} tra lunedì e giovedì. Spostare la pratica quotidiana verso sera potrebbe aiutare?`) : null,
       c.exercises ? L(`On average ${S.fmt.num(d.steps, 1)} of 6 steps were completed. “Surf” most often came just before settling; “Move” was often skipped late at night.`, `In media sono stati completati ${S.fmt.num(d.steps, 1)} passi su 6. “Cavalca” precede più spesso la calma; “Muoviti” viene spesso saltato a tarda notte.`) : null,
       L(`Soma started by itself ${d.auto} times; ${d.falseStarts} start${d.falseStarts === 1 ? ' was' : 's were'} marked “not a wave”. Is the sensitivity still right?`, `Soma è partito da solo ${d.auto} volte; ${d.falseStarts} avvi${d.falseStarts === 1 ? 'o è stato segnato' : 'i sono stati segnati'} come “non era un’onda”. La sensibilità è ancora adatta?`)
     ].filter(Boolean);
@@ -658,7 +675,7 @@
       <section class="rd-shared"><h4>${L('Shared by agreement', 'Condiviso per accordo')}</h4>
         <div class="rd-chips">${shared.map(([k, l]) => `<span class="${c[k] ? 'on' : 'off'}">${c[k] ? '✓' : '—'} ${l}</span>`).join('')}</div>
       </section>
-      <footer class="rd-foot">${L('SOMA informs therapy, it does not replace it. No single signal is interpreted as a binge-eating episode. Demo report: patient and data are fictitious.', 'SOMA informa la terapia, non la sostituisce. Nessun singolo segnale è interpretato come un episodio di abbuffata. Prototipo — dati simulati.')}</footer>
+      <footer class="rd-foot">${L('SOMA informs therapy, it does not replace it. No single signal is interpreted as a binge-eating episode. Demo report: patient and data are fictitious.', 'SOMA informa la terapia, non la sostituisce. Nessun singolo segnale è interpretato come un episodio di abbuffata. Report demo: paziente e dati sono fittizi.')}</footer>
     </article>`;
   };
 
