@@ -12,16 +12,16 @@
   };
 
   D.GESTURES = [
-    { id: 'hold',     en: 'Hold',            it: 'Tieni',            fbEn: 'Soft silicone, comforting contact.',      fbIt: 'Silicone morbido, contatto rassicurante.' , forEn: 'Feel held. A calm anchor in your palm.', forIt: 'Un’ancora calma, nel palmo della mano.', img: 'hand-hold' },
-    { id: 'squeeze',  en: 'Squeeze & release', it: 'Stringi e rilascia', fbEn: 'Elastic silicone, gentle resistance.', fbIt: 'Silicone elastico, resistenza delicata.' , forEn: 'Release tension; keeps the rhythm in Breathe.', forIt: 'Scaricare la tensione; tiene il ritmo in Respira.', img: 'g-squeeze' },
-    { id: 'rotate',   en: 'Rotate',          it: 'Ruota',            fbEn: 'Rounded edges, smooth rotation.',          fbIt: 'Bordi arrotondati, rotazione fluida.' , forEn: 'Follow the wave during Surf.', forIt: 'Seguire l’onda durante Cavalca.', img: 'g-rotate' },
+    { id: 'hold',     en: 'Hold',            it: 'Tieni in mano',            fbEn: 'Soft silicone, comforting contact.',      fbIt: 'Silicone morbido, contatto rassicurante.' , forEn: 'Feel held. A calm anchor in your palm.', forIt: 'Avere un punto fermo, nel palmo della mano.', img: 'hand-hold' },
+    { id: 'squeeze',  en: 'Squeeze & release', it: 'Stringi e rilascia', fbEn: 'Elastic silicone, gentle resistance.', fbIt: 'Silicone elastico, resistenza delicata.' , forEn: 'Release tension; keeps the rhythm in Breathe.', forIt: 'Scaricare la tensione e dare il ritmo a Respira.', img: 'g-squeeze' },
+    { id: 'rotate',   en: 'Rotate',          it: 'Ruota',            fbEn: 'Rounded edges, smooth rotation.',          fbIt: 'Bordi arrotondati, rotazione fluida.' , forEn: 'Follow the wave during “Watch the wave”.', forIt: 'Accompagnare l’onda nell’esercizio “Osserva l’onda”.', img: 'g-rotate' },
     { id: 'trace',    en: 'Trace the dots',  it: 'Segui i puntini',  fbEn: 'Raised dots guide the fingertips.',        fbIt: 'I puntini in rilievo guidano i polpastrelli.' , forEn: 'Bring attention back to your fingertips.', forIt: 'Riportare l’attenzione sui polpastrelli.', img: 'g-trace' },
     { id: 'rubA',     en: 'Rub side A',      it: 'Strofina lato A',  fbEn: 'Dotted surface, repeated stimulation.',    fbIt: 'Superficie a puntini, stimolo ripetuto.' , forEn: 'Soothe restlessness with a steady rhythm.', forIt: 'Calmare l’agitazione con un ritmo costante.', img: 'g-trace' },
-    { id: 'rubB',     en: 'Rub side B',      it: 'Strofina lato B',  fbEn: '3D ripples, varied tactile feedback.',     fbIt: 'Onde 3D, feedback tattile variato.' , forEn: 'Thumb on the ripples during Ground.', forIt: 'Il pollice sulle onde durante Radicati.', img: 'g-rubB' },
-    { id: 'press',    en: 'Press & hold 2 s', it: 'Premi 2 s',       fbEn: 'Starts the guided breathing sequence.',    fbIt: 'Avvia la sequenza di respiro guidato.' , forEn: 'Ask for guidance, any time, without opening the app.', forIt: 'Chiedere una guida in qualsiasi momento, senza aprire l’app.', img: 'g-press' },
-    { id: 'rock',     en: 'Rock',            it: 'Dondola',          fbEn: 'Curved body, rhythmic rocking.',           fbIt: 'Corpo curvo, dondolio ritmico.' , forEn: 'A slow, self-soothing rhythm.', forIt: 'Un ritmo lento che calma.', img: 'g-rock' },
-    { id: 'double',   en: 'Double tap',      it: 'Doppio tocco',     fbEn: 'Voice guidance on / off.',                 fbIt: 'Guida vocale on / off.' , forEn: 'Stay discreet in public: touch only, no voice.', forIt: 'Discrezione in pubblico: solo tatto, niente voce.', img: 'g-double' },
-    { id: 'phone',    en: 'Tap phone on SOMA', it: 'Avvicina il telefono', fbEn: 'Temporary app pause.',               fbIt: 'Pausa temporanea delle app.' , forEn: 'Interrupt automatic scrolling and delivery apps.', forIt: 'Interrompere lo scorrimento automatico e le app di consegna.', img: 'g-phone' },
+    { id: 'rubB',     en: 'Rub side B',      it: 'Strofina lato B',  fbEn: '3D ripples, varied tactile feedback.',     fbIt: 'Onde in rilievo, sensazioni tattili diverse.' , forEn: 'Thumb on the ripples during Ground.', forIt: 'Tenere il pollice sulle onde durante Radicati.', img: 'g-rubB' },
+    { id: 'press',    en: 'Press & hold 2 s', it: 'Premi per 2 s',       fbEn: 'Starts the guided breathing sequence.',    fbIt: 'Avvia la sequenza di respiro guidato.' , forEn: 'Ask for guidance, any time, without opening the app.', forIt: 'Chiedere una guida in qualsiasi momento, senza aprire l’app.', img: 'g-press' },
+    { id: 'rock',     en: 'Rock',            it: 'Dondola',          fbEn: 'Curved body, rhythmic rocking.',           fbIt: 'Corpo curvo, dondolio ritmico.' , forEn: 'A slow, self-soothing rhythm.', forIt: 'Trovare un ritmo lento che calma.', img: 'g-rock' },
+    { id: 'double',   en: 'Double tap',      it: 'Doppio tocco',     fbEn: 'Voice guidance on / off.',                 fbIt: 'Attiva o disattiva la guida vocale.' , forEn: 'Stay discreet in public: touch only, no voice.', forIt: 'Usare SOMA in pubblico con discrezione: solo tatto, niente voce.', img: 'g-double' },
+    { id: 'phone',    en: 'Tap phone on SOMA', it: 'Avvicina il telefono', fbEn: 'Temporary app pause.',               fbIt: 'Mette in pausa alcune app per un po’.' , forEn: 'Interrupt automatic scrolling and delivery apps.', forIt: 'Interrompere lo scorrimento automatico e le app di consegna.', img: 'g-phone' },
     { id: 'facedown', en: 'Turn face down',  it: 'Capovolgi',        fbEn: 'Stops the guidance, gently.',              fbIt: 'Interrompe la guida, con delicatezza.', forEn: 'End a session gently, whenever you want.', forIt: 'Chiudere una sessione con delicatezza, quando vuoi.', img: null }
   ];
 
@@ -118,7 +118,7 @@
       </div>
       <div class="pebble-stage" id="pebbleStage">
         ${D.svg()}
-        <div class="pebble-hint">${L('Press the body to hold · press the dial 2 s · double-tap the dial', 'Premi il corpo per tenerlo · premi il dial 2 s · doppio tocco sul dial')}</div>
+        <div class="pebble-hint">${L('Press the body to hold · press the dial 2 s · double-tap the dial', 'Premi il corpo per tenerlo in mano · tieni premuto il centro 2 s · doppio tocco sul centro')}</div>
       </div>
       <div class="side-switch" role="group" aria-label="${L('Side', 'Lato')}">
         <button class="${D.side === 'A' ? 'is-on' : ''}" data-dev-side="A">${L('Side A · dots', 'Lato A · puntini')}</button>
