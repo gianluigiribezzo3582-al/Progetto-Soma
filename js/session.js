@@ -94,7 +94,7 @@
       st.history.push(rec);
       st.pendingMorning = rec.id;
       S.save();
-      S.app.toast(L('Saved. Tomorrow morning, one optional question.', 'Salvato. Domattina, una domanda facoltativa.'));
+      S.app.toast(L('Saved. Tomorrow morning, one optional question.', 'Salvato. Domattina troverai una sola domanda, facoltativa.'));
     } else {
       // count as daily practice
       const w = S.state.week - 1;
@@ -179,9 +179,9 @@
 
   const SENSES = () => [
     { n: 5, sub: L('One sense at a time.', 'Un senso per volta.'), t: L('Look around you.', 'Guarda intorno a te.'), a: L('5 things you can see', '5 cose che puoi vedere'), h: L('You don’t need to name them out loud.', 'Non devi nominarle ad alta voce.') },
-    { n: 4, sub: L('4 things you can feel.', '4 cose che puoi percepire.'), t: L('Follow soma one dot after another', 'Segui un puntino dopo l’altro di soma'), a: '', h: L('Notice four sensations: texture, temperature, pressure and contact.', 'Nota quattro sensazioni: rilievo, temperatura, pressione e contatto.') },
-    { n: 3, sub: L('3 things you can hear.', '3 cose che puoi sentire.'), t: L('Listen.', 'Ascolta.'), a: L('3 sounds, near or far', '3 suoni, vicini o lontani'), h: L('Silence counts too.', 'Anche il silenzio conta.') },
-    { n: 2, sub: L('2 things you can smell.', '2 cose che puoi annusare.'), t: L('Breathe through your nose.', 'Respira dal naso.'), a: L('2 smells around you', '2 odori intorno a te'), h: L('The smell of your hands or of the air is fine.', 'Va bene anche l’odore delle tue mani o dell’aria.') },
+    { n: 4, sub: L('4 things you can feel.', '4 cose che puoi percepire.'), t: L('Follow the dots of SOMA, one at a time', 'Segui i puntini di SOMA, uno alla volta'), a: '', h: L('Notice four sensations: texture, temperature, pressure and contact.', 'Nota quattro sensazioni: rilievo, temperatura, pressione e contatto.') },
+    { n: 3, sub: L('3 things you can hear.', '3 cose che puoi udire.'), t: L('Listen.', 'Ascolta.'), a: L('3 sounds, near or far', '3 suoni, vicini o lontani'), h: L('Silence counts too.', 'Anche il silenzio conta.') },
+    { n: 2, sub: L('2 things you can smell.', '2 odori che puoi percepire.'), t: L('Breathe through your nose.', 'Respira dal naso.'), a: L('2 smells around you', '2 odori intorno a te'), h: L('The smell of your hands or of the air is fine.', 'Va bene anche l’odore delle tue mani o dell’aria.') },
     { n: 1, sub: L('1 thing you can taste.', '1 cosa che puoi gustare.'), t: L('A taste.', 'Un sapore.'), a: L('1 thing you can taste', '1 cosa che puoi gustare'), h: L('A sip of water, or the taste in your mouth right now.', 'Un sorso d’acqua, o il sapore che hai in bocca adesso.') }
   ];
   const senseCircle = (n) => {
@@ -209,7 +209,7 @@
       <p class="amber" id="waveMsg">${L('It is rising. You don’t have to do anything.', 'Sta salendo. Non devi fare nulla.')}</p>
       <div class="big-timer" id="waveTimer">0:00</div>
       <p class="dark-sub small">${L('minutes with you', 'minuti con te')}</p>
-    </div>`, { title: L('Watch the wave.', 'Osserva l’onda.'), sub: L('Follow it with the dial, or touch the two textures.', 'Seguila con il dial, o sfiora le due texture.') });
+    </div>`, { title: L('Watch the wave.', 'Osserva l’onda.'), sub: L('Follow it with the dial, or touch the two textures.', 'Seguila ruotando SOMA, oppure sfiora le due texture.') });
 
   R.move = (a) => {
     const until = new Date(Date.now() + 20 * 60000);
@@ -246,7 +246,7 @@
       <div class="intro-pebble small">${S.logoMark('')}</div>
       <h2 class="dark-title">${L('You stayed with yourself.', 'Hai scelto di restare con te.')}</h2>
       <p class="amber">${L('Whatever happens next,<br>it’s ok. Rest now.', 'Qualunque cosa succeda adesso,<br>va bene. Ora riposa.')}</p>
-      <p class="dark-sub">${L('Nothing to answer tonight.<br>We can look at it tomorrow.', 'Niente a cui rispondere stasera.<br>Possiamo guardarci domani.')}</p>
+      <p class="dark-sub">${L('Nothing to answer tonight.<br>We can look at it tomorrow.', 'Niente a cui rispondere stasera.<br>Possiamo riparlarne domani.')}</p>
     </div>`, { button: darkBtn(L('Close', 'Chiudi'), 'sess-finish'), next: false });
 
   /* ---------- Per-step behaviour ---------- */
@@ -309,7 +309,7 @@
       const ns = t < 0.4 ? 0 : t < 0.6 ? 1 : 2;
       if (ns !== stage) {
         stage = ns;
-        msg.textContent = [L('It is rising. You don’t have to do anything.', 'Sta salendo. Non devi fare nulla.'), L('This is the peak. Stay. It will pass.', 'Questo è il picco. Resta. Passerà.'), L('It has passed its peak.', 'Ha superato il suo picco.')][ns];
+        msg.textContent = [L('It is rising. You don’t have to do anything.', 'Sta salendo. Non devi fare nulla.'), L('This is the peak. Stay. It will pass.', 'Questo è il picco. Resta. Passerà.'), L('It has passed its peak.', 'Il picco è passato. Ora l’onda si abbassa.')][ns];
       }
       if (t >= 1 && !a.surfDone) { a.surfDone = true; clearInterval(motion); later(() => SS.next(), 1800); }
     }, 100);
@@ -339,8 +339,8 @@
   SETUP.kind = () => {
     const tips = [
       L('This is a hard moment. Hard moments pass.', 'Questo è un momento difficile. I momenti difficili passano.'),
-      L('Many people feel this way. You are not alone in it.', 'Molte persone si sentono così. In questo, non c’è solitudine.'),
-      L('May I be as kind to myself as I would be to a friend.', 'Che io possa essere gentile con me come lo sarei con un’amica o un amico.')
+      L('Many people feel this way. You are not alone in it.', 'Molte persone si sentono così: non sei l’unica persona a viverlo.'),
+      L('May I be as kind to myself as I would be to a friend.', 'Posso essere gentile con me, come lo sarei con una persona cara.')
     ];
     let i = 0; const el = document.getElementById('kindTip');
     const show = () => { el.textContent = tips[i]; el.classList.remove('fade'); void el.offsetWidth; el.classList.add('fade'); };

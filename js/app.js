@@ -58,12 +58,12 @@
       c = {
         intro: L('Guided sequence · “I’m here with you.”', 'Sequenza guidata · “Sono qui con te.”'),
         breathe: L('1 · Breathe — squeeze SOMA as you breathe in, release as you breathe out', '1 · Respira — stringi SOMA mentre inspiri, rilascia mentre espiri'),
-        ground: L('2 · Ground — 5-4-3-2-1 senses, thumb on the ripples', '2 · Radicati — 5-4-3-2-1 sensi, pollice sulle onde'),
+        ground: L('2 · Ground — 5-4-3-2-1 senses, thumb on the ripples', '2 · Radicati — grounding 5-4-3-2-1, un senso alla volta'),
         surf: L('3 · Watch the wave — urge surfing: it rises, peaks, passes (rotate SOMA)', '3 · Osserva l’onda — urge surfing: sale, ha un picco, passa (ruota SOMA)'),
         move: L('4 · Move — a short walk with music', '4 · Muoviti — una breve passeggiata con musica'),
         rest: L('5 · Rest — no questions tonight', '5 · Riposa — nessuna domanda stasera'),
         tipp: L('TIPP — cold water (DBT)', 'TIPP — acqua fredda (DBT)'),
-        meal: L('A slower meal — mindful eating', 'Un pasto più lento — mindful eating'),
+        meal: L('A slower meal — mindful eating', 'Pasto consapevole — mindful eating'),
         kind: L('Self-compassion', 'Autocompassione')
       }[step];
     } else if (!st.onboarded) {
@@ -83,8 +83,8 @@
       }[obStep()];
     } else {
       c = {
-        today: L('Today · phase of the personal model, daily practice, insights', 'Oggi · fase del modello personale, pratica quotidiana, insight'),
-        practice: L('Practice · evidence-based skills (CBT, DBT, mindfulness)', 'Pratica · abilità basate su evidenze (CBT, DBT, mindfulness)'),
+        today: L('Today · phase of the personal model, daily practice, insights', 'Oggi · fase del modello personale, pratica quotidiana, spunti'),
+        practice: L('Practice · evidence-based skills (CBT, DBT, mindfulness)', 'Pratica · abilità basate sull’evidenza scientifica (CBT, DBT, mindfulness)'),
         waves: L('Waves · what the data shows, in plain words', 'Onde · cosa mostrano i dati, in parole semplici'),
         me: L('Me · device, consent, settings set with the therapist', 'Io · dispositivo, consenso, impostazioni concordate'),
         morning: L('Morning after · plain words, one optional tap', 'Il mattino dopo · parole semplici, un tocco facoltativo'),
@@ -148,7 +148,7 @@
           <b>${L('Wave index', 'Indice d’onda')}</b>
           <span>${L('probability, updated every 30 s', 'probabilità, aggiornata ogni 30 s')}</span>
           <span>${L('Threshold', 'Soglia')} <b data-k="thr"></b> · ${L('set with', 'concordata con')} ${S.esc(S.drName())}</span>
-          <span>${L('Confidence', 'Confidenza')} <b data-k="conf"></b> · ${L('signature match', 'match con la firma')} <b data-k="match"></b></span>
+          <span>${L('Confidence', 'Confidenza')} <b data-k="conf"></b> · ${L('signature match', 'somiglianza con la firma')} <b data-k="match"></b></span>
         </div>
       </div>
       <div class="signals">
@@ -165,9 +165,9 @@
         <div class="demo-row"><span>${L('Jump to', 'Vai a')}</span>
           ${[[2, L('Week 2 · Listening', 'Sett. 2 · Ascolto')], [5, L('Week 5 · Learning', 'Sett. 5 · Apprendimento')], [9, L('Week 9 · Guiding', 'Sett. 9 · Guida')]].map(([w, l]) => `<button data-action="week" data-week="${w}" class="${S.state.week === w ? 'is-on' : ''}">${l}</button>`).join('')}
         </div>
-        <div class="demo-row"><button data-action="morning-demo">${L('Morning after', 'Il mattino dopo')}</button><button data-action="toggle-online">${S.state.online === false ? L('Reconnect SOMA', 'Ricollega SOMA') : L('Disconnect SOMA', 'Scollega SOMA')}</button><button data-action="restart-ob">${L('Replay onboarding', 'Rivedi l’onboarding')}</button><button data-action="reset">${L('Reset demo', 'Azzera la demo')}</button></div>
+        <div class="demo-row"><button data-action="morning-demo">${L('Morning after', 'Il mattino dopo')}</button><button data-action="toggle-online">${S.state.online === false ? L('Reconnect SOMA', 'Ricollega SOMA') : L('Disconnect SOMA', 'Scollega SOMA')}</button><button data-action="restart-ob">${L('Replay onboarding', 'Rivedi la configurazione iniziale')}</button><button data-action="reset">${L('Reset demo', 'Azzera la demo')}</button></div>
       </div>
-      <p class="side-note">${L('Values are synthetic. The model compares your signals with your own baseline: no single signal is ever read as a binge episode.', 'I valori sono sintetici. Il modello confronta i segnali con la tua baseline: nessun singolo segnale viene mai letto come un episodio di abbuffata.')}</p>
+      <p class="side-note">${L('Values are synthetic. The model compares your signals with your own baseline: no single signal is ever read as a binge episode.', 'I valori sono sintetici. Il modello confronta i segnali con i tuoi valori abituali: nessun singolo segnale viene mai interpretato come un episodio di abbuffata.')}</p>
     </div>`;
   }
 
@@ -235,17 +235,17 @@
     if (!st.onboarded || S.session.active) return;
     const ph = S.phase();
     if (ph === 'guiding' && st.consent.autoStart) {
-      S.engine.say('Two pulses, the amber ring. No question.', 'Due impulsi, l’anello ambra. Nessuna domanda.', 'start');
+      S.engine.say('Two pulses, the amber ring. No question.', 'Due vibrazioni, anello ambra acceso. Nessuna domanda.', 'start');
       if (isMobile()) closeSheet();
       S.session.start({ kind: 'full', trigger: 'auto' });
     } else if (ph === 'guiding') {
       S.device.buzz();
-      A.toast(L('Soma recognised a wave. You chose to start guidance yourself — press the dial for 2 s.', 'Soma ha riconosciuto un’onda. Hai scelto di avviare tu la guida — premi il dial per 2 s.'));
+      A.toast(L('Soma recognised a wave. You chose to start guidance yourself — press the dial for 2 s.', 'Soma ha riconosciuto un’onda. Hai scelto di avviare tu la guida: tieni premuto il centro di SOMA per 2 s.'));
     } else {
       st.listenedMoments++;
       S.save();
       S.engine.say('Phase: ' + ph + ' — noted, Soma does not start by itself yet.', 'Fase: ' + (ph === 'listening' ? 'ascolto' : 'apprendimento') + ' — annotato, Soma non parte ancora da solo.', 'info');
-      A.toast(L('Soma noticed a moment like a wave and kept a note. It is still learning, so it stays quiet. Press the dial for 2 s if you want guidance.', 'Soma ha notato un momento simile a un’onda e l’ha annotato. Sta ancora imparando, quindi resta in silenzio. Premi il dial per 2 s se vuoi una guida.'));
+      A.toast(L('Soma noticed a moment like a wave and kept a note. It is still learning, so it stays quiet. Press the dial for 2 s if you want guidance.', 'Soma ha riconosciuto un momento simile a un’onda e l’ha registrato. Sta ancora imparando, quindi resta in silenzio. Se vuoi una guida, tieni premuto il centro di SOMA per 2 s.'));
       if (!S.session.active && TABS.includes(view)) A.render();
     }
     setTimeout(() => { if (!S.session.active && S.engine.mode === 'rising') S.engine.setMode('calm'); }, 6000);
@@ -276,9 +276,9 @@
     if (S.session.onGesture(g)) return;
     if (!st.onboarded) return;
     const meta = S.device.GESTURES.find(x => x.id === g);
-    if (g === 'press') { A.toast(L('Dial pressed for 2 s · guidance starts', 'Dial premuto 2 s · parte la guida')); if (isMobile()) closeSheet(); S.session.start({ kind: 'full', trigger: 'manual' }); return; }
-    if (g === 'phone') { A.toast(L('Phone pause on · delivery apps paused for 20 min', 'Pausa telefono attiva · app di consegna in pausa per 20 min')); return; }
-    if (g === 'facedown') { A.toast(L('Face down · Soma rests', 'Capovolto · Soma riposa')); return; }
+    if (g === 'press') { A.toast(L('Dial pressed for 2 s · guidance starts', 'Centro premuto per 2 s · parte la guida')); if (isMobile()) closeSheet(); S.session.start({ kind: 'full', trigger: 'manual' }); return; }
+    if (g === 'phone') { A.toast(L('Phone pause on · delivery apps paused for 20 min', 'Pausa telefono attiva · app di consegna a domicilio in pausa per 20 min')); return; }
+    if (g === 'facedown') { A.toast(L('Face down · Soma rests', 'SOMA capovolto · la guida si ferma')); return; }
     if (meta) A.toast(`<b>${L(meta.en, meta.it)}</b> · ${L(meta.fbEn, meta.fbIt)}`);
   }
 
@@ -303,7 +303,7 @@
         setTimeout(() => S.device.setLight('off'), 2500);
         S.device.refresh();
         A.render();
-        A.toast(L('Paired · the ring lights up', 'Associato · l’anello si accende'));
+        A.toast(L('Paired · the ring lights up', 'Associazione completata · l’anello si accende'));
       }
     }, 100);
   }
@@ -385,7 +385,7 @@
     period: (el) => { S.reportDraft.period = +el.dataset.period; A.render(); },
     'gen-report': () => { const n = $('reportNote'); if (n) S.reportDraft.note = n.value; S.reportDraft.stage = 'analyzing'; A.render(); },
     'send-report': (el) => {
-      el.disabled = true; el.innerHTML = `<span class="spinner"></span> ${L('Sending securely…', 'Invio protetto…')}`;
+      el.disabled = true; el.innerHTML = `<span class="spinner"></span> ${L('Sending securely…', 'Invio sicuro in corso…')}`;
       setTimeout(() => {
         S.reportDraft.stage = 'sent'; S.reportDraft.sentAt = Date.now();
         S.state.reports.push({ at: new Date().toISOString(), period: S.reportDraft.period });
@@ -411,7 +411,7 @@
     message: () => A.go('message'),
     'send-message': () => {
       const t = $('msgText'); if (!t || !t.value.trim()) return;
-      S.state.messages.push({ from: 'me', text: t.value.trim(), at: 'Today · ' + S.fmt.time(new Date()) });
+      S.state.messages.push({ from: 'me', text: t.value.trim(), at: L('Today · ', 'Oggi · ') + S.fmt.time(new Date()) });
       S.save(); A.render(); $('app').scrollTop = 99999;
       A.toast(L('Sent to ', 'Inviato a ') + S.drName() + '. <span class="sim">' + L('simulated', 'simulato') + '</span>');
     },

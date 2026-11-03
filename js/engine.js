@@ -66,9 +66,9 @@
     if (mode === 'rising') {
       E.say('Context: evening, at home, phone in hand for 18 min.', 'Contesto: sera, a casa, telefono in mano da 18 min.', 'ctx');
     } else if (mode === 'stress') {
-      E.say('Arousal up while moving — looks like ordinary stress.', 'Attivazione in aumento in movimento — sembra stress ordinario.', 'info');
+      E.say('Arousal up while moving — looks like ordinary stress.', 'Attivazione in aumento durante il movimento: sembra stress ordinario.', 'info');
     } else if (mode === 'calm') {
-      E.say('Signals back near your evening baseline.', 'Segnali vicini alla tua baseline serale.', 'ok');
+      E.say('Signals back near your evening baseline.', 'Segnali tornati vicini ai tuoi valori serali abituali.', 'ok');
     }
     emit('mode', mode);
   };
@@ -150,7 +150,7 @@
 
     // Narration, only on meaningful changes
     if (E.mode === 'rising') {
-      if (Math.abs(f.hr - 1.6) < 0.08) E.say('HR above rest while still (+' + Math.round(s.hr - BASE.hr) + ' bpm).', 'FC sopra il riposo senza movimento (+' + Math.round(s.hr - BASE.hr) + ' bpm).', 'feat');
+      if (Math.abs(f.hr - 1.6) < 0.08) E.say('HR above rest while still (+' + Math.round(s.hr - BASE.hr) + ' bpm).', 'FC sopra il valore a riposo, senza movimento (+' + Math.round(s.hr - BASE.hr) + ' bpm).', 'feat');
       if (Math.abs(f.hrv - 1.5) < 0.08) E.say('HRV dropping — ' + Math.round(s.hrv) + ' ms.', 'HRV in calo — ' + Math.round(s.hrv) + ' ms.', 'feat');
       if (E.match > 0.7 && !E._matched) { E._matched = true; E.say('Similar to your evening waves (match ' + Math.round(E.match * 100) + '%).', 'Simile alle tue onde serali (match ' + Math.round(E.match * 100) + '%).', 'sig'); }
     } else { E._matched = false; }

@@ -110,7 +110,7 @@
           falseStart,
           minutes: falseStart ? 2 : Math.round(st + 4 + r() * 8),
           settle: falseStart ? null : Math.round(st * 10) / 10,
-          steps: Math.min(6, steps),
+          steps: Math.min(5, steps),
           hrPeak: Math.round(96 + r() * 14),
           hrEnd: Math.round(72 + r() * 8),
           outcome: falseStart ? 'notwave' : outcomes[Math.floor(r() * outcomes.length)],

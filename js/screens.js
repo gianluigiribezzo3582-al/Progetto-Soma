@@ -174,7 +174,7 @@
   // 7 · Pairing
   S.screens.pair = () => `
     <div class="scr">
-      ${head(null, L('Welcome to', 'Benvenuto/a su') + ' <span class="brand-word">soma</span>.', L('guided setup during the session', 'configurazione guidata durante la sessione'), 'ob-back')}
+      ${head(null, L('Welcome to', 'Benvenuto/a su') + ' <span class="brand-word">soma</span>.', L('guided setup during the session', 'configurazione guidata durante la seduta'), 'ob-back')}
       <div class="pair-stage">
         <svg viewBox="-40 -40 430 321" class="pair-arc" aria-hidden="true">
           <ellipse cx="175" cy="120.5" rx="205" ry="150" fill="none" stroke="#EADFD3" stroke-width="3"/>
@@ -192,7 +192,7 @@
   // 8 · Paired
   S.screens.paired = () => `
     <div class="scr">
-      ${head(null, L('Here it is, connected!', 'Eccoci, è connesso!'), L('Your SOMA is ready to accompany you.', 'Il tuo SOMA è pronto per accompagnarti.'), 'ob-back')}
+      ${head(null, L('Here it is, connected!', 'Eccoci, è connesso!'), L('Your SOMA is ready to accompany you.', 'Il tuo SOMA è pronto ad accompagnarti.'), 'ob-back')}
       <div class="paired-badge"><div class="paired-circle">${S.logoMark('')}</div><span class="check-badge">${I('check')}</span></div>
       <p class="center-text"><b>SOMA · ${L('connected', 'connesso')}</b><br><span class="muted small">${L('Battery', 'Batteria')} ${S.device.battery}%</span></p>
       <div class="swatches">${S.COLORS.map(c => `<button class="swatch ${c.id === st().color ? 'is-on' : ''}" style="--c:${c.hex}" data-action="color" data-color="${c.id}" aria-label="${L(c.en, c.it)}"><span></span><small>${L(c.en, c.it)}</small></button>`).join('')}</div>
@@ -205,7 +205,7 @@
       ${head(null, L('How would you like to be guided?', 'Come vuoi essere guidato/a?'), L('You can change these preferences whenever you want.', 'Puoi cambiare queste preferenze quando vuoi.'), 'ob-back')}
       <h3 class="sec-title">${L('Support mode', 'Modalità di supporto')}</h3>
       <section class="card list">
-        ${toggle('voice', st().voice, L('Sounds and voice', 'Suoni e voce'), L('Voice instructions, when you want them.', 'Istruzioni vocali, quando desideri.'), 'data-setting')}
+        ${toggle('voice', st().voice, L('Sounds and voice', 'Suoni e voce'), L('Voice instructions, when you want them.', 'Istruzioni vocali, quando lo desideri.'), 'data-setting')}
         ${toggle('haptics', st().haptics, L('Haptic feedback', 'Feedback tattile'), L('Gentle vibrations of the handheld.', 'Piccole vibrazioni del palmare.'), 'data-setting')}
       </section>
       <h3 class="sec-title">${L('When do you prefer quiet?', 'Quando preferisci tranquillità?')}</h3>
@@ -294,16 +294,16 @@
     const h = S.sessionsVisible();
     const list = [];
     if (S.phase() === 'listening' && st().week <= 2) {
-      list.push(L('Not much to say yet — and that’s expected. Soma needs a few weeks of ordinary days to know your baseline.', 'Ancora poco da dire — ed è normale. Soma ha bisogno di qualche settimana di giorni normali per conoscere la tua baseline.'));
+      list.push(L('Not much to say yet — and that’s expected. Soma needs a few weeks of ordinary days to know your baseline.', 'Ancora poco da dire — ed è normale. Soma ha bisogno di qualche settimana di giornate normali per conoscere i tuoi valori abituali.'));
     }
     if (h.length > 4) {
       const ev = h.filter(s => new Date(s.at).getHours() >= 20).length / h.length;
-      list.push(L(`${Math.round(ev * 100)}% of your waves began after 20:00, often after a long time on the phone.`, `${S.artPct(Math.round(ev * 100))} delle tue onde è iniziato dopo le 20:00, spesso dopo molto tempo al telefono.`));
+      list.push(L(`${Math.round(ev * 100)}% of your waves began after 20:00, often after a long time on the phone.`, `${S.artPct(Math.round(ev * 100))} delle tue onde sono iniziate dopo le 20:00, spesso dopo molto tempo passato al telefono.`));
     }
     if (st().week >= 4) {
       const s = S.weekStats();
       const first = s.settle.find(v => v != null), last = [...s.settle].reverse().find(v => v != null);
-      if (first && last) list.push(L(`Your body settles faster: from about ${Math.round(first)} minutes in week 1 to ${Math.round(last)} now.`, `Il tuo corpo si calma prima: da circa ${Math.round(first)} minuti nella settimana 1 a ${Math.round(last)} ora.`));
+      if (first && last) list.push(L(`Your body settles faster: from about ${Math.round(first)} minutes in week 1 to ${Math.round(last)} now.`, `Il tuo corpo si calma più in fretta: da circa ${Math.round(first)} minuti nella prima settimana ai ${Math.round(last)} di adesso.`));
     }
     return list;
   }
@@ -383,7 +383,7 @@
     return `
     <div class="scr">
       ${head(null, L('How do you feel?', 'Come ti senti?'), L('You can observe yourself, without judging.', 'Puoi osservarti, senza giudicarti.'), 'home')}
-      <p class="center-text mood-q">${L('Right now I feel…', 'In questo momento mi sento...')}</p>
+      <p class="center-text mood-q">${L('Right now I feel…', 'In questo momento mi sento…')}</p>
       <div class="moods">${opts.map(([id, label, cls]) => `<button class="mood ${cls} ${sel === id ? 'is-on' : ''}" data-action="mood-pick" data-mood="${id}"><i></i>${label}</button>`).join('')}</div>
       <p class="tiny">${L('“Not sure” is a valid answer too.', 'Anche “non so” è una risposta valida.')}</p>
       <div class="foot mid">
@@ -470,7 +470,7 @@
 
   S.outcomeLabel = (o) => ({
     rode: L('the wave passed', "l'onda è passata"),
-    ate: L('ate, and that’s okay', 'ho mangiato, va bene così'),
+    ate: L('ate, and that’s okay', 'ho mangiato, e va bene così'),
     notwave: L('not a wave', 'non era un’onda'),
     skip: L('no answer', 'nessuna risposta')
   })[o] || L('no answer yet', 'ancora nessuna risposta');
@@ -500,7 +500,7 @@
 
       <section class="card chart-card">
         <h3>${L('Guided waves per week', 'Onde guidate per settimana')}</h3>
-        ${S.charts.bars(s.weeks.map((wk, i) => ({ label: (S.lang === 'it' ? 'sett ' : 'wk ') + wk, value: s.counts[i], tip: (S.lang === 'it' ? 'Settimana ' : 'Week ') + wk + ': ' + s.counts[i] + ' ' + L('guided', 'guidate') + ' (' + s.auto[i] + ' ' + L('auto', 'auto') + ')' })), { label: L('Guided waves per week', 'Onde guidate per settimana'), max: 8 })}
+        ${S.charts.bars(s.weeks.map((wk, i) => ({ label: (S.lang === 'it' ? 'sett ' : 'wk ') + wk, value: s.counts[i], tip: (S.lang === 'it' ? 'Settimana ' : 'Week ') + wk + ': ' + s.counts[i] + ' ' + L('guided', 'guidate') + ' (' + s.auto[i] + ' ' + L('started by Soma', 'avviate da Soma') + ')' })), { label: L('Guided waves per week', 'Onde guidate per settimana'), max: 8 })}
         <p class="chart-note">${L('Fewer waves needed guidance over time. The current week is still running.', 'Col tempo, meno onde hanno avuto bisogno di guida. La settimana in corso non è finita.')}</p>
       </section>
 
@@ -519,7 +519,7 @@
         <h3>${L('Your wave signature', 'La firma delle tue onde')}</h3>
         <p class="chart-note top">${L('What your body does in the 20–40 minutes before a wave, compared with an ordinary stressful evening.', 'Cosa fa il tuo corpo nei 20–40 minuti prima di un’onda, rispetto a una normale serata stressante.')}</p>
         ${w < 3 ? `<div class="empty">${L('Soma needs about three weeks to draw this.', 'Soma ha bisogno di circa tre settimane per disegnarla.')}</div>` : S.charts.radar(
-          [L('heart rate', 'freq. cardiaca'), L('HRV drop', 'calo HRV'), L('EDA peaks', 'picchi EDA'), L('grip', 'presa'), L('stillness', 'immobilità'), L('evening', 'sera'), L('skipped meal', 'pasto saltato')].map(l => ({ label: l })),
+          [L('heart rate', 'freq. cardiaca'), L('HRV drop', 'calo HRV'), L('EDA peaks', 'picchi di sudorazione'), L('grip', 'forza della presa'), L('stillness', 'immobilità'), L('evening', 'sera'), L('skipped meal', 'pasto saltato')].map(l => ({ label: l })),
           [{ name: L('ordinary stress', 'stress ordinario'), values: [0.42, 0.35, 0.4, 0.3, 0.25, 0.4, 0.2], color: 'var(--slate)', dashed: true },
            { name: L('your waves', 'le tue onde'), values: [0.78, 0.7, 0.92, 0.55, 0.72, 0.85, 0.62], color: 'var(--olive-deep)', fill: 'rgba(122,132,60,.16)' }],
           { label: 'signature' })}
@@ -529,7 +529,7 @@
       <section class="card chart-card">
         <h3>${L('How well Soma knows your waves', 'Quanto bene Soma conosce le tue onde')}</h3>
         ${S.charts.lines([{ name: L('starts confirmed as waves', 'avvii confermati come onde'), values: confirm, color: 'var(--olive-deep)', label: confirm[confirm.length - 1] + '%' }], confirm.map((_, i) => (S.lang === 'it' ? 'sett ' : 'wk ') + (i + 1)), { min: 0, max: 100, ticks: [0, 50, 100], tickFmt: v => v + '%', valFmt: v => v + '%', label: 'learning' })}
-        <p class="chart-note">${L('Starts confirmed by your morning taps. In weeks 1–5 the model runs silently (“would have started”).', 'Avvii confermati dai tuoi tocchi del mattino. Nelle settimane 1–5 il modello lavora in silenzio (“sarebbe partito”).')} ${L('False starts now', 'Falsi avvii ora')}: <b>${S.fmt.num(falseStarts, 1)} / ${L('week', 'sett.')}</b></p>
+        <p class="chart-note">${L('Starts confirmed by your morning taps. In weeks 1–5 the model runs silently (“would have started”).', 'Avvii confermati dalle tue risposte del mattino. Nelle settimane 1–5 il modello lavora in silenzio e registra solo quando sarebbe partito.')} ${L('False starts now', 'Falsi avvii ora')}: <b>${S.fmt.num(falseStarts, 1)} / ${L('week', 'sett.')}</b></p>
       </section>
 
       <section class="card">
@@ -538,7 +538,7 @@
           <li>
             <span class="wl-dot ${x.trigger}"></span>
             <span class="row-text"><span class="row-title">${S.fmt.day(d)} · ${S.fmt.time(d)}</span>
-            <span class="row-sub">${x.trigger === 'auto' ? L('Soma started', 'avviata da Soma') : L('you started', 'avviata da te')} · ${x.minutes} min${x.settle ? ' · ' + L('settled in ', 'calma in ') + S.fmt.num(x.settle, 0) + ' min' : ''}</span></span>
+            <span class="row-sub">${x.trigger === 'auto' ? L('Soma started', 'avviata da Soma') : L('you started', 'avviata da te')} · ${x.minutes} min${x.settle ? ' · ' + L('settled in ', 'calma dopo ') + S.fmt.num(x.settle, 0) + ' min' : ''}</span></span>
             <span class="wl-out">${S.outcomeLabel(x.outcome)}</span>
           </li>`; }).join('')}</ul>` : `<div class="empty">${L('No waves yet.', 'Ancora nessuna onda.')}</div>`}
       </section>
@@ -573,7 +573,7 @@
       <section class="card">
         <div class="card-row">${S.miniPebble(36)}<div class="grow"><b>SOMA · ${L(S.color().en, S.color().it)}</b><div class="muted small">${st().paired ? L('Connected', 'Connesso') : L('Not paired', 'Non associato')} · ${L('battery', 'batteria')} ${S.device.battery}% · firmware 1.2.0</div></div></div>
         <div class="swatches small">${S.COLORS.map(col => `<button class="swatch ${col.id === st().color ? 'is-on' : ''}" style="--c:${col.hex}" data-action="color" data-color="${col.id}" aria-label="${L(col.en, col.it)}"><span></span></button>`).join('')}</div>
-        <label class="row toggle-row"><span class="row-text"><span class="row-title">${L('Voice guidance', 'Guida vocale')}</span><span class="row-sub">${L('double-tap the dial to switch', 'doppio tocco sul dial per cambiare')}</span></span><input type="checkbox" class="switch" data-setting="voice" ${st().voice ? 'checked' : ''}></label>
+        <label class="row toggle-row"><span class="row-text"><span class="row-title">${L('Voice guidance', 'Guida vocale')}</span><span class="row-sub">${L('double-tap the dial to switch', 'doppio tocco al centro di SOMA per attivarla o disattivarla')}</span></span><input type="checkbox" class="switch" data-setting="voice" ${st().voice ? 'checked' : ''}></label>
         <button class="row link-row" data-action="guide"><span class="row-text"><span class="row-title">${L('How to use SOMA', 'Come si usa SOMA')}</span><span class="row-sub">${L('gestures and what they are for', 'i gesti e a cosa servono')}</span></span>${I('chev')}</button>
         <label class="row toggle-row"><span class="row-text"><span class="row-title">${L('Daily practice reminder', 'Promemoria pratica quotidiana')}</span><span class="row-sub">${L('every day at ', 'ogni giorno alle ')}${st().practiceTime}</span></span><input type="checkbox" class="switch" data-setting="reminders" ${st().reminders ? 'checked' : ''}></label>
       </section>
@@ -588,12 +588,12 @@
         ${toggle('raw', c.raw, L('Share raw body signals', 'Condividi i segnali corporei grezzi'))}
       </section>
 
-      <div class="list-label">${L('Set with ', 'Impostato con ')}${esc(S.drName())}</div>
+      <div class="list-label">${L('Set with ', 'Impostazioni concordate con ')}${esc(S.drName())}</div>
       <section class="card list kv">
         <div class="row"><span>${L('Recognition sensitivity', 'Sensibilità del riconoscimento')}</span><b>${sens()}</b></div>
-        <div class="row"><span>${L('Quiet hours', 'Ore di silenzio')}</span><b>${se.quietFrom}–${se.quietTo}</b></div>
-        <div class="row"><span>${L('Max sessions per day', 'Massimo sessioni al giorno')}</span><b>${se.maxSessions}</b></div>
-        <div class="row"><span>${L('If distress stays high', 'Se il disagio resta alto')}</span><b>${L('suggest calling the clinic', 'suggerire di chiamare il centro')}</b></div>
+        <div class="row"><span>${L('Quiet hours', 'Ore silenziose')}</span><b>${se.quietFrom}–${se.quietTo}</b></div>
+        <div class="row"><span>${L('Max sessions per day', 'Sessioni massime al giorno')}</span><b>${se.maxSessions}</b></div>
+        <div class="row"><span>${L('If distress stays high', 'Se il disagio resta alto')}</span><b>${L('suggest calling the clinic', 'ti suggerisce di chiamare il centro')}</b></div>
       </section>
 
       <button class="card help-card" data-action="support">
@@ -625,7 +625,7 @@
       <figure class="guide-hero"><img src="assets/img/hands-float.jpg" alt="${L('SOMA floating between two hands', 'SOMA sospeso tra due mani')}"></figure>
       <section class="card guide-basics">
         <div><b>${L('Hold it', 'Tienilo in mano')}</b><span>${L('SOMA listens only while you hold it. When it rests, it stays silent.', 'SOMA ascolta solo mentre lo tieni in mano. Quando è appoggiato, resta in silenzio.')}</span></div>
-        <div><b>${L('Press the dial for 2 s', 'Premi il dial per 2 s')}</b><span>${L('Guidance starts, without opening the app.', 'Parte la guida, senza aprire l’app.')}</span></div>
+        <div><b>${L('Press the dial for 2 s', 'Tieni premuto il centro per 2 s')}</b><span>${L('Guidance starts, without opening the app.', 'Parte la guida, senza aprire l’app.')}</span></div>
         <div><b>${L('Turn it face down', 'Capovolgilo')}</b><span>${L('Guidance stops, gently.', 'La guida si ferma, con delicatezza.')}</span></div>
       </section>
       <div class="list-label">${L('Gestures', 'Gesti')}</div>
@@ -648,7 +648,7 @@
 
   /* ================= MESSAGES (care team) ================= */
   S.screens.message = () => {
-    const first = { from: 'dr', text: L('Hi Sara, I have added the “Evening waves” programme we discussed. Try the daily practice at 18:00 and we will look at how it went on Tuesday.', 'Ciao Sara, ho aggiunto il programma “Onde serali” di cui abbiamo parlato. Prova la pratica quotidiana alle 18:00 e martedì vediamo insieme com’è andata.'), at: L('Mon 14 Oct · 17:02', 'lun 14 ott · 17:02') };
+    const first = { from: 'dr', text: L('Hi ' + st().name + ', I have added the “Evening waves” programme we discussed. Try the daily practice at 18:00 and we will look at how it went on Tuesday.', 'Ciao ' + st().name + ', ho aggiunto il programma “Onde serali” di cui abbiamo parlato. Prova la pratica quotidiana alle 18:00 e martedì vediamo insieme com’è andata.'), at: L('Mon 14 Oct · 17:02', 'lun 14 ott · 17:02') };
     const msgs = [first].concat(st().messages);
     return `
     <div class="scr scr-msg">
@@ -680,7 +680,7 @@
         <p class="big-text soft">${L('You stayed with yourself.', 'Hai scelto di restare con te.')}</p>
       </div>
       ${answered ? `
-        <div class="card thanks">${I('heart')}<p>${L('Thank you. This helps Soma learn your waves — nothing else to do today.', 'Grazie. Questo aiuta Soma a imparare le tue onde — per oggi non c’è altro da fare.')}</p></div>
+        <div class="card thanks">${I('heart')}<p>${L('Thank you. This helps Soma learn your waves — nothing else to do today.', 'Grazie. La tua risposta aiuta Soma a riconoscere meglio le tue onde. Per oggi non serve altro.')}</p></div>
         <div class="foot"><button class="btn btn-primary btn-block" data-action="home">${L('Close', 'Chiudi')}</button></div>
       ` : `
         <div class="list-label">${L('If you want, one tap about last night:', 'Se vuoi, un tocco su ieri sera:')}</div>
@@ -729,13 +729,13 @@
       ` ${pct(d.passed)}% of the mornings after, ${st().name} reported that the wave passed; ${d.ate} time${d.ate === 1 ? '' : 's'} they reported eating, described without judgement.` +
       (c.exercises ? ` Daily practice was completed on ${d.prDays} of ${d.prMax} days.` : ''),
       `Nelle settimane ${d.from}–${d.to}, ${st().name} ha usato la guida di SOMA ${d.total} volte` + (c.times ? `, soprattutto la sera (inizio mediano ${d.mt || '–'})` : '') + '.' +
-      (c.settle && first && last ? ` Il tempo mediano perché il corpo si calmasse è passato da ${Math.round(first)} a ${Math.round(last)} minuti.` : '') +
-      ` ${/^(8|11|1$)/.test(String(pct(d.passed))) ? 'Nell’' : 'Nel '}${pct(d.passed)}% dei mattini successivi, ${st().name} ha riferito che l'onda è passata; ${d.ate} volt${d.ate === 1 ? 'a' : 'e'} ha riferito di aver mangiato, senza giudizio.` +
+      (c.settle && first && last ? ` Il tempo mediano necessario al corpo per calmarsi è passato da ${Math.round(first)} a ${Math.round(last)} minuti.` : '') +
+      ` ${/^(8|11|1$)/.test(String(pct(d.passed))) ? 'Nell’' : 'Nel '}${pct(d.passed)}% dei mattini successivi, ${st().name} ha riferito che l'onda è passata; ${d.ate} volt${d.ate === 1 ? 'a' : 'e'} ha riferito di aver mangiato: un dato registrato senza giudizio.` +
       (c.exercises ? ` La pratica quotidiana è stata svolta in ${d.prDays} giorni su ${d.prMax}.` : '')
     );
     const discuss = [
-      c.times ? L(`${pct(d.evening)}% of waves began after 20:00 and ${pct(d.weekday)}% on Mon–Thu. Would moving the daily practice closer to the evening help?`, `${S.artPct(pct(d.evening))} delle onde è iniziato dopo le 20:00 e ${S.artPct(pct(d.weekday)).toLowerCase()} tra lunedì e giovedì. Spostare la pratica quotidiana verso sera potrebbe aiutare?`) : null,
-      c.exercises ? L(`On average ${S.fmt.num(d.steps, 1)} of 6 steps were completed. “Surf” most often came just before settling; “Move” was often skipped late at night.`, `In media sono stati completati ${S.fmt.num(d.steps, 1)} passi su 6. “Cavalca” precede più spesso la calma; “Muoviti” viene spesso saltato a tarda notte.`) : null,
+      c.times ? L(`${pct(d.evening)}% of waves began after 20:00 and ${pct(d.weekday)}% on Mon–Thu. Would moving the daily practice closer to the evening help?`, `${S.artPct(pct(d.evening))} delle onde sono iniziate dopo le 20:00, e ${S.artPct(pct(d.weekday)).toLowerCase()} tra lunedì e giovedì. Spostare la pratica quotidiana verso sera potrebbe aiutare?`) : null,
+      c.exercises ? L(`On average ${S.fmt.num(d.steps, 1)} of 5 steps were completed. “Watch the wave” most often came just before settling; “Move” was often skipped late at night.`, `In media sono stati completati ${S.fmt.num(d.steps, 1)} passi su 5. “Osserva l’onda” è il passo dopo cui più spesso arriva la calma; “Muoviti” viene spesso saltato a tarda notte.`) : null,
       L(`Soma started by itself ${d.auto} times; ${d.falseStarts} start${d.falseStarts === 1 ? ' was' : 's were'} marked “not a wave”. Is the sensitivity still right?`, `Soma è partito da solo ${d.auto} volte; ${d.falseStarts} avvi${d.falseStarts === 1 ? 'o è stato segnato' : 'i sono stati segnati'} come “non era un’onda”. La sensibilità è ancora adatta?`)
     ].filter(Boolean);
     const shared = [
@@ -748,7 +748,7 @@
     <article class="report-doc ${forPrint ? 'for-print' : ''}">
       <header class="rd-head">
         <div class="rd-brand">${S.logoMark('rd-mark')}<span>soma</span></div>
-        <div class="rd-meta"><b>${L('Report for', 'Report per')} ${esc(S.drName())}</b><span>${esc(st().name)} R. · ${L('weeks', 'settimane')} ${d.from}–${d.to}</span><span>${L('Generated', 'Generato')} ${S.fmt.date(today)}</span></div>
+        <div class="rd-meta"><b>${L('Report for', 'Report per')} ${esc(S.drName())}</b><span>${esc(st().name)} R. · ${L('weeks', 'settimane')} ${d.from}–${d.to}</span><span>${L('Generated', 'Generato il')} ${S.fmt.date(today)}</span></div>
       </header>
       <section><h4>${I('spark', 'ico-inline')} ${L('Summary in plain words', 'Sintesi in parole semplici')}</h4><p>${summary}</p></section>
       <section class="rd-tiles">
@@ -760,7 +760,7 @@
       <section><h4>${L('Guided waves per week', 'Onde guidate per settimana')}</h4>${bars}</section>
       <section><h4>${L('Points to discuss in session', 'Punti da discutere in seduta')}</h4><ul>${discuss.map(x => `<li>${x}</li>`).join('')}</ul></section>
       ${c.notes && S.reportDraft.note ? `<section><h4>${L('A note from', 'Una nota da')} ${esc(st().name)}</h4><blockquote>${esc(S.reportDraft.note)}</blockquote></section>` : ''}
-      <section class="rd-shared"><h4>${L('Shared by agreement', 'Condiviso per accordo')}</h4>
+      <section class="rd-shared"><h4>${L('Shared by agreement', 'Condiviso secondo gli accordi')}</h4>
         <div class="rd-chips">${shared.map(([k, l]) => `<span class="${c[k] ? 'on' : 'off'}">${c[k] ? '✓' : '—'} ${l}</span>`).join('')}</div>
       </section>
       <footer class="rd-foot">${L('SOMA informs therapy, it does not replace it. No single signal is interpreted as a binge-eating episode. Demo report: patient and data are fictitious.', 'SOMA informa la terapia, non la sostituisce. Nessun singolo segnale è interpretato come un episodio di abbuffata. Report demo: paziente e dati sono fittizi.')}</footer>
@@ -772,8 +772,8 @@
     if (r.stage === 'analyzing') {
       const steps = [
         L('Collecting the sessions from SOMA', 'Raccolgo le sessioni da SOMA'),
-        L('Comparing with your personal baseline', 'Confronto con la tua baseline personale'),
-        L('Looking for patterns in timing and context', 'Cerco schemi negli orari e nel contesto'),
+        L('Comparing with your personal baseline', 'Confronto con i tuoi valori abituali'),
+        L('Looking for patterns in timing and context', 'Cerco ricorrenze negli orari e nel contesto'),
         L('Removing what you chose not to share', 'Rimuovo ciò che hai scelto di non condividere'),
         L('Writing it in plain, non-judgemental words', 'Scrivo con parole semplici e non giudicanti')
       ];
@@ -787,7 +787,7 @@
     if (r.stage === 'preview' || r.stage === 'sent') {
       return `
       <div class="scr scr-report">
-        ${head(L('Report', 'Report'), r.stage === 'sent' ? L('Sent.', 'Inviato.') : L('Ready to share', 'Pronto da condividere'), r.stage === 'sent' ? L(S.drName() + ' will see it before your session.', S.drName() + ' lo vedrà prima della seduta.') : L('Read it first. You decide.', 'Leggilo prima. Decidi tu.'), 'report-back')}
+        ${head(L('Report', 'Report'), r.stage === 'sent' ? L('Sent.', 'Inviato.') : L('Ready to share', 'Pronto da condividere'), r.stage === 'sent' ? L(S.drName() + ' will see it before your session.', S.drName() + ' lo vedrà prima della seduta.') : L('Read it first. You decide.', 'Leggilo prima di inviarlo. Decidi tu.'), 'report-back')}
         ${S.reportDoc(false)}
         <div class="foot sticky">
           ${r.stage === 'sent'
@@ -811,7 +811,7 @@
       <section class="card list">
         ${items.map(([k, l]) => `<div class="row incl ${c[k] ? 'on' : 'off'}"><span class="incl-ico">${c[k] ? I('check') : I('close')}</span><span class="row-title">${l}</span><span class="muted small">${c[k] ? L('shared', 'condiviso') : L('not shared', 'non condiviso')}</span></div>`).join('')}
       </section>
-      <p class="tiny left">${L('This follows what you agreed on. Change it in Me → What we agreed on.', 'Segue ciò su cui vi siete accordati. Puoi cambiarlo in Io → Su cosa ci siamo accordati.')}</p>
+      <p class="tiny left">${L('This follows what you agreed on. Change it in Me → What we agreed on.', 'Rispecchia ciò che avete concordato. Puoi cambiarlo in Io → Cosa abbiamo concordato.')}</p>
       ${c.notes ? `
         <div class="list-label">${L('A note for ' + S.drName() + ' (optional)', 'Una nota per ' + S.drName() + ' (facoltativa)')}</div>
         <textarea class="note" id="reportNote" rows="3" placeholder="${L('Anything you’d like to talk about…', 'Qualcosa di cui vorresti parlare…')}">${esc(r.note)}</textarea>` : ''}
