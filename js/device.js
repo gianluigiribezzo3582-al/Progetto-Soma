@@ -37,7 +37,7 @@
     rings.forEach(([r, n, size], ri) => {
       for (let i = 0; i < n; i++) {
         const a = (i / n) * Math.PI * 2 + (ri % 2 ? Math.PI / n : 0);
-        const x = (120 + Math.cos(a) * r).toFixed(1), y = (120 + Math.sin(a) * r).toFixed(1);
+        const x = (120 + Math.cos(a) * r * 1.05).toFixed(1), y = (120 + Math.sin(a) * r * 0.875).toFixed(1);
         s += `<circle cx="${(+x + size * 0.28).toFixed(1)}" cy="${(+y + size * 0.36).toFixed(1)}" r="${size}" class="dot-sh"/><circle cx="${x}" cy="${y}" r="${size}" class="dot" style="--i:${ri * 40 + i}"/>`;
       }
     });
@@ -45,7 +45,7 @@
   }
   function ripplesB() {
     let s = '';
-    for (let r = 10; r <= 76; r += 9) s += `<circle cx="120" cy="120" r="${r}" fill="none" class="ripple" stroke-width="${r > 60 ? 2.4 : 2}"/>`;
+    for (let r = 10; r <= 76; r += 9) s += `<ellipse cx="120" cy="120" rx="${(r * 1.05).toFixed(1)}" ry="${(r * 0.875).toFixed(1)}" fill="none" class="ripple" stroke-width="${r > 60 ? 2.4 : 2}"/>`;
     return s;
   }
 
@@ -83,12 +83,12 @@
           <feGaussianBlur stdDeviation="4"/>
         </filter>
       </defs>
-      <ellipse cx="120" cy="226" rx="86" ry="8" fill="rgba(0,0,0,.10)"/>
-      <circle cx="120" cy="120" r="108" fill="url(#rimGrad-${u})" class="rim" data-zone="body"/>
-      <circle cx="120" cy="120" r="108" fill="url(#rimHi-${u})" pointer-events="none"/>
-      <circle cx="120" cy="120" r="86" fill="${c.deep}" opacity=".35" pointer-events="none"/>
-      <circle cx="120" cy="120" r="84" fill="url(#faceGrad-${u})" data-zone="body"/>
-      <circle cx="120" cy="120" r="84" fill="url(#faceSh-${u})" pointer-events="none"/>
+      <ellipse cx="120" cy="222" rx="96" ry="8" fill="rgba(0,0,0,.10)"/>
+      <ellipse cx="120" cy="120" rx="116" ry="97" fill="url(#rimGrad-${u})" class="rim" data-zone="body"/>
+      <ellipse cx="120" cy="120" rx="116" ry="97" fill="url(#rimHi-${u})" pointer-events="none"/>
+      <ellipse cx="120" cy="120" rx="90" ry="75" fill="${c.deep}" opacity=".35" pointer-events="none"/>
+      <ellipse cx="120" cy="120" rx="88" ry="73" fill="url(#faceGrad-${u})" data-zone="body"/>
+      <ellipse cx="120" cy="120" rx="88" ry="73" fill="url(#faceSh-${u})" pointer-events="none"/>
       <g class="face-a" data-zone="body">${dotsA()}</g>
       <g class="face-b" data-zone="body">${ripplesB()}</g>
       <g class="dial-g" data-zone="dial">
