@@ -2,7 +2,7 @@
  * Nothing leaves the browser: everything lives in memory + localStorage.
  */
 (function () {
-  const KEY = 'soma-prototype-v4';
+  const KEY = 'soma-prototype-v5';
 
   /* ---------- Static content ---------- */
 
@@ -17,34 +17,51 @@
 
   /* The guided sequence prescribed by the therapist ("Evening waves") */
   S.PROGRAMME = [
-    { id: 'breathe', icon: 'breathe', en: 'Breathe',     it: 'Respira',        subEn: 'squeeze and release · 90 s',   subIt: 'stringi e rilascia · 90 s',      sec: 90 },
-    { id: 'ground',  icon: 'ground',  en: 'Ground',      it: 'Radicati',       subEn: 'thumb on the ripples · 3 min', subIt: 'pollice sulle onde · 3 min',     sec: 180 },
-    { id: 'surf',    icon: 'surf',    en: 'Surf',        it: 'Cavalca',        subEn: 'follow the wave · up to 10 min', subIt: "segui l'onda · fino a 10 min", sec: 600 },
-    { id: 'pause',   icon: 'pause',   en: 'Phone pause', it: 'Pausa telefono', subEn: 'starts automatically',         subIt: 'parte da sola',                  sec: 0 },
-    { id: 'move',    icon: 'move',    en: 'Move',        it: 'Muoviti',        subEn: 'a short walk with music',      subIt: 'una breve passeggiata con musica', sec: 600 },
-    { id: 'rest',    icon: 'rest',    en: 'Rest',        it: 'Riposa',         subEn: 'a few kind words',             subIt: 'qualche parola gentile',         sec: 60 }
+    { id: 'breathe', icon: 'breathe', en: 'Breathe',          it: 'Respira',        subEn: '90 seconds · squeeze and release', subIt: '90 secondi · stringi e rilascia', sec: 90 },
+    { id: 'ground',  icon: 'ground',  en: 'Ground',           it: 'Radicati',       subEn: '3 minutes · explore the textures', subIt: '3 minuti · esplora le texture',   sec: 180 },
+    { id: 'surf',    icon: 'surf',    en: 'Watch the wave',   it: 'Osserva l’onda', subEn: 'Up to 10 minutes',                 subIt: 'Fino a 10 minuti',                sec: 600 },
+    { id: 'move',    icon: 'move',    en: 'Move',             it: 'Muoviti',        subEn: 'A short walk',                     subIt: 'Passeggiata breve',               sec: 600 },
+    { id: 'rest',    icon: 'rest',    en: 'Rest',             it: 'Riposa',         subEn: 'A gentle message',                 subIt: 'Un messaggio gentile',            sec: 60 }
   ];
 
-  /* Evidence-based library (Practice tab) */
+  /* Practice library (designs 17, 18, 20) */
   S.SKILLS = [
-    { id: 'surf',    icon: 'surf',    en: 'Urge surfing',          it: 'Urge surfing',            min: 3,  prescribed: true,
-      descEn: 'Observe the urge without acting on it: it rises, peaks and passes.',
-      descIt: "Osserva l'impulso senza agire: sale, raggiunge il picco e passa." },
-    { id: 'breathe', icon: 'breathe', en: 'Squeeze and release',   it: 'Stringi e rilascia',      min: 3,  prescribed: true,
-      descEn: 'Rhythmic tactile breathing: squeeze as it swells, release as it softens.',
-      descIt: 'Respiro tattile ritmico: stringi quando si gonfia, rilascia quando si ammorbidisce.' },
-    { id: 'ground',  icon: 'ground',  en: 'Grounding 5-4-3-2-1',   it: 'Grounding 5-4-3-2-1',     min: 4,  prescribed: true,
-      descEn: 'Come back to the present through the five senses.',
-      descIt: 'Torna al presente attraverso i cinque sensi.' },
-    { id: 'tipp',    icon: 'cold',    en: 'TIPP: cold water',      it: 'TIPP: acqua fredda',      min: 1,  prescribed: false,
-      descEn: 'A DBT skill: cool temperature to bring intense arousal down fast.',
-      descIt: "Abilità DBT: il freddo per abbassare rapidamente un'attivazione intensa." },
-    { id: 'meal',    icon: 'meal',    en: 'A slower meal',         it: 'Un pasto più lento',      min: 15, prescribed: false,
-      descEn: 'Mindful eating: slower bites, more senses, no rules.',
-      descIt: 'Mindful eating: bocconi più lenti, più sensi, nessuna regola.' },
-    { id: 'kind',    icon: 'rest',    en: 'Self-compassion',       it: 'Autocompassione',         min: 3,  prescribed: false,
-      descEn: 'A few minutes of non-judgemental words for yourself.',
-      descIt: 'Qualche minuto di parole non giudicanti verso te.' }
+    { id: 'breathe', icon: 'breathe', en: 'Breathe', it: 'Respira', subEn: 'Squeeze and release · 3 min', subIt: 'Stringi e rilascia · 3 min', min: 3, prescribed: true,
+      titleEn: 'Breathe with your hands.', titleIt: 'Respira con le mani.', metaEn: 'Slow breathing · 3 minutes', metaIt: 'Respirazione lenta · 3 minuti',
+      cardEn: 'A slow movement', cardIt: 'Un movimento lento', capEn: 'Squeeze · Release', capIt: 'Stringi · Rilascia',
+      howTitleEn: 'How it works', howTitleIt: 'Come funziona',
+      howEn: 'Hold SOMA in your palm. Squeeze gently as you breathe in, then let the pressure go as you breathe out.', howIt: 'Tieni SOMA nel palmo. Stringi delicatamente mentre inspiri, poi lascia andare la pressione espirando.',
+      noteEn: 'If you feel discomfort, reduce the pressure.', noteIt: 'Se senti disagio, riduci la pressione.', ctaEn: 'Start the practice', ctaIt: 'Inizia la pratica' },
+    { id: 'ground', icon: 'ground', en: 'Grounding', it: 'Grounding', subEn: 'Follow the dots · 4 min', subIt: 'Segui i puntini · 4 min', min: 4, prescribed: true,
+      titleEn: 'Come back to the present.', titleIt: 'Ritorna al presente.', metaEn: 'Grounding 5-4-3-2-1 · 4 min', metaIt: 'Grounding 5-4-3-2-1 · 4 min',
+      cardEn: 'Start from touch', cardIt: 'Comincia dal tatto', capEn: 'Follow the dots with your finger.', capIt: 'Segui i puntini con il dito.',
+      howTitleEn: 'One sense at a time', howTitleIt: 'Un senso alla volta',
+      howEn: 'First explore the texture of SOMA. Then notice what you see, touch, hear, smell or taste, without forcing anything.', howIt: 'Prima esplora la texture di SOMA. Poi osserva ciò che vedi, tocchi, senti, annusi o gusti, senza forzare nulla.',
+      ctaEn: 'Start grounding', ctaIt: 'Inizia il grounding' },
+    { id: 'surf', icon: 'surf', en: 'Watch the wave', it: 'Osserva l’onda', subEn: 'Touch the two textures · 10 min', subIt: 'Sfiora le due texture · 10 min', min: 10, prescribed: true,
+      titleEn: 'Watch the wave.', titleIt: 'Osserva l’onda.', metaEn: 'Urge surfing · up to 10 minutes', metaIt: 'Urge surfing · fino a 10 minuti',
+      cardEn: 'It rises, then it passes', cardIt: 'Sale, poi passa', capEn: 'Touch side A, then side B.', capIt: 'Sfiora il lato A, poi il lato B.',
+      howTitleEn: 'How it works', howTitleIt: 'Come funziona',
+      howEn: 'An urge is like a wave: it rises, reaches a peak and passes. You don’t have to do anything, just watch it while your fingers move across the textures.', howIt: 'Un impulso è come un’onda: sale, arriva al picco e passa. Non devi fare nulla, solo osservarla mentre le dita scorrono sulle texture.',
+      ctaEn: 'Start the practice', ctaIt: 'Inizia la pratica' },
+    { id: 'move', icon: 'move', en: 'Move', it: 'Muoviti', subEn: 'Rock SOMA', subIt: 'Fai oscillare SOMA', min: 5, prescribed: false,
+      titleEn: 'Move.', titleIt: 'Muoviti.', metaEn: 'A short walk · 5–10 minutes', metaIt: 'Passeggiata breve · 5–10 minuti',
+      cardEn: 'A slow rhythm', cardIt: 'Un ritmo lento', capEn: 'Rock SOMA, then walk.', capIt: 'Fai oscillare SOMA, poi cammina.',
+      howTitleEn: 'How it works', howTitleIt: 'Come funziona',
+      howEn: 'Rock SOMA slowly in your hand to find a rhythm, then take a short walk around the block with your playlist.', howIt: 'Fai oscillare SOMA lentamente nella mano per trovare un ritmo, poi fai una breve passeggiata con la tua playlist.',
+      ctaEn: 'Start the practice', ctaIt: 'Inizia la pratica' },
+    { id: 'meal', icon: 'meal', en: 'Mindful meal', it: 'Pasto consapevole', subEn: 'Listen to the sensations', subIt: 'Ascolta le sensazioni', min: 15, prescribed: false,
+      titleEn: 'A mindful meal.', titleIt: 'Un pasto consapevole.', metaEn: 'Mindful eating · 15 minutes', metaIt: 'Mindful eating · 15 minuti',
+      cardEn: 'No rules', cardIt: 'Nessuna regola', capEn: 'Slower bites, more senses.', capIt: 'Bocconi più lenti, più sensi.',
+      howTitleEn: 'How it works', howTitleIt: 'Come funziona',
+      howEn: 'SOMA suggests a few small pauses during the meal to notice taste, temperature and hunger. You can stop or continue: both are fine.', howIt: 'SOMA suggerisce qualche piccola pausa durante il pasto per notare sapore, temperatura e fame. Puoi fermarti o continuare: vanno bene entrambe.',
+      ctaEn: 'Start the practice', ctaIt: 'Inizia la pratica' },
+    { id: 'kind', icon: 'rest', en: 'Self-compassion', it: 'Autocompassione', subEn: 'Hold SOMA in your palm', subIt: 'Tieni SOMA nel palmo', min: 3, prescribed: false,
+      titleEn: 'A few kind words.', titleIt: 'Qualche parola gentile.', metaEn: 'Self-compassion · 3 minutes', metaIt: 'Autocompassione · 3 minuti',
+      cardEn: 'Held in your hand', cardIt: 'Tenuto nel palmo', capEn: 'Hold SOMA close.', capIt: 'Tieni SOMA vicino a te.',
+      howTitleEn: 'How it works', howTitleIt: 'Come funziona',
+      howEn: 'Hold SOMA in your palm and read a few non-judgemental words for yourself, as you would for a friend.', howIt: 'Tieni SOMA nel palmo e leggi qualche parola non giudicante per te, come faresti con un’amica o un amico.',
+      ctaEn: 'Start the practice', ctaIt: 'Inizia la pratica' }
   ];
 
   /* ---------- Seeded random, so the demo history is stable ---------- */
@@ -116,9 +133,12 @@
       onboarded: false,
       linked: false,
       reminders: true,
+      haptics: true,
+      online: true,
+      moods: [],
       messages: [],
-      onboardStep: 0,
-      name: 'Sara',
+      onboardStep: 'welcome',
+      name: 'Laura',
       therapist: 'Dr. Bianchi',
       clinic: 'Centro DCA · Bari',
       color: 'sage',
