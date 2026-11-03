@@ -915,3 +915,8 @@ button.help-card .chev { margin-left: auto; color: var(--amber-deep); }
 .breath-illus { max-width: 360px; margin: 12px auto 8px; }
 .scr-dark .center-stack { gap: 10px; }
 .sense-circle { width: 176px; height: 176px; margin-bottom: 8px; }
+
+/* SOMA is a 6 x 5 cm oval, not a circle */
+.fab-pebble { width: 44px; height: 36px; }
+.fab-pebble::before { inset: 7px 8px; }
+.fab-pebble::after { inset: 12px 16px; }

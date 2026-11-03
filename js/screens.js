@@ -643,7 +643,7 @@
       <div class="carry">
         ${[1, 2, 3].map(i => `<img src="assets/img/everyday-${i}.jpg" alt="${L('SOMA clipped to a bag', 'SOMA agganciato a una borsa')}" loading="lazy">`).join('')}
       </div>
-      <p class="tiny">${L('Soft silicone base · bio-based polycarbonate shell · 2200 K amber light ring · Qi2 wireless charging dish.', 'Base in silicone morbido · guscio in policarbonato bio-based · anello luminoso ambra 2200 K · base di ricarica wireless Qi2.')}</p>
+      <p class="tiny">${L('About 6 × 5 cm, a soft oval that fits in the palm · soft silicone base · bio-based polycarbonate shell · 2200 K amber light ring · Qi2 wireless charging dish.', 'Circa 6 × 5 cm, un ovale morbido che sta nel palmo · base in silicone morbido · guscio in policarbonato bio-based · anello luminoso ambra 2200 K · base di ricarica wireless Qi2.')}</p>
     </div>`;
 
   /* ================= MESSAGES (care team) ================= */
