@@ -29,8 +29,8 @@
     if (SS.active) return;
     const kind = opts.kind || 'full';
     let steps;
-    if (kind === 'full') steps = ['intro', 'breathe', 'ground', 'surf', 'pause', 'move', 'rest'];
-    else steps = ['intro', kind === 'surf' ? 'surf' : kind, 'rest'];
+    if (kind === 'full') steps = ['intro', 'breathe', 'ground', 'surf', 'move', 'rest'];
+    else steps = [kind, 'rest']; // a single practice starts straight from its intro screen
     SS.active = { kind, trigger: opts.trigger || 'manual', steps, idx: 0, done: [], timers: [], squeezes: 0, startedAt: Date.now() };
     if (kind === 'full') S.engine.startSession();
     S.app.setDark(true);
@@ -52,6 +52,13 @@
   SS.nextAction = function () {
     const a = SS.active; if (!a) return;
     if (a.steps[a.idx] === 'ground' && SS.groundNext) SS.groundNext(); else SS.next();
+  };
+
+  SS.togglePause = function () {
+    const a = SS.active; if (!a) return;
+    a.paused = !a.paused;
+    const b = document.getElementById('pauseBtn');
+    if (b) b.textContent = a.paused ? L('Resume', 'Riprendi') : L('Pause', 'Pausa');
   };
 
   SS.toRest = function () {
@@ -116,34 +123,38 @@
     return false;
   };
 
-  /* ---------- Rendering ---------- */
+  /* ---------- Rendering (designs 19–22) ---------- */
   function segs(a) {
     const real = a.steps.filter(s => s !== 'intro');
-    const pos = a.idx - 1;
-    return `<div class="segs">${real.map((_, i) => `<i class="${i <= pos ? 'on' : ''}"></i>`).join('')}</div>`;
+    const pos = real.indexOf(a.steps[a.idx]);
+    return `<div class="segs">${real.map((_, i) => `<i class="${i < pos ? 'on' : i === pos ? 'on cur' : ''}"></i>`).join('')}</div>`;
   }
 
+  /* opts: title, sub, button (html), next (false hides the small skip link), nextLabel */
   function frame(a, inner, opts = {}) {
-    const meta = STEP_META[a.steps[a.idx]];
+    const step = a.steps[a.idx];
     return `
-      <div class="scr scr-dark step-${a.steps[a.idx]}">
-        <div class="dark-top">
-          ${a.steps[a.idx] === 'intro' ? '<div class="segs"></div>' : segs(a)}
+      <div class="scr scr-dark step-${step}">
+        <div class="topbar">
+          ${step !== 'rest' ? `<button class="back-btn" data-action="sess-stop" aria-label="${L('Stop', 'Ferma')}">${I('back')}</button>` : '<span></span>'}
           <div class="dark-tools">
             <span class="hr-live" id="sessHr" title="${L('Heart rate (from SOMA)', 'Frequenza cardiaca (da SOMA)')}">${I('heart')} <b>${Math.round(S.engine.sig.hr)}</b></span>
             <button class="icon-btn ghost" data-action="support" aria-label="${L('Get help now', 'Chiedi aiuto ora')}">${I('lifebuoy')}</button>
             <button class="icon-btn ghost" data-action="voice" aria-label="${L('Voice', 'Voce')}">${I('voice', S.state.voice ? '' : 'off')}</button>
-            ${a.steps[a.idx] !== 'rest' ? `<button class="icon-btn ghost" data-action="sess-stop" aria-label="${L('Stop', 'Ferma')}">${I('close')}</button>` : ''}
           </div>
         </div>
-        ${meta ? `<div class="step-eyebrow">${L(meta.eyEn, meta.eyIt)}</div>` : ''}
+        ${opts.title ? `<h1 class="dark-h1">${opts.title}</h1>` : ''}
+        ${opts.sub ? `<p class="dark-lead" id="${opts.subId || ''}">${opts.sub}</p>` : ''}
+        ${step === 'intro' ? '' : segs(a)}
         ${inner}
         <div class="dark-foot">
-          ${opts.next !== false ? `<button class="link-next" data-action="sess-next">${opts.nextLabel || L('Next', 'Avanti')} ${I('chev')}</button>` : ''}
+          ${opts.button || ''}
+          ${opts.next !== false ? `<button class="link-next" data-action="sess-next">${opts.nextLabel || L('Skip', 'Salta')} ${I('chev')}</button>` : ''}
           <p>${L('Turn Soma face down to stop', 'Capovolgi Soma per fermarti')}</p>
         </div>
       </div>`;
   }
+  const darkBtn = (label, action, id) => `<button class="btn btn-dark btn-block" data-action="${action}" ${id ? `id="${id}"` : ''}>${label}</button>`;
 
   const R = {};
 
@@ -155,143 +166,131 @@
       <p class="dark-sub">${a.trigger === 'auto'
         ? L('Soma began because your body showed the signs of a wave.', 'Soma è partito perché il tuo corpo ha mostrato i segni di un’onda.')
         : L('You asked for a moment. That is already a step.', 'Hai chiesto un momento. È già un passo.')}</p>
-    </div>`, { nextLabel: L('Begin', 'Inizia') });
+    </div>`, { button: darkBtn(L('Begin', 'Inizia'), 'sess-next'), next: false });
 
   R.breathe = (a) => frame(a, `
-    <h2 class="step-title">${L('Squeeze as it swells.', 'Stringi mentre si gonfia.')}</h2>
     <div class="center-stack">
-      <div class="breath" id="breath" data-hold="squeeze">
-        <div class="breath-halo"></div>
-        <div class="breath-ring"></div>
-        <div class="breath-core"><span id="breathWord">${L('squeeze', 'stringi')}</span><small id="breathSec">4 ${L('seconds', 'secondi')}</small></div>
-      </div>
-      <p class="dark-sub">${L('…and release as it softens.', '…e rilascia mentre si ammorbidisce.')}</p>
-      <p class="breathe-fb" id="breatheFb">${L('Squeeze SOMA — or press the circle', 'Stringi SOMA — o premi il cerchio')}</p>
-      <div class="bar"><i id="breathBar"></i></div>
-    </div>`);
+      <div class="breath-illus" id="breath" data-hold="squeeze">${S.illus('breathe', true)}</div>
+      <p class="instr" id="breathWord">${L('SQUEEZE GENTLY', 'STRINGI DELICATAMENTE')}</p>
+      <p class="dark-sub strong" id="breathSub">${L('Then release as you breathe out.', 'Poi rilascia mentre espiri.')}</p>
+      <p class="breathe-fb" id="breatheFb">${L('Squeeze SOMA, or press the drawing', 'Stringi SOMA, oppure premi il disegno')}</p>
+      <p class="timer-line" id="breathTime">00:00 / 03:00</p>
+    </div>`, { title: L('Breathe in calmly.', 'Inspira con calma.'), sub: L('Follow the pressure of your hands.', 'Segui la pressione delle mani.'), button: darkBtn(L('Pause', 'Pausa'), 'sess-pause', 'pauseBtn') });
 
-  R.ground = (a) => frame(a, `
-    <h2 class="step-title">${L('Trace the circles under your thumb.', 'Segui i cerchi sotto il pollice.')}</h2>
+  const SENSES = () => [
+    { n: 5, sub: L('One sense at a time.', 'Un senso per volta.'), t: L('Look around you.', 'Guarda intorno a te.'), a: L('5 things you can see', '5 cose che puoi vedere'), h: L('You don’t need to name them out loud.', 'Non devi nominarle ad alta voce.') },
+    { n: 4, sub: L('4 things you can feel.', '4 cose che puoi percepire.'), t: L('Follow soma one dot after another', 'Segui un puntino dopo l’altro di soma'), a: '', h: L('Notice four sensations: texture, temperature, pressure and contact.', 'Nota quattro sensazioni: rilievo, temperatura, pressione e contatto.') },
+    { n: 3, sub: L('3 things you can hear.', '3 cose che puoi sentire.'), t: L('Listen.', 'Ascolta.'), a: L('3 sounds, near or far', '3 suoni, vicini o lontani'), h: L('Silence counts too.', 'Anche il silenzio conta.') },
+    { n: 2, sub: L('2 things you can smell.', '2 cose che puoi annusare.'), t: L('Breathe through your nose.', 'Respira dal naso.'), a: L('2 smells around you', '2 odori intorno a te'), h: L('The smell of your hands or of the air is fine.', 'Va bene anche l’odore delle tue mani o dell’aria.') },
+    { n: 1, sub: L('1 thing you can taste.', '1 cosa che puoi gustare.'), t: L('A taste.', 'Un sapore.'), a: L('1 thing you can taste', '1 cosa che puoi gustare'), h: L('A sip of water, or the taste in your mouth right now.', 'Un sorso d’acqua, o il sapore che hai in bocca adesso.') }
+  ];
+  const senseCircle = (n) => {
+    const dots = [...Array(n)].map((_, i) => { const ang = -Math.PI / 2 + (i / n) * Math.PI * 2; return `<circle cx="${(80 + Math.cos(ang) * 48).toFixed(1)}" cy="${(80 + Math.sin(ang) * 48).toFixed(1)}" r="5" fill="#F2B27A"/>`; }).join('');
+    return `<svg viewBox="0 0 160 160" class="sense-circle" aria-hidden="true"><circle cx="80" cy="80" r="74" fill="none" stroke="#A3A567" stroke-width="2.5"/>${dots}<text x="80" y="96" text-anchor="middle">${n}</text></svg>`;
+  };
+
+  R.ground = (a) => {
+    const s = SENSES()[0];
+    return frame(a, `
     <div class="center-stack">
-      <svg class="ripples" viewBox="0 0 200 200" aria-hidden="true">
-        ${[20, 36, 52, 68, 84].map((r, i) => `<circle cx="100" cy="100" r="${r}" fill="none" stroke="${i % 2 ? '#7C7FB8' : '#C9C27A'}" stroke-width="1.6" opacity="${0.5 + i * 0.1}"/>`).join('')}
-        <circle r="5" fill="var(--amber)" class="tracer"><animateMotion dur="6s" repeatCount="indefinite" path="M100,32 a68,68 0 1,1 -0.1,0"/></circle>
-      </svg>
-      <p class="sense" id="sense"></p>
-      <p class="dark-sub small">${L('You don’t need to say them aloud.', 'Non serve dirle ad alta voce.')}</p>
-      <div class="sense-dots" id="senseDots">${[5, 4, 3, 2, 1].map(n => `<i>${n}</i>`).join('')}</div>
-    </div>`, { nextLabel: L('Next sense', 'Senso successivo') });
+      <div id="senseArt">${senseCircle(5)}</div>
+      <p class="sense-title" id="senseTitle">${s.t}</p>
+      <p class="amber" id="senseAmber">${s.a}</p>
+      <p class="dark-sub" id="senseHint">${s.h}</p>
+    </div>`, { title: 'Grounding 5-4-3-2-1', sub: s.sub, subId: 'groundSub', button: darkBtn(L('Continue', 'Continua'), 'sess-next'), next: false });
+  };
 
   R.surf = (a) => frame(a, `
-    <h2 class="step-title">${L('Follow the wave with the dial.', 'Segui l’onda con il dial.')}</h2>
     <div class="center-stack">
       <svg class="wave-svg" viewBox="0 0 260 140" aria-hidden="true">
-        <path id="wavePath" d="M10,120 C70,120 90,20 130,20 C170,20 190,120 250,120" fill="none" stroke="#C9C27A" stroke-width="2.5" stroke-linecap="round"/>
-        <circle id="waveDot" r="6.5" fill="#fff" stroke="var(--amber)" stroke-width="2"/>
+        <path id="wavePath" d="M10,120 C70,120 90,20 130,20 C170,20 190,120 250,120" fill="none" stroke="#A3A567" stroke-width="3" stroke-linecap="round"/>
+        <circle id="waveDot" r="7" fill="#fff" stroke="var(--amber)" stroke-width="2.5"/>
       </svg>
       <p class="amber" id="waveMsg">${L('It is rising. You don’t have to do anything.', 'Sta salendo. Non devi fare nulla.')}</p>
       <div class="big-timer" id="waveTimer">0:00</div>
       <p class="dark-sub small">${L('minutes with you', 'minuti con te')}</p>
-    </div>`);
-
-  R.pause = (a) => {
-    const until = new Date(Date.now() + 20 * 60000);
-    return frame(a, `
-    <h2 class="step-title">${L('Some apps can wait.', 'Alcune app possono aspettare.')}</h2>
-    <div class="center-stack">
-      <div class="round-big">${I('pause')}</div>
-      <div class="dark-card">${I('pause', 'ico-inline')} <span><b>${L('Phone pause on', 'Pausa telefono attiva')}</b><small>${L('delivery apps until', 'app di consegna fino alle')} ${S.fmt.time(until)}</small></span></div>
-      <p class="dark-sub">${L('Agreed with ' + S.drName() + '. It starts by itself and ends by itself.', 'Concordata con ' + S.drName() + '. Parte da sola e finisce da sola.')}</p>
-    </div>`);
-  };
+    </div>`, { title: L('Watch the wave.', 'Osserva l’onda.'), sub: L('Follow it with the dial, or touch the two textures.', 'Seguila con il dial, o sfiora le due texture.') });
 
   R.move = (a) => {
     const until = new Date(Date.now() + 20 * 60000);
     return frame(a, `
-    <h2 class="step-title">${L('Let’s go for a short walk.', 'Facciamo una breve passeggiata.')}</h2>
     <div class="center-stack">
       <div class="round-big walker">${I('move')}</div>
       <p class="dark-sub">${L('Your walking playlist is starting.<br>Ten minutes, around the block.', 'La tua playlist per camminare sta partendo.<br>Dieci minuti, intorno all’isolato.')}</p>
       <div class="dark-card">${I('pause', 'ico-inline')} <span><b>${L('Phone pause on', 'Pausa telefono attiva')}</b><small>${L('delivery apps until', 'app di consegna fino alle')} ${S.fmt.time(until)}</small></span></div>
-      <div class="dark-actions"><button class="btn btn-amber" data-action="sess-next">${L('I’m walking', 'Sto camminando')}</button><button class="btn btn-ghost-dark" data-action="sess-next">${L('Not now', 'Non ora')}</button></div>
-    </div>`, { next: false });
+    </div>`, { title: L('Move.', 'Muoviti.'), sub: L('Let’s go for a short walk.', 'Facciamo una breve passeggiata.'), button: `<div class="dark-actions"><button class="btn btn-amber" data-action="sess-next">${L('I’m walking', 'Sto camminando')}</button><button class="btn btn-dark" data-action="sess-next">${L('Not now', 'Non ora')}</button></div>`, next: false });
   };
 
   R.tipp = (a) => frame(a, `
-    <h2 class="step-title">${L('Cool water on your face, or hold something cold.', 'Acqua fresca sul viso, o tieni in mano qualcosa di freddo.')}</h2>
     <div class="center-stack">
       <div class="round-big cold">${I('cold')}</div>
       <div class="big-timer" id="tippTimer">0:30</div>
       <p class="dark-sub">${L('Thirty seconds. Notice the temperature, nothing else.', 'Trenta secondi. Nota la temperatura, nient’altro.')}</p>
-    </div>`);
+    </div>`, { title: L('Cold water.', 'Acqua fresca.'), sub: L('On your face, or hold something cold.', 'Sul viso, o tieni in mano qualcosa di freddo.') });
 
   R.meal = (a) => frame(a, `
-    <h2 class="step-title">${L('A slower meal.', 'Un pasto più lento.')}</h2>
     <div class="center-stack">
-      <div class="round-big">${I('meal')}</div>
-      <p class="sense" id="mealTip"></p>
+      <div class="breath-illus small">${S.illus('meal', true)}</div>
+      <p class="sense-title" id="mealTip"></p>
       <p class="dark-sub small">${L('No rules. Just a little more attention.', 'Nessuna regola. Solo un po’ più di attenzione.')}</p>
-    </div>`);
+    </div>`, { title: L('A mindful meal.', 'Un pasto consapevole.'), sub: L('Listen to the sensations.', 'Ascolta le sensazioni.') });
 
   R.kind = (a) => frame(a, `
-    <h2 class="step-title">${L('A few kind words.', 'Qualche parola gentile.')}</h2>
     <div class="center-stack">
       <div class="intro-pebble small">${S.logoMark('pulse-mark')}</div>
-      <p class="sense" id="kindTip"></p>
-    </div>`);
+      <p class="sense-title" id="kindTip"></p>
+    </div>`, { title: L('A few kind words.', 'Qualche parola gentile.'), sub: L('Hold SOMA in your palm.', 'Tieni SOMA nel palmo.') });
 
   R.rest = (a) => frame(a, `
     <div class="center-stack rest">
+      <div class="intro-pebble small">${S.logoMark('')}</div>
       <h2 class="dark-title">${L('You stayed with yourself.', 'Hai scelto di restare con te.')}</h2>
       <p class="amber">${L('Whatever happens next,<br>it’s ok. Rest now.', 'Qualunque cosa succeda adesso,<br>va bene. Ora riposa.')}</p>
       <p class="dark-sub">${L('Nothing to answer tonight.<br>We can look at it tomorrow.', 'Niente a cui rispondere stasera.<br>Possiamo guardarci domani.')}</p>
-      <button class="btn btn-ghost-dark" data-action="sess-finish">${L('Close', 'Chiudi')}</button>
-    </div>`, { next: false });
+    </div>`, { button: darkBtn(L('Close', 'Chiudi'), 'sess-finish'), next: false });
 
   /* ---------- Per-step behaviour ---------- */
   const SETUP = {};
 
-  SETUP.intro = (a) => { later(() => { if (SS.active === a && a.steps[a.idx] === 'intro') SS.next(); }, 6000); };
+  SETUP.intro = (a) => { later(() => { if (SS.active === a && a.steps[a.idx] === 'intro') SS.next(); }, 7000); };
 
   SETUP.breathe = (a) => {
     S.device.setLight('breathe');
-    const total = 6; let cycle = 0, phase = 0, sec = 4;
+    const total = 6; let cycle = 0, phase = 0, sec = 4, elapsed = 0;
     const el = document.getElementById('breath');
-    const word = document.getElementById('breathWord'), sc = document.getElementById('breathSec'), bar = document.getElementById('breathBar');
+    const word = document.getElementById('breathWord'), sub = document.getElementById('breathSub'), time = document.getElementById('breathTime');
+    const shown = () => S.fmt.mmss(Math.round(elapsed * 180 / (total * 8))).padStart(5, '0') + ' / 03:00';
     const setPhase = () => {
       el.classList.toggle('swell', phase === 0);
       el.classList.toggle('soften', phase === 1);
-      word.textContent = phase === 0 ? L('squeeze', 'stringi') : L('release', 'rilascia');
+      word.textContent = phase === 0 ? L('SQUEEZE GENTLY', 'STRINGI DELICATAMENTE') : L('RELEASE SLOWLY', 'RILASCIA PIANO');
+      sub.textContent = phase === 0 ? L('Then release as you breathe out.', 'Poi rilascia mentre espiri.') : L('Let go as you breathe out.', 'Lascia andare mentre espiri.');
     };
-    setPhase();
+    setPhase(); time.textContent = shown();
     every(() => {
-      sec--;
+      if (a.paused) return;
+      sec--; elapsed++;
       if (sec <= 0) { phase = 1 - phase; sec = 4; if (phase === 0) cycle++; setPhase(); }
-      sc.textContent = sec + ' ' + (sec === 1 ? L('second', 'secondo') : L('seconds', 'secondi'));
-      bar.style.width = Math.min(100, ((cycle * 8 + (phase * 4) + (4 - sec)) / (total * 8)) * 100) + '%';
+      time.textContent = shown();
       if (cycle >= total) SS.next();
     }, 1000);
   };
 
   SETUP.ground = (a) => {
     S.device.setLight('on');
-    const prompts = [
-      L('Now name five things you can see.', 'Ora nomina cinque cose che puoi vedere.'),
-      L('Four things you can feel.', 'Quattro cose che puoi sentire al tatto.'),
-      L('Three things you can hear.', 'Tre cose che puoi udire.'),
-      L('Two things you can smell.', 'Due cose di cui senti l’odore.'),
-      L('One thing you can taste.', 'Una cosa di cui senti il sapore.')
-    ];
+    const senses = SENSES();
     let i = 0;
     const show = () => {
-      const el = document.getElementById('sense'); if (!el) return;
-      el.textContent = prompts[i];
-      el.classList.remove('fade'); void el.offsetWidth; el.classList.add('fade');
-      document.querySelectorAll('#senseDots i').forEach((d, k) => d.classList.toggle('on', k <= i));
+      const s = senses[i];
+      const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+      const art = document.getElementById('senseArt'); if (!art) return;
+      art.innerHTML = senseCircle(s.n);
+      set('senseTitle', s.t); set('senseAmber', s.a); set('senseHint', s.h); set('groundSub', s.sub);
+      art.classList.remove('fade'); void art.offsetWidth; art.classList.add('fade');
     };
-    SS.groundNext = () => { i++; if (i >= prompts.length) { SS.groundNext = null; SS.next(); } else show(); };
+    SS.groundNext = () => { i++; if (i >= senses.length) { SS.groundNext = null; SS.next(); } else show(); };
     show();
-    every(() => SS.groundNext && SS.groundNext(), 7000);
+    every(() => { if (!a.paused && SS.groundNext) SS.groundNext(); }, 12000);
   };
 
   SETUP.surf = (a) => {

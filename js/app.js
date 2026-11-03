@@ -1,7 +1,11 @@
 /* SOMA — app shell: routing, events, AI console, toasts, tooltips. */
 (function () {
   const A = {};
-  const OB = ['welcome', 'code', 'pair', 'agree', 'programme', 'listening'];
+  /* Onboarding, in the order of the designs (1–12) */
+  const OB = ['welcome', 'login', 'signup', 'verify', 'together', 'pair', 'paired', 'prefs', 'agree', 'support', 'programme', 'phases'];
+  const OB_NEXT = { welcome: 'login', login: 'together', signup: 'verify', verify: 'together', together: 'pair', pair: 'paired', paired: 'prefs', prefs: 'agree', agree: 'support', support: 'programme', programme: 'phases' };
+  const OB_BACK = { login: 'welcome', signup: 'welcome', verify: 'signup', together: 'welcome', pair: 'together', paired: 'pair', prefs: 'paired', agree: 'prefs', support: 'agree', programme: 'support', phases: 'programme' };
+  const obStep = () => (OB.includes(S.state.onboardStep) ? S.state.onboardStep : 'welcome');
   const TABS = ['today', 'practice', 'waves', 'me'];
   let view = 'today';
   const $ = (id) => document.getElementById(id);
@@ -12,7 +16,7 @@
     const st = S.state;
     let html;
     if (!st.onboarded) {
-      html = S.screens[OB[st.onboardStep]]();
+      html = S.screens[obStep()]();
     } else {
       html = S.screens[view]();
       if (TABS.includes(view)) html += S.tabbar(view);
@@ -20,7 +24,7 @@
     const app = $('app');
     const keepScroll = app.dataset.view === view ? app.scrollTop : 0;
     app.innerHTML = html;
-    app.dataset.view = st.onboarded ? view : OB[st.onboardStep];
+    app.dataset.view = st.onboarded ? view : obStep();
     app.scrollTop = keepScroll;
     A.caption();
     if (view === 'report' && S.reportDraft.stage === 'analyzing') runAnalysis();
@@ -53,23 +57,30 @@
       const step = S.session.active.steps[S.session.active.idx];
       c = {
         intro: L('Guided sequence · “I’m here with you.”', 'Sequenza guidata · “Sono qui con te.”'),
-        breathe: L('1 · Breathe — squeeze SOMA as the circle swells', '1 · Respira — stringi SOMA mentre il cerchio si gonfia'),
+        breathe: L('1 · Breathe — squeeze SOMA as you breathe in, release as you breathe out', '1 · Respira — stringi SOMA mentre inspiri, rilascia mentre espiri'),
         ground: L('2 · Ground — 5-4-3-2-1 senses, thumb on the ripples', '2 · Radicati — 5-4-3-2-1 sensi, pollice sulle onde'),
-        surf: L('3 · Surf — urge surfing: the wave rises, peaks, passes (rotate SOMA)', '3 · Cavalca — urge surfing: l’onda sale, ha un picco, passa (ruota SOMA)'),
-        pause: L('4 · Phone pause — delivery apps paused, agreed in therapy', '4 · Pausa telefono — app di consegna in pausa, concordata in terapia'),
-        move: L('5 · Move — a short walk with music', '5 · Muoviti — una breve passeggiata con musica'),
-        rest: L('6 · Rest — no questions tonight', '6 · Riposa — nessuna domanda stasera'),
+        surf: L('3 · Watch the wave — urge surfing: it rises, peaks, passes (rotate SOMA)', '3 · Osserva l’onda — urge surfing: sale, ha un picco, passa (ruota SOMA)'),
+        move: L('4 · Move — a short walk with music', '4 · Muoviti — una breve passeggiata con musica'),
+        rest: L('5 · Rest — no questions tonight', '5 · Riposa — nessuna domanda stasera'),
         tipp: L('TIPP — cold water (DBT)', 'TIPP — acqua fredda (DBT)'),
         meal: L('A slower meal — mindful eating', 'Un pasto più lento — mindful eating'),
         kind: L('Self-compassion', 'Autocompassione')
       }[step];
     } else if (!st.onboarded) {
-      c = [L('Onboarding · in session with the therapist', 'Onboarding · in seduta con il terapeuta'),
-        L('Activation · the clinic links the app to the patient’s care team', 'Attivazione · il centro collega l’app al team di cura del paziente'),
-        L('1 · Pairing in session — hold SOMA for three seconds', '1 · Associazione in seduta — tieni SOMA per tre secondi'),
-        L('2 · What we agree on — consent, decided together and revocable', '2 · Su cosa siamo d’accordo — consenso deciso insieme e revocabile'),
-        L('3 · The programme prescribed by the therapist', '3 · Il programma prescritto dal terapeuta'),
-        L('4 · Listening first — why Soma stays quiet for three weeks', '4 · Prima, ascoltare — perché Soma resta in silenzio tre settimane')][st.onboardStep];
+      c = {
+        welcome: L('Welcome · sign in or create an account', 'Benvenuto · accedi o crea un account'),
+        login: L('Sign in', 'Accesso'),
+        signup: L('Create an account · the name you want to be called', 'Registrazione · il nome con cui vuoi essere chiamato/a'),
+        verify: L('Email confirmation', 'Conferma dell’email'),
+        together: L('Setup with the therapist · three steps', 'Configurazione con il terapeuta · tre passi'),
+        pair: L('01 · Pair the handheld — hold SOMA for three seconds', '01 · Associa il palmare — tieni SOMA per tre secondi'),
+        paired: L('01 · SOMA connected · choose its colour', '01 · SOMA connesso · scegli il colore'),
+        prefs: L('02 · How you want to be guided · quiet hours', '02 · Come vuoi essere guidato/a · ore silenziose'),
+        agree: L('02 · Agreements — what you share with the therapist', '02 · Accordi — cosa condividi con il terapeuta'),
+        support: L('Support network · invitation code from the professional', 'Rete di supporto · codice di invito del professionista'),
+        programme: L('03 · The programme proposed by the therapist', '03 · Il programma proposto dal terapeuta'),
+        phases: L('Listening, learning, agreed guidance', 'Ascolto, apprendimento, guida concordata')
+      }[obStep()];
     } else {
       c = {
         today: L('Today · phase of the personal model, daily practice, insights', 'Oggi · fase del modello personale, pratica quotidiana, insight'),
@@ -79,7 +90,10 @@
         morning: L('Morning after · plain words, one optional tap', 'Il mattino dopo · parole semplici, un tocco facoltativo'),
         report: L('Report · AI summary for the therapist, only agreed data', 'Report · sintesi IA per il terapeuta, solo dati concordati'),
         message: L('Care team · secure messages with the therapist (not for emergencies)', 'Team di cura · messaggi protetti con il terapeuta (non per le emergenze)'),
-        guide: L('How to use SOMA · the gestures from “Movements of the hand”', 'Come si usa SOMA · i gesti di “Movements of the hand”')
+        guide: L('How to use SOMA · the gestures from “Movements of the hand”', 'Come si usa SOMA · i gesti di “Movements of the hand”'),
+        mood: L('How do you feel? · observe without judging', 'Come ti senti? · osservarsi senza giudicarsi'),
+        notifications: L('Messages · only useful reminders, no pressure', 'Messaggi · solo promemoria utili, senza pressione'),
+        skill: L('Practice · how it works, before starting', 'Pratica · come funziona, prima di iniziare')
       }[view];
     }
     $('caption').textContent = c || '';
@@ -151,7 +165,7 @@
         <div class="demo-row"><span>${L('Jump to', 'Vai a')}</span>
           ${[[2, L('Week 2 · Listening', 'Sett. 2 · Ascolto')], [5, L('Week 5 · Learning', 'Sett. 5 · Apprendimento')], [9, L('Week 9 · Guiding', 'Sett. 9 · Guida')]].map(([w, l]) => `<button data-action="week" data-week="${w}" class="${S.state.week === w ? 'is-on' : ''}">${l}</button>`).join('')}
         </div>
-        <div class="demo-row"><button data-action="morning-demo">${L('Morning after', 'Il mattino dopo')}</button><button data-action="restart-ob">${L('Replay onboarding', 'Rivedi l’onboarding')}</button><button data-action="reset">${L('Reset demo', 'Azzera la demo')}</button></div>
+        <div class="demo-row"><button data-action="morning-demo">${L('Morning after', 'Il mattino dopo')}</button><button data-action="toggle-online">${S.state.online === false ? L('Reconnect SOMA', 'Ricollega SOMA') : L('Disconnect SOMA', 'Scollega SOMA')}</button><button data-action="restart-ob">${L('Replay onboarding', 'Rivedi l’onboarding')}</button><button data-action="reset">${L('Reset demo', 'Azzera la demo')}</button></div>
       </div>
       <p class="side-note">${L('Values are synthetic. The model compares your signals with your own baseline: no single signal is ever read as a binge episode.', 'I valori sono sintetici. Il modello confronta i segnali con la tua baseline: nessun singolo segnale viene mai letto come un episodio di abbuffata.')}</p>
     </div>`;
@@ -250,7 +264,7 @@
   let pairHold = null;
   function onGesture(g) {
     const st = S.state;
-    if (g === 'holdstart' && !st.onboarded && OB[st.onboardStep] === 'pair' && !st.paired) { startPair(); return; }
+    if (g === 'holdstart' && !st.onboarded && obStep() === 'pair') { startPair(); return; }
     if (g === 'holdend') { stopPair(); return; }
     if (g === 'holdstart' || g === 'holdend') return;
     if (g === 'double') {
@@ -284,7 +298,7 @@
       const fill = document.querySelector('#pairBtn .hold-fill'); if (fill) fill.style.width = p + '%';
       if (p >= 100) {
         clearInterval(pairHold); pairHold = null; S._pairing = false;
-        S.state.paired = true; S.save();
+        S.state.paired = true; S.state.online = true; S.state.onboardStep = 'paired'; S.save();
         S.device.setPair(0); S.device.setLight('on'); S.device.buzz();
         setTimeout(() => S.device.setLight('off'), 2500);
         S.device.refresh();
@@ -317,9 +331,19 @@
     setTimeout(() => window.print(), 50);
   }
 
+  function obGo(step) {
+    S.state.onboardStep = step; S.save(); A.render(); $('app').scrollTop = 0;
+  }
+
   /* ---------------- Actions ---------------- */
   const ACT = {
-    'ob-next': () => { S.state.onboardStep = Math.min(OB.length - 1, S.state.onboardStep + 1); S.save(); A.render(); $('app').scrollTop = 0; },
+    'ob-next': () => obGo(OB_NEXT[obStep()] || 'phases'),
+    'ob-go': (el) => obGo(el.dataset.to),
+    'ob-back': () => obGo(OB_BACK[obStep()] || 'welcome'),
+    signup: () => { const n = ($('suName') || {}).value; if (n && n.trim()) S.state.name = n.trim().split(' ')[0]; obGo('verify'); },
+    'verify-email': (el) => { el.disabled = true; el.innerHTML = '<span class="spinner"></span> ' + L('Checking…', 'Verifica in corso…'); setTimeout(() => obGo('together'), 900); },
+    'skip-link': () => { S.state.linked = false; obGo('programme'); A.toast(L('You can connect your therapist later from Me.', 'Puoi collegare il terapeuta più tardi da Io.')); },
+    toast: (el) => A.toast(el.dataset.msg),
     'ob-finish': () => {
       S.state.onboarded = true; S.state.week = Math.max(1, S.state.week); S.save();
       view = 'today'; A.render();
@@ -331,9 +355,22 @@
     home: () => A.go('today'),
     'open-device': () => { if (isMobile()) openSheet('device'); else { const p = $('devicePanel'); p.classList.remove('flash'); void p.offsetWidth; p.classList.add('flash'); } },
     'start-manual': () => S.session.start({ kind: 'full', trigger: 'manual' }),
-    skill: (el) => S.session.start({ kind: el.dataset.skill, trigger: 'manual' }),
+    skill: (el) => { S.currentSkill = el.dataset.skill; if (view !== 'skill') S.skillBack = view; A.go('skill'); },
+    'skill-back': () => A.go(S.skillBack || 'practice'),
+    'skill-start': () => S.session.start({ kind: S.currentSkill || 'breathe', trigger: 'manual' }),
+    notifications: () => A.go('notifications'),
+    mood: () => { S.moodPick = null; A.go('mood'); },
+    'mood-pick': (el) => { S.moodPick = el.dataset.mood; A.render(); },
+    'mood-save': () => {
+      if (!S.moodPick) { A.toast(L('Choose an answer, or skip for now.', 'Scegli una risposta, oppure salta per ora.')); return; }
+      S.state.moods.push({ at: new Date().toISOString(), mood: S.moodPick }); S.save();
+      A.go('today'); A.toast(L('Saved. Listening to yourself is already a step.', 'Salvato. Ascoltarsi è già un passo.'));
+    },
+    reconnect: () => { A.toast(L('Looking for SOMA…', 'Cerco SOMA…')); setTimeout(() => { S.state.online = true; S.save(); S.device.refresh(); A.render(); A.toast(L('SOMA connected', 'SOMA collegato')); }, 1200); },
+    'toggle-online': () => { S.state.online = S.state.online === false; S.save(); S.device.refresh(); document.querySelectorAll('[data-mount="ai"]').forEach(mountAI); if (!S.session.active) A.render(); A.toast(S.state.online ? L('SOMA connected', 'SOMA collegato') : L('SOMA disconnected', 'SOMA scollegato')); },
     'sess-next': () => S.session.nextAction(),
     'sess-stop': () => S.session.toRest(),
+    'sess-pause': () => S.session.togglePause(),
     'sess-finish': () => S.session.finish(),
     voice: () => onGesture('double'),
     morning: () => A.go('morning'),
@@ -361,7 +398,7 @@
       const v = ($('actCode') || {}).value || '';
       if (v.trim().length < 4) { A.toast(L('Please enter the code from your clinic.', 'Inserisci il codice ricevuto dal tuo centro.')); return; }
       el.disabled = true; el.innerHTML = '<span class="spinner"></span> ' + L('Checking…', 'Verifica in corso…');
-      setTimeout(() => { S.state.linked = true; S.save(); A.render(); }, 1100);
+      setTimeout(() => { S.state.linked = true; S.save(); A.toast(L('Connected with ', 'Collegato con ') + S.drName()); obGo('programme'); }, 1100);
     },
     'tab-me': () => A.go('me'),
     guide: () => { S.guideBack = TABS.includes(view) ? view : 'practice'; A.go('guide'); },
@@ -401,7 +438,7 @@
     'sim-wave': () => simulate('rising'),
     'sim-stress': () => simulate('stress'),
     'sim-calm': () => simulate('calm'),
-    'restart-ob': () => { if (S.session.active) return; S.state.onboarded = false; S.state.onboardStep = 0; S.state.paired = false; S.state.linked = false; S.save(); S.device.refresh(); A.render(); },
+    'restart-ob': () => { if (S.session.active) return; S.state.onboarded = false; S.state.onboardStep = 'welcome'; S.state.paired = false; S.state.linked = false; S.save(); S.device.refresh(); A.render(); },
     reset: () => {
       if (!confirm(L('Reset the prototype to its initial state?', 'Riportare il prototipo allo stato iniziale?'))) return;
       S.reset(); S.save(); view = 'today'; S.device.refresh(); refreshChrome(); A.render();
@@ -443,6 +480,7 @@
       }
       const s = e.target.closest('[data-setting]');
       if (s && s.dataset.setting === 'voice') { S.state.voice = s.checked; S.save(); }
+      if (s && s.dataset.setting === 'haptics') { S.state.haptics = s.checked; S.save(); }
       if (s && s.dataset.setting === 'reminders') { S.state.reminders = s.checked; S.save(); A.toast(s.checked ? L('Reminder on · every day at ', 'Promemoria attivo · ogni giorno alle ') + S.state.practiceTime : L('Reminder off', 'Promemoria disattivato')); }
     });
     document.addEventListener('input', (e) => { if (e.target.id === 'reportNote') S.reportDraft.note = e.target.value; });
@@ -498,7 +536,7 @@
     A.render();
     const sp = document.createElement('div');
     sp.className = 'splash';
-    sp.innerHTML = `<div class="splash-mark">${S.logoMark()}</div><span>soma</span>`;
+    sp.innerHTML = `<div class="splash-mark"><img src="assets/brand/logo-wordmark.svg" alt="soma"></div>`;
     $('phone').appendChild(sp);
     setTimeout(() => sp.classList.add('out'), 1300);
     setTimeout(() => sp.remove(), 1900);

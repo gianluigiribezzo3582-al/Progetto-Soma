@@ -34,53 +34,70 @@
     globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
     play: '<path d="M7 4l13 8-13 8z"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+    bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
     lifebuoy: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"/>'
   };
   S.icon = (n, cls = '') => `<svg class="ico ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || ''}</svg>`;
   const I = S.icon;
 
-  /* Mini pebble used in headers */
+  /* Mini pebble used in toasts and chips (follows the chosen colour) */
   S.miniPebble = (size = 28) => {
     const c = S.color();
-    return `<svg class="mini-pebble" width="${size}" height="${size}" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="${c.hex}"/><circle cx="20" cy="20" r="13" fill="#F7F3EB"/><circle cx="20" cy="20" r="4.5" fill="#C9CCCF" stroke="#F2B27A" stroke-width="1.2"/></svg>`;
+    return `<svg class="mini-pebble" width="${size}" height="${Math.round(size * 0.69)}" viewBox="0 0 350 241" aria-hidden="true"><ellipse cx="175" cy="120.5" rx="175" ry="120.5" fill="${c.hex}"/><ellipse cx="175" cy="120" rx="129" ry="89" fill="#FAF6F3"/><circle cx="175" cy="120" r="38" fill="none" stroke="#F3B880" stroke-width="10"/><circle cx="175" cy="120" r="32" fill="#8C8A86"/></svg>`;
   };
 
-  S.logoMark = (cls = '') => `<svg class="logo-mark ${cls}" viewBox="0 0 120 120" aria-hidden="true">
-    <path class="lm-arc" d="M 96 26 A 50 50 0 1 1 22 30" fill="none" stroke="var(--amber)" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="60" cy="60" r="34" fill="none" stroke="var(--olive)" stroke-width="13"/>
-    <circle cx="60" cy="60" r="27.5" fill="#FBF8F2"/>
-    <g fill="#8A8D86" class="lm-dots">${[...Array(16)].map((_, i) => { const a = i / 16 * Math.PI * 2; return `<circle cx="${(60 + Math.cos(a) * 21).toFixed(1)}" cy="${(60 + Math.sin(a) * 21).toFixed(1)}" r="1.4"/>`; }).join('')}</g>
-    <circle cx="60" cy="60" r="13" fill="none" stroke="var(--amber)" stroke-width="2"/>
-    <circle cx="60" cy="60" r="10.5" fill="#D9DAD6"/>
+  /* The SOMA logo (from the designers' SVG), drawn inline so it can animate */
+  const DOTS = [[213.18,165.95],[228.41,148.37],[234.41,127.37],[233.62,106.67],[226.62,88.67],[213.94,74.48],[196.69,64.63],[175.81,61.09],[154.24,64.24],[136.09,74.69],[124.09,88.03],[117.09,106.29],[115.09,126.63],[121.09,148.22],[135.09,165.69],[154.09,176.9],[175.09,180.9],[197.09,176.9]];
+  S.logoMark = (cls = '', rim) => `<svg class="logo-mark ${cls}" viewBox="0 0 350 241" aria-hidden="true">
+    <ellipse cx="174.95" cy="120.58" rx="174.95" ry="120.58" fill="${rim || '#A4A667'}"/>
+    <ellipse cx="174.71" cy="120.05" rx="129.32" ry="89.12" fill="#FAF6F3"/>
+    <g fill="#8C8A86" class="lm-dots">${DOTS.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.85"/>`).join('')}</g>
+    <circle class="lm-ring" cx="174.58" cy="120.26" r="38.2" fill="none" stroke="#F3B880" stroke-width="5"/>
+    <circle cx="174.56" cy="120.27" r="32.49" fill="#8C8A86"/>
   </svg>`;
+  S.wordmark = (cls = '') => `<img class="wordmark ${cls}" src="assets/brand/logo-wordmark.svg" alt="soma">`;
 
-  const toggle = (key, on, label, sub) => `
+  /* Illustrations used in the practice cards and dark sessions */
+  S.illus = (kind, dark) => {
+    const arrows = `<g class="il-arrows" stroke="#F2B27A" stroke-width="7" stroke-linecap="round" fill="none"><path class="ar-l" d="M-130 120h75M-75 100l22 20-22 20"/><path class="ar-r" d="M480 120h-75M425 100l-22 20 22 20"/></g>`;
+    const extra = {
+      breathe: arrows,
+      ground: `<g transform="translate(205 20) rotate(32)"><rect x="0" y="-80" width="44" height="150" rx="22" fill="#F4C9A4" stroke="#C98A5C" stroke-width="3"/><path d="M8 -50h28M8 -38h28" stroke="#C98A5C" stroke-width="3" stroke-linecap="round"/></g><path d="M118 92a62 62 0 0 1 30-26" stroke="#F2B27A" stroke-width="6" fill="none" stroke-linecap="round"/>`,
+      surf: `<path class="il-wave" d="M-120 210c60 0 80-70 120-70s60 70 110 70 80-70 120-70 60 70 110 70 70-70 110-70" fill="none" stroke="#F2B27A" stroke-width="6" stroke-linecap="round"/>`,
+      move: `<g stroke="#F2B27A" stroke-width="6" fill="none" stroke-linecap="round"><path d="M-40 60a160 160 0 0 0 0 120"/><path d="M390 60a160 160 0 0 1 0 120"/></g>`,
+      meal: `<g transform="translate(250 150)"><path d="M0 0h110a55 55 0 0 1-110 0z" fill="#FBEBD9" stroke="#C98A5C" stroke-width="4"/><path d="M30-30v18M55-36v24M80-30v18" stroke="#F2B27A" stroke-width="5" stroke-linecap="round"/></g>`,
+      kind: `<path d="M175 236s-38-22-38-48a20 20 0 0 1 38-10 20 20 0 0 1 38 10c0 26-38 48-38 48z" fill="#F2B27A"/>`
+    }[kind] || '';
+    return `<svg class="illus il-${kind} ${dark ? 'on-dark' : ''}" viewBox="-140 -20 630 280" aria-hidden="true"><g class="il-body">${S.logoMark('').replace(/<\/?svg[^>]*>/g, '')}</g>${extra}</svg>`;
+  };
+
+  const toggle = (key, on, label, sub, attr = 'data-consent') => `
     <label class="row toggle-row">
       <span class="row-text"><span class="row-title">${label}</span>${sub ? `<span class="row-sub">${sub}</span>` : ''}</span>
-      <input type="checkbox" class="switch" data-consent="${key}" ${on ? 'checked' : ''}>
+      <input type="checkbox" class="switch" ${attr}="${key}" ${on ? 'checked' : ''}>
     </label>`;
 
-  const head = (eyebrow, title, sub, back) => `
+  /* Screen header: back chevron on the left, then title and subtitle (as in the designs) */
+  const head = (eyebrow, title, sub, back, right) => `
     <header class="scr-head">
-      ${back ? `<button class="icon-btn back" data-action="${back}" aria-label="${L('Back', 'Indietro')}">${I('back')}</button>` : ''}
+      <div class="topbar">
+        ${back ? `<button class="back-btn" data-action="${back}" aria-label="${L('Back', 'Indietro')}">${I('back')}</button>` : '<span></span>'}
+        ${right || ''}
+      </div>
       ${eyebrow ? `<div class="eyebrow">${eyebrow}</div>` : ''}
       <h1>${title}</h1>
       ${sub ? `<p class="sub">${sub}</p>` : ''}
     </header>`;
+  S.head = head;
 
-  const withDr = () => L('With ' + st().therapist, 'Con ' + st().therapist.replace('Dr.', 'Dott.ssa'));
   S.drName = () => S.lang === 'it' ? st().therapist.replace('Dr.', 'Dott.ssa') : st().therapist;
 
-  /* ================= ONBOARDING ================= */
+  /* ================= ONBOARDING (designs 1–12) ================= */
 
-  function obDots(i) {
-    return `<div class="ob-dots" aria-hidden="true">${[0, 1, 2, 3, 4].map(k => `<i class="${k === i ? 'on' : k < i ? 'done' : ''}"></i>`).join('')}</div>`;
-  }
+  S.screens = {};
 
   /* Italian article before a percentage: l'8%, l'11%, l'80%, il 73% */
   S.artPct = n => (/^(8|11|1$)/.test(String(n)) ? 'L’' : 'Il ') + n + '%';
-
-  S.screens = {};
 
   S.langSwitch = () => `
     <div class="lang-switch" role="group" aria-label="${L('Language', 'Lingua')}">
@@ -88,175 +105,195 @@
       <button class="${S.lang === 'en' ? 'is-on' : ''}" data-action="lang" data-lang="en">EN</button>
     </div>`;
 
+  // 2 · Welcome
   S.screens.welcome = () => `
     <div class="scr scr-welcome">
       ${S.langSwitch()}
-      <div class="welcome-mark">${S.logoMark('breathing')}</div>
-      <h1 class="welcome-title">${L('Welcome to Soma', 'Ti diamo il benvenuto in Soma')}</h1>
-      <p class="welcome-sub">${L('A space to pause, reconnect and take care of yourself.', 'Uno spazio per fermarti, riconnetterti e prenderti cura di te.')}</p>
-      <div class="welcome-foot">
-        <button class="btn btn-primary btn-block" data-action="ob-next">${L('Get started', 'Inizia')}</button>
-        <p class="tiny">${L('SOMA is prescribed and set up together with your care team.', 'SOMA viene prescritto e configurato insieme al tuo team di cura.')}</p>
+      <div class="welcome-brand">${S.wordmark('breathing')}</div>
+      <h1 class="welcome-title">${L('A space to find yourself again.', 'Uno spazio per ritrovarti.')}</h1>
+      <p class="welcome-sub">${L('Your experience, one step at a time.', 'La tua esperienza, un passo alla volta.')}</p>
+      <div class="welcome-actions">
+        <button class="btn btn-primary btn-block" data-action="ob-go" data-to="login">${L('Sign in with email', 'Accedi con email')}</button>
+        <button class="btn btn-outline btn-block" data-action="ob-go" data-to="signup">${L('Create an account', 'Crea un account')}</button>
+        <p class="tiny">${L('You can set up SOMA together with your therapist.', 'Puoi configurare SOMA insieme al terapeuta.')}</p>
       </div>
     </div>`;
 
-  S.screens.code = () => {
-    const linked = st().linked;
-    return `
+  // 3 · Sign in
+  S.screens.login = () => `
     <div class="scr">
-      ${obDots(0)}
-      ${head(L('Step 1 of 5', 'Passo 1 di 5'), linked ? L('Your care team', 'Il tuo team di cura') : L('Connect to your care team', 'Collegati al tuo team di cura'), linked ? L('Check that these details are right.', 'Controlla che questi dati siano corretti.') : L('Enter the activation code you received from your clinic.', 'Inserisci il codice di attivazione ricevuto dal tuo centro.'))}
-      ${linked ? `
-        <section class="card team-card">
-          <div class="team-top">
-            <div class="avatar dr">B</div>
-            <div><b>${esc(S.drName())}</b><span>${L('Psychotherapist', 'Psicoterapeuta')} · CBT-E</span></div>
-          </div>
-          <div class="kv-mini">
-            <div><span>${L('Clinic', 'Centro')}</span><b>${esc(st().clinic)}</b></div>
-            <div><span>${L('Patient', 'Paziente')}</span><b>${esc(st().name)} R.</b></div>
-            <div><span>${L('Programme', 'Programma')}</span><b>${L('Evening waves', 'Onde serali')}</b></div>
-          </div>
-        </section>
-        <p class="tiny left">${I('shield', 'ico-inline')} ${L('Only your care team can see what you choose to share.', 'Solo il tuo team di cura può vedere ciò che scegli di condividere.')}</p>
-        <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('This is my care team', 'È il mio team di cura')}</button></div>
-      ` : `
-        <label class="field">
-          <span>${L('Activation code', 'Codice di attivazione')}</span>
-          <input id="actCode" class="code-input" value="BRI-4821" autocomplete="off" spellcheck="false" inputmode="text" aria-label="${L('Activation code', 'Codice di attivazione')}">
-        </label>
-        <p class="tiny left">${L('You can find it on the sheet your therapist gave you in session.', 'Lo trovi sul foglio che ti è stato consegnato in seduta.')}</p>
-        <div class="foot"><button class="btn btn-primary btn-block" data-action="verify-code" id="verifyBtn">${L('Continue', 'Continua')}</button></div>
-      `}
-    </div>`;
-  };
-
-  S.screens.pair = () => {
-    const paired = st().paired;
-    return `
-    <div class="scr">
-      ${obDots(1)}
-      ${head(withDr(), paired ? L('Soma is yours.', 'Soma è tuo.') : L('Pair your Soma', 'Associa il tuo Soma'), L('set up together, in session', 'configurato insieme, in seduta'))}
-      ${!paired ? `
-      <div class="pair-photo">
-        <img src="assets/img/hand-hold.jpg" alt="A hand holding SOMA in the palm">
-        <svg viewBox="0 0 200 200" aria-hidden="true">
-          <circle cx="100" cy="100" r="94" fill="none" stroke="var(--track)" stroke-width="4"/>
-          <circle cx="100" cy="100" r="94" fill="none" stroke="var(--amber)" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 100 100)" id="pairArc"/>
-        </svg>
-      </div>` : ''}
-      <div class="pair-visual ${paired ? 'is-paired' : 'is-hidden'}" id="pairVisual">
-        <svg viewBox="0 0 200 200" class="pair-svg" aria-hidden="true">
-          <circle cx="100" cy="100" r="86" fill="none" stroke="var(--track)" stroke-width="3"/>
-          <circle cx="100" cy="100" r="86" fill="none" stroke="var(--amber)" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0" transform="rotate(-90 100 100)" ${paired ? 'id="pairArc"' : ''}/>
-          <circle cx="100" cy="100" r="52" fill="none" stroke="${S.color().hex}" stroke-width="20" id="pairRim"/>
-          <circle cx="100" cy="100" r="40" fill="#FBF8F2"/>
-          ${[...Array(22)].map((_, i) => { const a = i / 22 * Math.PI * 2; return `<circle cx="${(100 + Math.cos(a) * 31).toFixed(1)}" cy="${(100 + Math.sin(a) * 31).toFixed(1)}" r="1.6" fill="#8A8D86"/>`; }).join('')}
-          <circle cx="100" cy="100" r="19" fill="none" stroke="var(--amber)" stroke-width="2.5" class="pair-ring"/>
-          <circle cx="100" cy="100" r="16" fill="#D7D9D6"/>
-        </svg>
+      ${head(null, L('Welcome back.', 'Bentornato/a.'), L('Sign in to continue your journey.', 'Accedi per continuare il tuo percorso.'), 'ob-back')}
+      <label class="field"><span>Email</span><input type="email" value="laura.r@email.it" placeholder="nome@email.it" autocomplete="off"></label>
+      <label class="field"><span>Password</span><input type="password" value="somasoma" placeholder="••••••••" autocomplete="off"></label>
+      <button class="link-btn right" data-action="toast" data-msg="${L('We’ve sent you a link to reset your password.', 'Ti abbiamo inviato un link per reimpostare la password.')}">${L('Forgot your password?', 'Password dimenticata?')}</button>
+      <div class="foot mid">
+        <button class="btn btn-primary btn-block" data-action="ob-go" data-to="together">${L('Sign in', 'Accedi')}</button>
+        <p class="tiny">${L('Don’t have an account yet?', 'Non hai ancora un account?')}<br><button class="link-btn" data-action="ob-go" data-to="signup">${L('Sign up', 'Registrati')}</button></p>
       </div>
-      ${paired ? `
-        <p class="center-text">${L('The ring lit up. Which one is yours?', "L'anello si è acceso. Qual è il tuo?")}</p>
-        <div class="swatches">${S.COLORS.map(c => `<button class="swatch ${c.id === st().color ? 'is-on' : ''}" style="--c:${c.hex}" data-action="color" data-color="${c.id}" aria-label="${L(c.en, c.it)}"><span></span><small>${L(c.en, c.it)}</small></button>`).join('')}</div>
-        <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Continue', 'Continua')}</button></div>
-      ` : `
-        <p class="center-text">${L('Hold Soma in your palm for three seconds to pair it.', 'Tieni Soma nel palmo per tre secondi per associarlo.')}</p>
-        <div class="foot">
-          <button class="btn btn-primary btn-block hold-btn" id="pairBtn" data-hold="pair"><span class="hold-fill"></span><span class="hold-label">${L('Press and hold to pair', 'Tieni premuto per associare')}</span></button>
-          <p class="tiny">${L('…or hold the SOMA object on the side.', "…oppure tieni premuto l'oggetto SOMA a lato.")}</p>
-        </div>
-      `}
     </div>`;
-  };
 
+  // 4 · Sign up
+  S.screens.signup = () => `
+    <div class="scr">
+      ${head(null, L('Let’s start with you.', 'Iniziamo da te.'), L('The information you enter stays yours.', 'Le informazioni che inserisci restano tue.'), 'ob-back')}
+      <label class="field"><span>${L('What would you like to be called?', 'Come vuoi essere chiamato/a?')}</span><input id="suName" value="${esc(st().name)}" placeholder="${L('Your name', 'Il tuo nome')}" autocomplete="off"></label>
+      <label class="field"><span>Email</span><input type="email" value="laura.r@email.it" placeholder="nome@email.it" autocomplete="off"></label>
+      <label class="field"><span>Password</span><input type="password" placeholder="${L('At least 8 characters', 'Almeno 8 caratteri')}" value="somasoma" autocomplete="off"></label>
+      <div class="note note-green">${L('SOMA accompanies your therapy, but it does not replace clinical support.', 'SOMA accompagna il percorso terapeutico, ma non sostituisce il supporto clinico.')}</div>
+      <div class="foot mid">
+        <button class="btn btn-primary btn-block" data-action="signup">${L('Continue', 'Continua')}</button>
+        <p class="tiny">${L('Already have an account?', 'Hai già un account?')}<br><button class="link-btn" data-action="ob-go" data-to="login">${L('Sign in', 'Accedi')}</button></p>
+      </div>
+    </div>`;
+
+  // 5 · Verify email
+  S.screens.verify = () => `
+    <div class="scr">
+      ${head(null, L('Check your email.', 'Controlla la tua email.'), L('We sent you a confirmation code.', 'Ti abbiamo inviato un codice di conferma.'), 'ob-back')}
+      <div class="soft-circle">${I('note')}</div>
+      <div class="code-boxes">${['4', '8', '2', '1'].map((d, i) => `<input maxlength="1" inputmode="numeric" value="${d}" aria-label="${L('Digit', 'Cifra')} ${i + 1}">`).join('')}</div>
+      <div class="foot mid">
+        <button class="btn btn-primary btn-block" data-action="verify-email" id="verifyBtn">${L('Verify code', 'Verifica codice')}</button>
+        <button class="link-btn" data-action="toast" data-msg="${L('New code sent.', 'Nuovo codice inviato.')}">${L('Send a new code', 'Invia un nuovo codice')}</button>
+      </div>
+    </div>`;
+
+  // 6 · Together, calmly
+  S.screens.together = () => `
+    <div class="scr">
+      ${head(null, L('Together, calmly.', 'Insieme, con calma.'), L('Before you start, agree on the journey with your therapist.', 'Prima di iniziare, concorda il percorso con il tuo terapeuta.'), 'ob-back')}
+      <div class="logo-center">${S.logoMark('breathing')}</div>
+      <section class="card steps-card">
+        <div><b>01 ${L('Connect the handheld', 'Collega il palmare')}</b><span>${L('Pair your device.', 'Associa il tuo dispositivo.')}</span></div>
+        <div><b>02 ${L('Set the agreements', 'Definisci gli accordi')}</b><span>${L('Choose what to share.', 'Scegli cosa condividere.')}</span></div>
+        <div><b>03 ${L('Discover the programme', 'Scopri il programma')}</b><span>${L('Learn to use SOMA.', 'Impara a utilizzare SOMA.')}</span></div>
+      </section>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Start the setup', 'Inizia la configurazione')}</button></div>
+    </div>`;
+
+  // 7 · Pairing
+  S.screens.pair = () => `
+    <div class="scr">
+      ${head(null, L('Welcome to', 'Benvenuto/a su') + ' <span class="brand-word">soma</span>.', L('guided setup during the session', 'configurazione guidata durante la sessione'), 'ob-back')}
+      <div class="pair-stage">
+        <svg viewBox="-40 -40 430 321" class="pair-arc" aria-hidden="true">
+          <ellipse cx="175" cy="120.5" rx="205" ry="150" fill="none" stroke="#EADFD3" stroke-width="3"/>
+          <ellipse cx="175" cy="120.5" rx="205" ry="150" fill="none" stroke="#F2B27A" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 175 120.5)" id="pairArc"/>
+        </svg>
+        ${S.logoMark('pair-logo')}
+      </div>
+      <p class="center-text">${L('Hold soma in the palm of your hand', 'Tieni soma nel palmo della mano')}<br><span class="muted">${L('for three seconds to pair it.', 'per tre secondi per associarlo.')}</span></p>
+      <div class="foot">
+        <button class="btn btn-muted btn-block hold-btn" id="pairBtn" data-hold="pair"><span class="hold-fill"></span><span class="hold-label">${L('Press and hold to pair', 'Tieni premuto per associare')}</span></button>
+        <p class="tiny">${L('…or hold the SOMA object on the side.', '…oppure tieni premuto l’oggetto SOMA a lato.')}</p>
+      </div>
+    </div>`;
+
+  // 8 · Paired
+  S.screens.paired = () => `
+    <div class="scr">
+      ${head(null, L('Here it is, connected!', 'Eccoci, è connesso!'), L('Your SOMA is ready to accompany you.', 'Il tuo SOMA è pronto per accompagnarti.'), 'ob-back')}
+      <div class="paired-badge"><div class="paired-circle">${S.logoMark('')}</div><span class="check-badge">${I('check')}</span></div>
+      <p class="center-text"><b>SOMA · ${L('connected', 'connesso')}</b><br><span class="muted small">${L('Battery', 'Batteria')} ${S.device.battery}%</span></p>
+      <div class="swatches">${S.COLORS.map(c => `<button class="swatch ${c.id === st().color ? 'is-on' : ''}" style="--c:${c.hex}" data-action="color" data-color="${c.id}" aria-label="${L(c.en, c.it)}"><span></span><small>${L(c.en, c.it)}</small></button>`).join('')}</div>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Continue', 'Continua')}</button></div>
+    </div>`;
+
+  // 9 · Guidance preferences
+  S.screens.prefs = () => `
+    <div class="scr">
+      ${head(null, L('How would you like to be guided?', 'Come vuoi essere guidato/a?'), L('You can change these preferences whenever you want.', 'Puoi cambiare queste preferenze quando vuoi.'), 'ob-back')}
+      <h3 class="sec-title">${L('Support mode', 'Modalità di supporto')}</h3>
+      <section class="card list">
+        ${toggle('voice', st().voice, L('Sounds and voice', 'Suoni e voce'), L('Voice instructions, when you want them.', 'Istruzioni vocali, quando desideri.'), 'data-setting')}
+        ${toggle('haptics', st().haptics, L('Haptic feedback', 'Feedback tattile'), L('Gentle vibrations of the handheld.', 'Piccole vibrazioni del palmare.'), 'data-setting')}
+      </section>
+      <h3 class="sec-title">${L('When do you prefer quiet?', 'Quando preferisci tranquillità?')}</h3>
+      <section class="card quiet-card">
+        <div><span>${L('Quiet hours', 'Ore silenziose')}</span><b>${st().settings.quietFrom} — ${st().settings.quietTo}</b></div>
+        <button class="link-btn" data-action="toast" data-msg="${L('Quiet hours are set together with your therapist.', 'Le ore silenziose si decidono insieme al terapeuta.')}">${L('Edit', 'Modifica')} ›</button>
+      </section>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Save and continue', 'Salva e continua')}</button></div>
+    </div>`;
+
+  // 02 · Agreements (what to share)
   S.screens.agree = () => {
     const c = st().consent;
     return `
     <div class="scr">
-      ${obDots(2)}
-      ${head(withDr(), L('What we agree on', 'Su cosa siamo d’accordo'), L('you can change it at any session', 'puoi cambiarlo a ogni seduta'))}
-      <div class="card list">
+      ${head(null, L('What do you want to share?', 'Cosa vuoi condividere?'), L('Decided with your therapist. You can change it at any session.', 'Lo decidi con il terapeuta. Puoi cambiarlo a ogni seduta.'), 'ob-back')}
+      <section class="card list">
         ${toggle('autoStart', c.autoStart, L('Soma may start guiding by itself', 'Soma può iniziare a guidarti da solo'), L('when it recognises your waves', 'quando riconosce le tue onde'))}
-      </div>
-      <div class="list-label">${L('Share with ' + S.drName() + ':', 'Condividi con ' + S.drName() + ':')}</div>
-      <div class="card list">
+      </section>
+      <h3 class="sec-title">${L('Share with your therapist', 'Condividi con il terapeuta')}</h3>
+      <section class="card list">
         ${toggle('times', c.times, L('Times and duration of guidance', 'Orari e durata della guida'))}
         ${toggle('exercises', c.exercises, L('Exercises completed', 'Esercizi completati'))}
         ${toggle('settle', c.settle, L('How quickly your body settled', 'Quanto in fretta il corpo si è calmato'))}
         ${toggle('notes', c.notes, L('Your notes', 'Le tue note'))}
         ${toggle('raw', c.raw, L('Raw body signals', 'Segnali corporei grezzi'))}
-      </div>
+      </section>
       <p class="tiny left">${I('shield', 'ico-inline')} ${L('Signals are processed on the device. No single signal is ever read as a binge episode.', 'I segnali sono elaborati sul dispositivo. Nessun singolo segnale viene mai letto come un episodio di abbuffata.')}</p>
-      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('We agree', 'Siamo d’accordo')}</button></div>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Save and continue', 'Salva e continua')}</button></div>
     </div>`;
   };
 
+  // 10 · Support network
+  S.screens.support = () => `
+    <div class="scr">
+      ${head(null, L('A support network.', 'Una rete di supporto.'), L('Connect with the professional who follows you.', 'Collegati con il professionista che ti segue.'), 'ob-back')}
+      <div class="soft-circle big">${I('heart')}</div>
+      <label class="field"><span>${L('Invitation code', 'Codice di invito')}</span><input id="actCode" class="code-input" value="SOMA-4821" placeholder="Es. SOMA-4821" autocomplete="off" spellcheck="false"></label>
+      <div class="foot">
+        <button class="btn btn-primary btn-block" data-action="verify-code" id="linkBtn">${L('Connect the professional', 'Collega il professionista')}</button>
+        <button class="link-btn" data-action="skip-link">${L('I’ll do it later', 'Lo farò più tardi')}</button>
+      </div>
+    </div>`;
+
+  // 11 · Programme
   S.screens.programme = () => `
     <div class="scr">
-      ${obDots(3)}
-      ${head(withDr(), L('Your programme', 'Il tuo programma'), L('“Evening waves” · prescribed today', '“Onde serali” · prescritto oggi'))}
+      ${head(null, L('A journey for you.', 'Un percorso per te.'), L('Proposed by your therapist and editable together.', 'Proposto dal terapeuta e modificabile insieme.'), 'ob-back')}
+      <section class="card card-green prog-head"><span class="eyebrow">${L('Shared programme', 'Programma condiviso')}</span><b>${L('Evening waves · Support plan', 'Onde serali · Piano di supporto')}</b></section>
       <ol class="prog-list">
-        ${S.PROGRAMME.map((p, i) => `
-          <li class="prog-item">
-            <span class="prog-dot">${I(p.icon)}</span>
-            <span class="row-text"><span class="row-title"><b>${i + 1}</b> ${L(p.en, p.it)}</span><span class="row-sub">${L(p.subEn, p.subIt)}</span></span>
-          </li>`).join('')}
+        ${S.PROGRAMME.map((p, i) => `<li class="prog-item"><span class="num">${i + 1}</span><span class="row-text"><span class="row-title">${L(p.en, p.it)}</span><span class="row-sub">${L(p.subEn, p.subIt)}</span></span></li>`).join('')}
       </ol>
-      <p class="tiny">${L('Daily practice: squeeze-and-release, ' + st().practiceTime, 'Pratica quotidiana: stringi-e-rilascia, ' + st().practiceTime)}</p>
-      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Continue', 'Continua')}</button></div>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Got it, continue', 'Ho capito, continua')}</button></div>
     </div>`;
 
-  S.screens.listening = () => `
+  // 12 · Phases
+  S.screens.phases = () => `
     <div class="scr">
-      ${obDots(4)}
-      ${head(L('Weeks 1–3', 'Settimane 1–3'), L('Listening first.', 'Prima, ascoltare.'), L('why Soma stays quiet at first', 'perché all’inizio Soma resta in silenzio'))}
-      <div class="phase-cards">
-        <div class="phase-card ph-listen"><small>${L('weeks 1–3', 'settimane 1–3')}</small><b>${L('Listening', 'Ascolto')}</b><span>${L('learns what is normal for you', 'impara cosa è normale per te')}</span></div>
-        <div class="phase-card ph-learn"><small>${L('weeks 3–6', 'settimane 3–6')}</small><b>${L('Learning', 'Apprendimento')}</b><span>${L('learns the shape of your waves', 'impara la forma delle tue onde')}</span></div>
-        <div class="phase-card ph-guide"><small>${L('week 6 →', 'settimana 6 →')}</small><b>${L('Guiding', 'Guida')}</b><span>${L('starts when it recognises one', 'parte quando ne riconosce una')}</span></div>
-      </div>
-      <p class="body-text">${L('Meanwhile, press the dial for two seconds and Soma will guide you.', 'Nel frattempo, premi il dial per due secondi e Soma ti guiderà.')}</p>
-      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-finish">${L('Start listening', 'Inizia l’ascolto')}</button></div>
+      ${head(null, L('Let’s get to know each other first.', 'Prima conosciamoci.'), L('Automatic start is not immediate.', 'L’avvio automatico non è immediato.'), 'ob-back')}
+      <section class="card timeline">
+        <div class="tl-item on"><i></i><div><small>${L('Weeks 1–3', 'Settimane 1–3')}</small><b>${L('Listening', 'Ascolto')}</b><span>${L('Use the manual support.', 'Usa il supporto manuale.')}</span></div></div>
+        <div class="tl-item"><i></i><div><small>${L('Weeks 3–6', 'Settimane 3–6')}</small><b>${L('Learning', 'Apprendimento')}</b><span>${L('Recognition to be verified.', 'Riconoscimento da verificare.')}</span></div></div>
+        <div class="tl-item"><i></i><div><small>${L('After the review', 'Dopo la valutazione')}</small><b>${L('Agreed guidance', 'Guida concordata')}</b><span>${L('Only with consent and validation.', 'Solo con consenso e validazione.')}</span></div></div>
+      </section>
+      <div class="note note-peach">${L('You can ask SOMA for help manually at any time.', 'Puoi chiedere aiuto a SOMA manualmente in qualunque momento.')}</div>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-finish">${L('Go to your home', 'Vai alla tua home')}</button></div>
     </div>`;
 
-  /* ================= TABS ================= */
-
+  /* ================= TAB BAR ================= */
+  const TAB_ICONS = {
+    today: '<path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
+    practice: '<circle cx="12" cy="7.5" r="3.5"/><circle cx="12" cy="16.5" r="3.5"/><circle cx="7.5" cy="12" r="3.5"/><circle cx="16.5" cy="12" r="3.5"/>',
+    waves: '<path d="M3 14c2.5-5 5.5-5 9 0s6.5 5 9 0"/>',
+    me: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'
+  };
   S.tabbar = (active) => `
     <nav class="tabbar" aria-label="${L('Main', 'Principale')}">
       ${[['today', L('Today', 'Oggi')], ['practice', L('Practice', 'Pratica')], ['waves', L('Waves', 'Onde')], ['me', L('Me', 'Io')]].map(([id, label]) =>
-        `<button class="tab ${active === id ? 'is-on' : ''}" data-action="tab" data-tab="${id}">${I(id)}<span>${label}</span></button>`).join('')}
+        `<button class="tab ${active === id ? 'is-on' : ''}" data-action="tab" data-tab="${id}"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TAB_ICONS[id]}</svg><span>${label}</span></button>`).join('')}
     </nav>`;
 
-  function phaseCard() {
-    const w = st().week, ph = S.phase();
-    const pct = Math.min(100, (w / 9) * 100);
-    const text = {
-      listening: L('Soma is learning what is normal for you. It stays quiet for now — press the dial for 2 s whenever you want guidance.', 'Soma sta imparando cosa è normale per te. Per ora resta in silenzio — premi il dial per 2 s quando vuoi una guida.'),
-      learning: L('Soma is learning the shape of your waves. It may let you know, but never starts by itself.', 'Soma sta imparando la forma delle tue onde. Può avvisarti, ma non parte mai da solo.'),
-      guiding: st().consent.autoStart
-        ? L('Soma can start by itself when it recognises a wave. Sensitivity ' + sens() + ' · quiet hours ' + st().settings.quietFrom + '–' + st().settings.quietTo + '.', 'Soma può partire da solo quando riconosce un’onda. Sensibilità ' + sens() + ' · ore di silenzio ' + st().settings.quietFrom + '–' + st().settings.quietTo + '.')
-        : L('Soma recognises your waves, but you chose to start guidance yourself.', 'Soma riconosce le tue onde, ma hai scelto di avviare tu la guida.')
-    }[ph];
-    const label = { listening: L('Listening', 'Ascolto'), learning: L('Learning', 'Apprendimento'), guiding: L('Guiding', 'Guida') }[ph];
-    return `
-      <section class="card phase-now ph-${ph}">
-        <div class="phase-top">
-          <span class="eyebrow">${L('Week', 'Settimana')} ${w} · ${label}</span>
-          ${ph === 'listening' && st().listenedMoments ? `<span class="pill">${st().listenedMoments} ${L('moments noted', 'momenti annotati')}</span>` : ''}
-        </div>
-        <div class="phase-track"><i style="width:${pct}%"></i><span style="left:33.3%"></span><span style="left:55.5%"></span></div>
-        <div class="phase-legend"><span>${L('Listening', 'Ascolto')}</span><span>${L('Learning', 'Apprend.')}</span><span>${L('Guiding', 'Guida')}</span></div>
-        <p>${text}</p>
-      </section>`;
-  }
   const sens = () => ({ low: L('low', 'bassa'), medium: L('medium', 'media'), high: L('high', 'alta') })[st().settings.sensitivity];
+  S.sens = sens;
 
   function insights() {
-    const ph = S.phase();
     const h = S.sessionsVisible();
     const list = [];
-    if (ph === 'listening' && st().week <= 2) {
+    if (S.phase() === 'listening' && st().week <= 2) {
       list.push(L('Not much to say yet — and that’s expected. Soma needs a few weeks of ordinary days to know your baseline.', 'Ancora poco da dire — ed è normale. Soma ha bisogno di qualche settimana di giorni normali per conoscere la tua baseline.'));
     }
     if (h.length > 4) {
@@ -267,25 +304,35 @@
       const s = S.weekStats();
       const first = s.settle.find(v => v != null), last = [...s.settle].reverse().find(v => v != null);
       if (first && last) list.push(L(`Your body settles faster: from about ${Math.round(first)} minutes in week 1 to ${Math.round(last)} now.`, `Il tuo corpo si calma prima: da circa ${Math.round(first)} minuti nella settimana 1 a ${Math.round(last)} ora.`));
-      list.push(L('“Surf” is the step after which you most often settle.', '“Cavalca” è il passo dopo il quale più spesso ti calmi.'));
     }
     return list;
   }
 
+  /* ================= TODAY (designs 13–14) ================= */
   S.screens.today = () => {
-    const now = new Date();
-    const ins = insights();
+    const online = st().online !== false;
     const pm = st().pendingMorning && st().history.find(s => s.id === st().pendingMorning);
-    const pr = st().practice[st().week - 1] ?? 0;
+    const ins = insights();
+    const g = S.device.GESTURES[(new Date().getDate()) % 6];
+    const status = online
+      ? `<button class="status-pill" data-action="open-device"><i class="dot-on"></i>SOMA ${S.device.battery}%</button>`
+      : `<button class="status-pill off" data-action="open-device"><i class="dot-off"></i>Offline</button>`;
+    const right = `<div class="top-right"><button class="bell" data-action="notifications" aria-label="${L('Messages for you', 'Messaggi per te')}">${I('bell')}<i class="badge"></i></button>${status}</div>`;
     return `
     <div class="scr scr-tab">
-      <header class="today-head">
-        <div>
-          <div class="eyebrow">${S.fmt.dayLong(now)}</div>
-          <h1>${esc(S.greeting(st().name))}</h1>
-        </div>
-        <button class="dev-chip" data-action="open-device" aria-label="SOMA">${S.miniPebble(30)}<span><b>SOMA</b><small>${st().paired ? L('Connected', 'Connesso') : L('Not paired', 'Non associato')} · ${S.device.battery}%</small></span></button>
-      </header>
+      ${head(null, L('Hi, ', 'Ciao, ') + esc(st().name) + '.', online ? L('Take the time you need.', 'Prenditi il tempo che ti serve.') : L('Today you can start calmly.', 'Oggi puoi iniziare con calma.'), null, right)}
+
+      ${online ? `
+      <section class="card card-green gesture-card">
+        <div><span class="eyebrow">${L('Today’s gesture', 'Il gesto di oggi')}</span><b>${L(g.en, g.it)}</b><span>${L(g.fbEn, g.fbIt)}</span>
+        <button class="pill pill-white" data-action="guide">${L('Discover the gesture', 'Scopri il gesto')}</button></div>
+        <div class="gesture-art">${S.logoMark('')}</div>
+      </section>` : `
+      <section class="card card-peach">
+        <b class="card-title">${L('SOMA is not connected', 'SOMA non è collegato')}</b>
+        <p>${L('Bring the handheld closer and check Bluetooth. Practice in the app is still available.', 'Avvicina il palmare e controlla il Bluetooth. La pratica dall’app resta disponibile.')}</p>
+        <button class="pill pill-white" data-action="reconnect">${L('Retry connection', 'Riprova connessione')}</button>
+      </section>`}
 
       ${pm ? `
       <button class="card morning-card" data-action="morning">
@@ -294,28 +341,26 @@
         <span class="chev">${I('chev')}</span>
       </button>` : ''}
 
-      <button class="moment-btn" data-action="start-manual">
-        <span class="moment-ring"></span>
-        <span class="moment-text"><b>${L('I need a moment', 'Ho bisogno di un momento')}</b><small>${L('or press the dial for 2 seconds', 'oppure premi il dial per 2 secondi')}</small></span>
-      </button>
-
-      ${phaseCard()}
-
+      ${online ? `
+      <div class="sec-row"><h3 class="sec-title">${L('To practise', 'Per esercitarti')}</h3><button class="link-btn" data-action="tab" data-tab="practice">${L('See all', 'Vedi tutto')} ›</button></div>
       <section class="card">
-        <div class="card-row">
-          <div><div class="eyebrow">${L('Daily practice', 'Pratica quotidiana')} · ${st().practiceTime}</div><b class="card-title">${L('Squeeze and release', 'Stringi e rilascia')}</b><span class="muted"> · 3 min</span></div>
-          <button class="btn btn-soft btn-sm" data-action="skill" data-skill="breathe">${I('play')} ${L('Start', 'Inizia')}</button>
-        </div>
-        <div class="week-dots" aria-label="${L('Last seven days', 'Ultimi sette giorni')}">
-          ${[6, 5, 4, 3, 2, 1, 0].map((back, i) => {
-            const d = new Date(now); d.setDate(now.getDate() - back);
-            const past = Math.min(6, pr);
-            const done = back === 0 ? st().practicedOn === now.toDateString() : (6 - i) <= past;
-            const lab = (S.lang === 'it' ? 'DLMMGVS' : 'SMTWTFS')[d.getDay()];
-            return `<span class="${done ? 'done' : ''} ${back === 0 ? 'today' : ''}"><i>${done ? I('check') : ''}</i>${lab}</span>`;
-          }).join('')}
-        </div>
+        <b class="card-title">${L('Breathe with SOMA', 'Respira con SOMA')}</b>
+        <p class="muted">${L('Squeeze and release · 3 min', 'Stringi e rilascia · 3 min')}</p>
+        <button class="pill pill-peach" data-action="skill" data-skill="breathe">${L('Start the practice', 'Inizia la pratica')}</button>
       </section>
+
+      <h3 class="sec-title">${L('When you feel the need', 'Quando ne senti il bisogno')}</h3>
+      <section class="card">
+        <b class="card-title">${L('A gesture, a moment.', 'Un gesto, un momento.')}</b>
+        <p>${L('You can press and hold the centre of SOMA to start the guidance.', 'Puoi tenere premuto il centro di SOMA per avviare la guida.')}</p>
+        <button class="pill pill-green" data-action="start-manual">${L('Guide me now', 'Guidami adesso')}</button>
+      </section>` : `
+      <h3 class="sec-title">${L('Also available offline', 'Disponibili anche offline')}</h3>
+      <button class="card row-card" data-action="skill" data-skill="breathe"><span class="row-text"><span class="row-title">${L('Guided breathing', 'Respirazione guidata')}</span><span class="row-sub">${L('Uses only the phone', 'Usa solo il telefono')}</span></span>${I('chev')}</button>
+      <button class="card row-card" data-action="skill" data-skill="ground"><span class="row-text"><span class="row-title">Grounding 5-4-3-2-1</span><span class="row-sub">${L('Come back to the present moment', 'Ritorna al momento presente')}</span></span>${I('chev')}</button>
+      <div class="note note-green">${L('You can always stop a practice or choose not to start it.', 'Puoi sempre interrompere una pratica o scegliere di non iniziarla.')}</div>`}
+
+      <button class="card row-card" data-action="mood"><span class="row-text"><span class="row-title">${L('How do you feel?', 'Come ti senti?')}</span><span class="row-sub">${L('One tap, no judgement', 'Un tocco, senza giudizio')}</span></span>${I('chev')}</button>
 
       ${ins.length ? `
       <section class="card insight">
@@ -325,37 +370,80 @@
 
       <section class="card card-row next-session">
         <span class="round-ico">${I('calendar')}</span>
-        <div class="grow"><div class="eyebrow">${L('Next session', 'Prossima seduta')}</div><b>${esc(S.drName())} · ${L('Tue 18:30', 'Mar 18:30')}</b></div>
-        <button class="btn btn-soft btn-sm" data-action="report">${L('Prepare', 'Prepara')}</button>
+        <div class="grow"><div class="eyebrow">${L('Next session', 'Prossima seduta')}</div><b>${esc(S.drName())} · ${L('Tue 18:30', 'mar 18:30')}</b></div>
+        <button class="pill pill-green" data-action="report">${L('Prepare', 'Prepara')}</button>
       </section>
     </div>`;
   };
 
+  /* ================= MOOD (design 15) ================= */
+  S.screens.mood = () => {
+    const opts = [['calm', L('Calm', 'Sereno/a'), 'm-green'], ['tense', L('Tense', 'In tensione'), 'm-peach'], ['tired', L('Tired', 'Stanco/a'), 'm-grey'], ['unsure', L('Not sure', 'Non so'), 'm-green2']];
+    const sel = S.moodPick;
+    return `
+    <div class="scr">
+      ${head(null, L('How do you feel?', 'Come ti senti?'), L('You can observe yourself, without judging.', 'Puoi osservarti, senza giudicarti.'), 'home')}
+      <p class="center-text mood-q">${L('Right now I feel…', 'In questo momento mi sento...')}</p>
+      <div class="moods">${opts.map(([id, label, cls]) => `<button class="mood ${cls} ${sel === id ? 'is-on' : ''}" data-action="mood-pick" data-mood="${id}"><i></i>${label}</button>`).join('')}</div>
+      <p class="tiny">${L('“Not sure” is a valid answer too.', 'Anche “non so” è una risposta valida.')}</p>
+      <div class="foot mid">
+        <button class="btn btn-primary btn-block" data-action="mood-save">${L('Save', 'Salva')}</button>
+        <button class="link-btn" data-action="home">${L('Skip for now', 'Salta per ora')}</button>
+      </div>
+    </div>`;
+  };
+
+  /* ================= NOTIFICATIONS (design 16) ================= */
+  S.screens.notifications = () => `
+    <div class="scr scr-tab">
+      ${head(null, L('A message for you.', 'Un messaggio per te.'), L('Only useful reminders, no pressure.', 'Solo promemoria utili, senza pressione.'), 'home')}
+      ${[
+        [L('Your practice is ready', 'La tua pratica è pronta'), L('Squeeze and release · 3 minutes', 'Stringi e rilascia · 3 minuti'), L('Today · 18:00', 'Oggi · 18:00'), 'skill', 'breathe'],
+        [L('Programme updated', 'Programma aggiornato'), L('A change shared with your therapist', 'Un cambiamento condiviso con il terapeuta'), L('Yesterday · 16:40', 'Ieri · 16:40'), 'tab', 'practice'],
+        [L('Time for you', 'Hai tempo per te'), L('Reflections can wait', 'Le riflessioni possono aspettare'), L('Mon · 09:00', 'Lun · 09:00'), 'mood', '']
+      ].map(([t, s, w, a, v]) => `
+        <button class="card notif" data-action="${a}" ${a === 'skill' ? `data-skill="${v}"` : a === 'tab' ? `data-tab="${v}"` : ''}>
+          <i></i><span class="row-text"><span class="row-title">${t}</span><span class="row-sub">${s}</span><span class="when">${w}</span></span>
+        </button>`).join('')}
+    </div>`;
+
+  /* ================= PRACTICE (design 17) ================= */
   S.screens.practice = () => `
     <div class="scr scr-tab">
-      ${head(L('Practice', 'Pratica'), L('Skills for calm water.', 'Abilità per acque calme.'))}
-      <button class="card guide-entry" data-action="guide">
-        <img src="assets/img/g-squeeze.jpg" alt="">
-        <span class="grow"><span class="eyebrow">${L('Your SOMA', 'Il tuo SOMA')}</span><b>${L('How to use SOMA', 'Come si usa SOMA')}</b><small>${L('10 gestures, what they do and what they are for', '10 gesti: cosa fanno e a cosa servono')}</small></span>
-        <span class="chev">${I('chev')}</span>
+      ${head(null, L('Exercises with soma.', 'Esercizi con soma.'), L('Each activity has a gesture to follow.', 'Ogni attività ha un gesto da seguire.'))}
+      <button class="card card-green guide-entry" data-action="guide">
+        <span class="grow"><span class="eyebrow">${L('Discover the handheld', 'Scopri il palmare')}</span><b>${L('10 gestures to know', '10 gesti da conoscere')}</b></span>${I('chev')}
       </button>
-      <div class="skill-grid">
-        ${S.SKILLS.map(s => `
-          <button class="skill ${s.prescribed ? 'is-rx' : ''}" data-action="skill" data-skill="${s.id}">
-            ${I(s.icon)}
-            <b>${L(s.en, s.it)}</b>
-            <small>${s.min} min${s.prescribed ? ' · ' + L('prescribed', 'prescritto') : ''}</small>
-          </button>`).join('')}
-      </div>
-      <section class="card">
-        <div class="card-row"><div><div class="eyebrow">${L('Your programme', 'Il tuo programma')}</div><b class="card-title">${L('“Evening waves”', '“Onde serali”')}</b></div>
-        <button class="btn btn-soft btn-sm" data-action="start-manual">${I('play')} ${L('Run', 'Avvia')}</button></div>
-        <ol class="prog-list compact">
-          ${S.PROGRAMME.map((p, i) => `<li class="prog-item"><span class="prog-dot">${I(p.icon)}</span><span class="row-text"><span class="row-title"><b>${i + 1}</b> ${L(p.en, p.it)}</span><span class="row-sub">${L(p.subEn, p.subIt)}</span></span></li>`).join('')}
-        </ol>
-        <p class="tiny left">${L('Edited by ' + S.drName() + ' on 14 Oct. Words and durations can change; the structure stays evidence-based.', 'Modificato da ' + S.drName() + ' il 14 ott. Parole e durate possono cambiare; la struttura resta basata su evidenze.')}</p>
+      <h3 class="sec-title">${L('Choose a practice', 'Scegli una pratica')}</h3>
+      ${S.SKILLS.map((s, i) => `
+        <button class="card row-card skill-row" data-action="skill" data-skill="${s.id}">
+          <span class="dot-circle ${i % 3 === 0 ? 'peach' : i % 3 === 1 ? 'green' : 'grey'}"></span>
+          <span class="row-text"><span class="row-title">${L(s.en, s.it)}</span><span class="row-sub">${L(s.subEn, s.subIt)}</span></span>${I('chev')}
+        </button>`).join('')}
+      <section class="card prog-mini">
+        <div class="card-row"><div><div class="eyebrow">${L('Your programme', 'Il tuo programma')}</div><b class="card-title">${L('Evening waves', 'Onde serali')}</b></div>
+        <button class="pill pill-green" data-action="start-manual">${L('Run', 'Avvia')}</button></div>
+        <p class="tiny left">${L('Edited by ' + S.drName() + ' on 14 Oct.', 'Modificato da ' + S.drName() + ' il 14 ott.')}</p>
       </section>
     </div>`;
+
+  /* ================= PRACTICE INTRO (designs 18, 20) ================= */
+  S.screens.skill = () => {
+    const s = S.SKILLS.find(x => x.id === S.currentSkill) || S.SKILLS[0];
+    return `
+    <div class="scr">
+      ${head(null, L(s.titleEn, s.titleIt), L(s.metaEn, s.metaIt), 'skill-back')}
+      <section class="card card-green illus-card">
+        <span class="eyebrow">${L(s.cardEn, s.cardIt)}</span>
+        ${S.illus(s.id)}
+        <b class="illus-cap">${L(s.capEn, s.capIt)}</b>
+      </section>
+      <h3 class="sec-title">${L(s.howTitleEn, s.howTitleIt)}</h3>
+      <p class="body-text">${L(s.howEn, s.howIt)}</p>
+      ${s.noteEn ? `<div class="note note-peach small">${L(s.noteEn, s.noteIt)}</div>` : ''}
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="skill-start">${L(s.ctaEn, s.ctaIt)}</button></div>
+    </div>`;
+  };
 
   /* ---------- Aggregates used by Waves + Report ---------- */
   S.weekStats = function (fromWeek = 1, toWeek = st().week) {
