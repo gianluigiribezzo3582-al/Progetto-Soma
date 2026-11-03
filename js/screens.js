@@ -178,7 +178,7 @@
       <div class="pair-stage">
         <svg viewBox="-40 -40 430 321" class="pair-arc" aria-hidden="true">
           <ellipse cx="175" cy="120.5" rx="205" ry="150" fill="none" stroke="#EADFD3" stroke-width="3"/>
-          <ellipse cx="175" cy="120.5" rx="205" ry="150" fill="none" stroke="#F2B27A" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 175 120.5)" id="pairArc"/>
+          <path d="M175 -29.5 A205 150 0 0 1 175 270.5 A205 150 0 0 1 175 -29.5" fill="none" stroke="#F2B27A" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" id="pairArc"/>
         </svg>
         ${S.logoMark('pair-logo')}
       </div>
