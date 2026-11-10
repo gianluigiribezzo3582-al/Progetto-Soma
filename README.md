@@ -21,23 +21,22 @@ Non serve installare niente: è una webapp statica in HTML, CSS e JavaScript, se
 
 ## Il percorso da mostrare
 
-La grafica segue le 22 schermate disegnate dal team (in `docs/design-reference/`). Logo e icona sono in `assets/brand/`.
+La grafica segue le schermate disegnate dal team: 42 per l'app e 10 per l'area terapista, salvate in `docs/design-reference/`. Logo e icona sono in `assets/brand/`.
 
-1. **Avvio:** schermata di benvenuto, poi accesso o registrazione con verifica dell'email (i dati sono già compilati: basta premere i pulsanti).
-2. **Configurazione con il terapeuta** (“Insieme, con calma”):
-   - associazione dell'oggetto: si tiene premuto per 3 s il pulsante o l'oggetto a lato;
-   - “Eccoci, è connesso!”, con la scelta del colore;
-   - come vuoi essere guidato/a (voce, vibrazioni, ore silenziose);
-   - cosa condividere con il terapeuta;
-   - rete di supporto (codice di invito);
-   - programma “Onde serali”;
-   - le tre fasi (ascolto, apprendimento, guida concordata).
-3. **Oggi:** il gesto del giorno, “Per esercitarti”, “Quando ne senti il bisogno”, “Come ti senti?” e i messaggi (campanella in alto). Dai comandi demo si può scollegare SOMA per mostrare la versione offline.
-4. **Pratica:** i 10 gesti e le 6 pratiche. Ogni pratica ha una scheda “Come funziona” prima di iniziare.
-5. **Simula un'onda** (console IA a destra): alla settimana 9 SOMA parte da solo con la sequenza Respira → Radicati (5-4-3-2-1) → Osserva l'onda → Muoviti → Riposa. Il pulsante di aiuto è sempre visibile in alto.
-6. **Il mattino dopo**, **Onde** (grafici), **Report per il terapeuta**, **Io** (team di cura, messaggi, consensi, lingua).
+1. **Avvio e configurazione con la terapista:** benvenuto, accesso o registrazione, associazione di SOMA, preferenze, accordi su cosa condividere, codice di invito, programma, fasi.
+2. **Oggi:** il gesto del giorno, le pratiche, "Come ti senti?" e i messaggi (la campanella). Dai comandi demo si può scollegare SOMA per mostrare la versione offline.
+3. **Pratica:** sei pratiche, ognuna con la scheda "Come funziona". Grounding 5-4-3-2-1 fino a "Grounding completato", Osserva l'onda, Autocompassione, Pasto consapevole.
+4. **Sequenza guidata** ("Simula un impulso che sale", alla settimana 9): Respira → Grounding → Osserva l'onda → Cammina con calma → Resta con te.
+5. **Il giorno dopo** (dai comandi demo): una risposta facoltativa, poi **Onde · Le tue esperienze** con le riflessioni, private o "da portare in seduta".
+6. **Il tuo spazio:** programma, voce e tranquillità, accordi e dati, il tuo SOMA, ritmo quotidiano, team di cura, aiuto, lingua.
+7. **Pausa del telefono:** gesto "Avvicina il telefono" sull'oggetto, oppure dai comandi demo.
+8. **Area terapista** (comandi demo → "Apri l'area terapista"):
+   - le persone seguite e il percorso di Laura;
+   - le sessioni e le note condivise (si vede la riflessione che Laura ha scelto di condividere);
+   - l'andamento delle onde;
+   - la modifica del programma in 4 passi. Dopo "Condividi con Laura", tornando all'app paziente il programma e la notifica risultano aggiornati.
 
-I **comandi per la presentazione** sono fuori dal telefono, nel pannello “Comandi demo” sotto la console IA (su telefono: pulsante rotondo → *IA e demo*). Da lì si salta alla settimana 2, 5 o 9, si apre il mattino dopo, si scollega o ricollega SOMA, si rivede l'onboarding o si azzera la demo.
+I **comandi per la presentazione** sono fuori dal telefono, nel pannello "Comandi demo" sotto la console IA (su telefono: pulsante rotondo → *IA e demo*). Da lì si passa tra app paziente e area terapista, si salta alla settimana 2, 5 o 9, si apre il giorno dopo, si attiva la pausa del telefono, si scollega SOMA, si rivede la configurazione o si azzera la demo.
 
 ## Gesti dell'oggetto (dal capitolo "Movements of the hand")
 

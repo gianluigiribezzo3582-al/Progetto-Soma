@@ -59,6 +59,7 @@
 
   /* Illustrations used in the practice cards and dark sessions */
   S.illus = (kind, dark) => {
+    if (kind === 'surf') return `<svg class="illus il-surf" viewBox="0 0 320 220" aria-hidden="true"><path d="M8 190 C60 190 80 40 130 40 S190 190 240 190 S290 140 312 128" fill="none" stroke="#A3A567" stroke-width="5" stroke-linecap="round"/></svg>`;
     const arrows = `<g class="il-arrows" stroke="#F2B27A" stroke-width="7" stroke-linecap="round" fill="none"><path class="ar-l" d="M-130 120h75M-75 100l22 20-22 20"/><path class="ar-r" d="M480 120h-75M425 100l-22 20 22 20"/></g>`;
     const extra = {
       breathe: arrows,
@@ -216,25 +217,27 @@
       <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Save and continue', 'Salva e continua')}</button></div>
     </div>`;
 
-  // 02 · Agreements (what to share)
+  // Agreements (design 36) — used in onboarding and from "Il tuo spazio"
   S.screens.agree = () => {
     const c = st().consent;
+    const inOb = !st().onboarded;
+    const card = (key, title, sub) => `
+      <label class="card toggle-card">
+        <span class="row-text"><span class="row-title strong">${title}</span><span class="row-sub">${sub}</span></span>
+        <input type="checkbox" class="switch" data-consent="${key}" ${c[key] ? 'checked' : ''}>
+      </label>`;
     return `
     <div class="scr">
-      ${head(null, L('What do you want to share?', 'Cosa vuoi condividere?'), L('Decided with your therapist. You can change it at any session.', 'Lo decidi con il terapeuta. Puoi cambiarlo a ogni seduta.'), 'ob-back')}
-      <section class="card list">
-        ${toggle('autoStart', c.autoStart, L('Soma may start guiding by itself', 'Soma può iniziare a guidarti da solo'), L('when it recognises your waves', 'quando riconosce le tue onde'))}
-      </section>
-      <h3 class="sec-title">${L('Share with your therapist', 'Condividi con il terapeuta')}</h3>
-      <section class="card list">
-        ${toggle('times', c.times, L('Times and duration of guidance', 'Orari e durata della guida'))}
-        ${toggle('exercises', c.exercises, L('Exercises completed', 'Esercizi completati'))}
-        ${toggle('settle', c.settle, L('How quickly your body settled', 'Quanto in fretta il corpo si è calmato'))}
-        ${toggle('notes', c.notes, L('Your notes', 'Le tue note'))}
-        ${toggle('raw', c.raw, L('Raw body signals', 'Segnali corporei grezzi'))}
-      </section>
-      <p class="tiny left">${I('shield', 'ico-inline')} ${L('Signals are processed on the device. No single signal is ever read as a binge episode.', 'I segnali sono elaborati sul dispositivo. Nessun singolo segnale viene mai letto come un episodio di abbuffata.')}</p>
-      <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Save and continue', 'Salva e continua')}</button></div>
+      ${head(null, L('Your agreements.', 'I tuoi accordi.'), L('With your therapist, only what you choose.', 'Con la terapista, solo ciò che scegli.'), inOb ? 'ob-back' : 'space-back')}
+      ${card('times', L('Times and duration', 'Orari e durata'), L('Share the summary of the guidance.', 'Condividi il riepilogo della guida.'))}
+      ${card('exercises', L('Exercises done', 'Esercizi svolti'), L('Share the practices you used.', 'Condividi le pratiche utilizzate.'))}
+      ${card('notes', L('Next-day reflections', 'Riflessioni del giorno dopo'), L('Share the optional answers.', 'Condividi le risposte facoltative.'))}
+      ${card('autoStart', L('Automatic guidance', 'Guida automatica'), L('Only after validation and agreement.', 'Solo dopo validazione e accordo.'))}
+      <p class="tiny left">${L('Raw body signals stay private. You can change these agreements at any time.', 'I segnali corporei grezzi restano privati. Puoi modificare questi accordi in ogni momento.')}</p>
+      <div class="foot">
+        <button class="btn btn-primary btn-block" data-action="${inOb ? 'ob-next' : 'agree-save'}">${L('Save the agreements', 'Salva gli accordi')}</button>
+        ${inOb ? '' : `<button class="link-btn" data-action="go" data-to="data">${L('Manage your data', 'Gestisci i dati')}</button>`}
+      </div>
     </div>`;
   };
 
@@ -256,7 +259,7 @@
       ${head(null, L('A journey for you.', 'Un percorso per te.'), L('Proposed by your therapist and editable together.', 'Proposto dal terapeuta e modificabile insieme.'), 'ob-back')}
       <section class="card card-green prog-head"><span class="eyebrow">${L('Shared programme', 'Programma condiviso')}</span><b>${L('Evening waves · Support plan', 'Onde serali · Piano di supporto')}</b></section>
       <ol class="prog-list">
-        ${S.PROGRAMME.map((p, i) => `<li class="prog-item"><span class="num">${i + 1}</span><span class="row-text"><span class="row-title">${L(p.en, p.it)}</span><span class="row-sub">${L(p.subEn, p.subIt)}</span></span></li>`).join('')}
+        ${S.PROGRAMME.map((p, i) => `<li class="prog-item"><span class="num">${i + 1}</span><span class="row-text"><span class="row-title">${L(p.en, p.it)}</span><span class="row-sub">${S.progSub(p)}</span></span></li>`).join('')}
       </ol>
       <div class="foot"><button class="btn btn-primary btn-block" data-action="ob-next">${L('Got it, continue', 'Ho capito, continua')}</button></div>
     </div>`;
@@ -399,10 +402,10 @@
       ${head(null, L('A message for you.', 'Un messaggio per te.'), L('Only useful reminders, no pressure.', 'Solo promemoria utili, senza pressione.'), 'home')}
       ${[
         [L('Your practice is ready', 'La tua pratica è pronta'), L('Squeeze and release · 3 minutes', 'Stringi e rilascia · 3 minuti'), L('Today · 18:00', 'Oggi · 18:00'), 'skill', 'breathe'],
-        [L('Programme updated', 'Programma aggiornato'), L('A change shared with your therapist', 'Un cambiamento condiviso con il terapeuta'), L('Yesterday · 16:40', 'Ieri · 16:40'), 'tab', 'practice'],
+        [L('Programme updated', 'Programma aggiornato'), st().progUpdated ? L('Watch the wave · now ' + st().surfMin + ' minutes', 'Osserva l’onda · ora ' + st().surfMin + ' minuti') : L('A change shared with your therapist', 'Un cambiamento condiviso con il terapeuta'), st().progUpdated ? L('Just now', 'Adesso') : L('Yesterday · 16:40', 'Ieri · 16:40'), 'go', 'myprog'],
         [L('Time for you', 'Hai tempo per te'), L('Reflections can wait', 'Le riflessioni possono aspettare'), L('Mon · 09:00', 'Lun · 09:00'), 'mood', '']
       ].map(([t, s, w, a, v]) => `
-        <button class="card notif" data-action="${a}" ${a === 'skill' ? `data-skill="${v}"` : a === 'tab' ? `data-tab="${v}"` : ''}>
+        <button class="card notif" data-action="${a}" ${a === 'skill' ? `data-skill="${v}"` : a === 'tab' ? `data-tab="${v}"` : a === 'go' ? `data-to="${v}"` : ''}>
           <i></i><span class="row-text"><span class="row-title">${t}</span><span class="row-sub">${s}</span><span class="when">${w}</span></span>
         </button>`).join('')}
     </div>`;
@@ -440,7 +443,7 @@
       </section>
       <h3 class="sec-title">${L(s.howTitleEn, s.howTitleIt)}</h3>
       <p class="body-text">${L(s.howEn, s.howIt)}</p>
-      ${s.noteEn ? `<div class="note note-peach small">${L(s.noteEn, s.noteIt)}</div>` : ''}
+      ${s.noteEn ? `<div class="note ${s.noteKind === 'green' ? 'note-green' : 'note-peach'} small">${L(s.noteEn, s.noteIt)}</div>` : ''}
       <div class="foot"><button class="btn btn-primary btn-block" data-action="skill-start">${L(s.ctaEn, s.ctaIt)}</button></div>
     </div>`;
   };
@@ -475,7 +478,7 @@
     skip: L('no answer', 'nessuna risposta')
   })[o] || L('no answer yet', 'ancora nessuna risposta');
 
-  S.screens.waves = () => {
+  S.screens.trends = () => {
     const w = st().week;
     const s = S.weekStats();
     const vis = S.sessionsVisible();
@@ -490,7 +493,7 @@
 
     return `
     <div class="scr scr-tab">
-      ${head(L('Waves', 'Onde'), L('How your waves are changing.', 'Come stanno cambiando le tue onde.'), L('Week 1 → week ' + w + '. Only what you agreed to keep.', 'Settimana 1 → settimana ' + w + '. Solo ciò che hai scelto di conservare.') + ' <span class="sim">' + L('demo data', 'dati demo') + '</span>')}
+      ${head(L('Therapist area', 'Area terapista'), L('How ' + st().name + '’s waves are changing.', 'Come cambiano le onde di ' + st().name + '.'), L('Week 1 → week ' + w + '. Only the agreed data.', 'Settimana 1 → settimana ' + w + '. Solo i dati concordati.') + ' <span class="sim">' + L('demo data', 'dati demo') + '</span>', 'go-th-patient')}
 
       <div class="tiles">
         <div class="tile"><small>${L('Guided waves', 'Onde guidate')}</small><b>${thisWeek}</b><span>${L('this week', 'questa settimana')}</span></div>
@@ -542,78 +545,174 @@
             <span class="wl-out">${S.outcomeLabel(x.outcome)}</span>
           </li>`; }).join('')}</ul>` : `<div class="empty">${L('No waves yet.', 'Ancora nessuna onda.')}</div>`}
       </section>
-
-      <button class="btn btn-primary btn-block" data-action="report">${I('note')} ${L('Prepare report for ' + S.drName(), 'Prepara il report per ' + S.drName())}</button>
     </div>`;
   };
 
-  S.screens.me = () => {
-    const c = st().consent, se = st().settings;
+  /* ================= WAVES · YOUR EXPERIENCES (design 34) ================= */
+  const lastSession = () => [...st().history].filter(x => !x.falseStart).sort((a, b) => new Date(b.at) - new Date(a.at))[0];
+  S.lastSession = lastSession;
+  const dayWord = (d) => {
+    const t = new Date(); t.setHours(0, 0, 0, 0);
+    const x = new Date(d); x.setHours(0, 0, 0, 0);
+    const diff = Math.round((t - x) / 86400000);
+    if (diff === 0) return L('Today', 'Oggi');
+    if (diff === 1) return L('Yesterday', 'Ieri');
+    return d.toLocaleDateString(S.lang === 'it' ? 'it-IT' : 'en-GB', { weekday: 'long' }).replace(/^./, c => c.toUpperCase());
+  };
+  S.dayWord = dayWord;
+
+  S.screens.waves = () => {
+    const s = lastSession();
+    const d = s ? new Date(s.at) : null;
+    const evening = d && (d.getHours() >= 19 || d.getHours() < 5);
     return `
     <div class="scr scr-tab">
-      <header class="me-head">
-        <div class="avatar">${esc(st().name[0] || 'S')}</div>
-        <div><h1>${esc(st().name)} R.</h1><p class="sub">${L('Patient', 'Paziente')} · ${esc(st().clinic)}</p></div>
-      </header>
+      ${head(null, L('Your experiences.', 'Le tue esperienze.'), L('Waves · a space to read yourself again', 'Onde · uno spazio per rileggerti'))}
+      ${s ? `
+      <button class="card card-green row-card" data-action="morning">
+        <span class="row-text"><span class="row-title">${dayWord(d)} · ${evening ? L('evening guidance', 'guida serale') : L('guidance', 'guida')}</span><span class="row-sub">${s.minutes} ${L('minutes', 'minuti')} · ${L('Look back at the moment', 'Rivedi il momento')}</span></span>${I('chev')}
+      </button>` : ''}
+      <h3 class="sec-title">${L('Your reflections', 'Le tue riflessioni')}</h3>
+      ${st().reflections.slice().reverse().map(r => `
+        <button class="card row-card refl" data-action="reflect-open" data-id="${r.id}">
+          <span class="row-text"><span class="row-title">${esc(L(r.titleEn, r.titleIt))}</span><span class="row-sub">${r.share ? L('Shared note', 'Nota condivisa') : L('Just for me', 'Solo per me')} · ${esc(L(r.dayEn, r.dayIt))}</span></span>${I('chev')}
+        </button>`).join('')}
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="reflect-new">${L('Write a reflection', 'Scrivi una riflessione')}</button></div>
+    </div>`;
+  };
 
-      <div class="list-label">${L('Care team', 'Team di cura')}</div>
-      <section class="card team-card">
-        <div class="team-top">
-          <div class="avatar dr">B</div>
-          <div class="grow"><b>${esc(S.drName())}</b><span>${L('Psychotherapist', 'Psicoterapeuta')} · CBT-E</span></div>
-        </div>
-        <div class="team-next">${I('calendar', 'ico-inline')} ${L('Next session · Tue 18:30 · in person', 'Prossima seduta · mar 18:30 · in presenza')}</div>
-        <div class="team-actions">
-          <button class="btn btn-soft btn-sm" data-action="message">${I('note')} ${L('Message', 'Messaggio')}</button>
-          <button class="btn btn-soft btn-sm" data-action="call-clinic">${I('phone')} ${L('Call clinic', 'Chiama il centro')}</button>
-        </div>
-      </section>
+  /* ================= A REFLECTION (design 33) ================= */
+  S.screens.reflect = () => {
+    const r = S.reflectEdit || { titleIt: '', titleEn: '', textIt: '', textEn: '', share: false };
+    const text = L(r.textEn, r.textIt);
+    return `
+    <div class="scr">
+      ${head(null, L('A reflection.', 'Una riflessione.'), L('You can write only what you feel like.', 'Puoi scrivere solo quello che ti va.'), 'tab-waves')}
+      <h3 class="sec-title">${L('What did you notice?', 'Che cosa hai notato?')}</h3>
+      <textarea class="note big" id="reflText" rows="8" placeholder="${L('An emotion, the context or something that helped you…', 'Un’emozione, il contesto o qualcosa che ti è stato utile…')}">${esc(text)}</textarea>
+      <label class="card toggle-card">
+        <span class="row-text"><span class="row-title">${L('To bring to the session', 'Da portare in seduta')}</span><span class="row-sub">${L('Share this note with your therapist.', 'Condividi questa nota con la terapista.')}</span></span>
+        <input type="checkbox" class="switch" id="reflShare" ${r.share ? 'checked' : ''}>
+      </label>
+      <p class="tiny left">${L('Other notes stay private.', 'Le altre note restano private.')}</p>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="reflect-save">${L('Save and go back to your experiences', 'Salva e torna alle esperienze')}</button></div>
+    </div>`;
+  };
 
-      <div class="list-label">${L('Your SOMA', 'Il tuo SOMA')}</div>
-      <section class="card">
-        <div class="card-row">${S.miniPebble(36)}<div class="grow"><b>SOMA · ${L(S.color().en, S.color().it)}</b><div class="muted small">${st().paired ? L('Connected', 'Connesso') : L('Not paired', 'Non associato')} · ${L('battery', 'batteria')} ${S.device.battery}% · firmware 1.2.0</div></div></div>
-        <div class="swatches small">${S.COLORS.map(col => `<button class="swatch ${col.id === st().color ? 'is-on' : ''}" style="--c:${col.hex}" data-action="color" data-color="${col.id}" aria-label="${L(col.en, col.it)}"><span></span></button>`).join('')}</div>
-        <label class="row toggle-row"><span class="row-text"><span class="row-title">${L('Voice guidance', 'Guida vocale')}</span><span class="row-sub">${L('double-tap the dial to switch', 'doppio tocco al centro di SOMA per attivarla o disattivarla')}</span></span><input type="checkbox" class="switch" data-setting="voice" ${st().voice ? 'checked' : ''}></label>
-        <button class="row link-row" data-action="guide"><span class="row-text"><span class="row-title">${L('How to use SOMA', 'Come si usa SOMA')}</span><span class="row-sub">${L('gestures and what they are for', 'i gesti e a cosa servono')}</span></span>${I('chev')}</button>
-        <label class="row toggle-row"><span class="row-text"><span class="row-title">${L('Daily practice reminder', 'Promemoria pratica quotidiana')}</span><span class="row-sub">${L('every day at ', 'ogni giorno alle ')}${st().practiceTime}</span></span><input type="checkbox" class="switch" data-setting="reminders" ${st().reminders ? 'checked' : ''}></label>
-      </section>
-
-      <div class="list-label">${L('What we agreed on', 'Cosa abbiamo concordato')}</div>
-      <section class="card list">
-        ${toggle('autoStart', c.autoStart, L('Soma may start guiding by itself', 'Soma può iniziare a guidarti da solo'))}
-        ${toggle('times', c.times, L('Share times and duration', 'Condividi orari e durata'))}
-        ${toggle('exercises', c.exercises, L('Share exercises completed', 'Condividi gli esercizi completati'))}
-        ${toggle('settle', c.settle, L('Share how quickly you settled', 'Condividi quanto in fretta il corpo si è calmato'))}
-        ${toggle('notes', c.notes, L('Share your notes', 'Condividi le tue note'))}
-        ${toggle('raw', c.raw, L('Share raw body signals', 'Condividi i segnali corporei grezzi'))}
-      </section>
-
-      <div class="list-label">${L('Set with ', 'Impostazioni concordate con ')}${esc(S.drName())}</div>
-      <section class="card list kv">
-        <div class="row"><span>${L('Recognition sensitivity', 'Sensibilità del riconoscimento')}</span><b>${sens()}</b></div>
-        <div class="row"><span>${L('Quiet hours', 'Ore silenziose')}</span><b>${se.quietFrom}–${se.quietTo}</b></div>
-        <div class="row"><span>${L('Max sessions per day', 'Sessioni massime al giorno')}</span><b>${se.maxSessions}</b></div>
-        <div class="row"><span>${L('If distress stays high', 'Se il disagio resta alto')}</span><b>${L('suggest calling the clinic', 'ti suggerisce di chiamare il centro')}</b></div>
-      </section>
-
+  /* ================= YOUR SPACE (design 35) ================= */
+  S.screens.me = () => {
+    const row = (to, t, s) => `<button class="card row-card" data-action="go" data-to="${to}"><span class="row-text"><span class="row-title strong">${t}</span><span class="row-sub">${s}</span></span>${I('chev')}</button>`;
+    return `
+    <div class="scr scr-tab">
+      ${head(null, L('Your space.', 'Il tuo spazio.'), L('Your preferences, always editable.', 'Le tue preferenze, sempre modificabili.'))}
+      ${row('myprog', L('Your programme', 'Il tuo programma'), L('Review the agreed journey', 'Rivedi il percorso concordato'))}
+      ${row('voice', L('Voice and quiet', 'Voce e tranquillità'), L('Sounds, vibrations and quiet hours', 'Suoni, vibrazioni e ore silenziose'))}
+      ${row('agree', L('Consent and data', 'Consensi e dati'), L('Choose what to share', 'Scegli cosa condividere'))}
+      ${row('mysoma', L('Your SOMA', 'Il tuo SOMA'), L('Connection and battery', 'Connessione e batteria'))}
+      ${row('rhythm', L('Daily reminders', 'Promemoria quotidiani'), L('The rhythm agreed in therapy', 'Il ritmo concordato in terapia'))}
+      <h3 class="sec-title">${L('Other', 'Altro')}</h3>
+      ${row('message', L('Your care team', 'Il tuo team di cura'), esc(S.drName()) + ' · ' + L('messages', 'messaggi'))}
+      ${row('guide', L('How to use SOMA', 'Come si usa SOMA'), L('The 10 gestures and what they are for', 'I 10 gesti e a cosa servono'))}
       <button class="card help-card" data-action="support">
         <span class="round-ico">${I('lifebuoy')}</span>
         <div><b>${L('Get help now', 'Chiedi aiuto ora')}</b><p>${L('If you feel unsafe or in crisis, contact your clinic or emergency services.', 'Se non ti senti al sicuro o sei in crisi, contatta il tuo centro o i servizi di emergenza.')}</p></div>
         <span class="chev">${I('chev')}</span>
       </button>
-
-      <div class="list-label">${L('Language', 'Lingua')}</div>
       <div class="seg">
         <button class="${S.lang === 'it' ? 'is-on' : ''}" data-action="lang" data-lang="it">Italiano</button>
         <button class="${S.lang === 'en' ? 'is-on' : ''}" data-action="lang" data-lang="en">English</button>
       </div>
-
       <section class="about">
-        ${S.logoMark('about-mark')}
         <p><b>SOMA</b> · ${L('version', 'versione')} 1.0.0</p>
         <p class="tiny">${L('SOMA supports your therapy, it does not replace it. It is not an emergency service.', 'SOMA sostiene la tua terapia, non la sostituisce. Non è un servizio di emergenza.')}</p>
         <p class="tiny">${L('Demo build for the thesis presentation · Politecnico di Bari. Patient, care team, history and AI analysis are simulated.', 'Versione demo per la presentazione della tesi · Politecnico di Bari. Paziente, team di cura, storico e analisi IA sono simulati.')}</p>
       </section>
+    </div>`;
+  };
+
+  /* Programme durations (Osserva l'onda can be changed by the therapist) */
+  S.progSub = (p) => {
+    if (p.id !== 'surf') return L(p.subEn, p.subIt);
+    return `${st().surfMin} ${L('minutes', 'minuti')}` + (st().progUpdated ? ' · ' + L('updated', 'aggiornato') : '');
+  };
+
+  S.screens.myprog = () => `
+    <div class="scr">
+      ${head(null, L('Your programme.', 'Il tuo programma.'), L('Proposed by your therapist and editable together.', 'Proposto dalla terapista e modificabile insieme.'), 'space-back')}
+      <section class="card card-green prog-head"><span class="eyebrow">${L('Shared programme', 'Programma condiviso')}</span><b>${L('Evening waves · Support plan', 'Onde serali · Piano di supporto')}</b></section>
+      <ol class="prog-list">
+        ${S.PROGRAMME.map((p, i) => `<li class="prog-item ${p.id === 'surf' && st().progUpdated ? 'is-new' : ''}"><span class="num">${i + 1}</span><span class="row-text"><span class="row-title">${L(p.en, p.it)}</span><span class="row-sub">${S.progSub(p)}</span></span></li>`).join('')}
+      </ol>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="start-manual">${L('Start the programme', 'Avvia il programma')}</button></div>
+    </div>`;
+
+  S.screens.voice = () => `
+    <div class="scr">
+      ${head(null, L('Voice and quiet.', 'Voce e tranquillità.'), L('You can change these preferences whenever you want.', 'Puoi cambiare queste preferenze quando vuoi.'), 'space-back')}
+      <h3 class="sec-title">${L('Support mode', 'Modalità di supporto')}</h3>
+      <section class="card list">
+        ${toggle('voice', st().voice, L('Sounds and voice', 'Suoni e voce'), L('Voice instructions, when you want them.', 'Istruzioni vocali, quando lo desideri.'), 'data-setting')}
+        ${toggle('haptics', st().haptics, L('Haptic feedback', 'Feedback tattile'), L('Gentle vibrations of the handheld.', 'Piccole vibrazioni del palmare.'), 'data-setting')}
+      </section>
+      <h3 class="sec-title">${L('When do you prefer quiet?', 'Quando preferisci tranquillità?')}</h3>
+      <section class="card quiet-card">
+        <div><span>${L('Quiet hours', 'Ore silenziose')}</span><b>${st().settings.quietFrom} — ${st().settings.quietTo}</b></div>
+        <button class="link-btn" data-action="toast" data-msg="${L('Quiet hours are set together with your therapist.', 'Le ore silenziose si decidono insieme alla terapista.')}">${L('Edit', 'Modifica')} ›</button>
+      </section>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="space-back">${L('Save and go back to your space', 'Salva e torna al tuo spazio')}</button></div>
+    </div>`;
+
+  /* ================= YOUR DATA (design 39) ================= */
+  S.screens.data = () => `
+    <div class="scr">
+      ${head(null, L('Your data.', 'I tuoi dati.'), L('You stay in control.', 'Il controllo rimane a te.'), 'go-agree')}
+      <section class="card card-green data-card"><b>${L('Body signals', 'Segnali corporei')}</b><span>${L('They stay on the device and on the phone.', 'Restano sul dispositivo e sul telefono.')}</span></section>
+      <section class="card data-card"><b>${L('Summaries for therapy', 'Riepiloghi per la terapia')}</b><span>${L('Shared only according to your agreements.', 'Condivisi solo secondo i tuoi accordi.')}</span></section>
+      <section class="card data-card"><b>${L('Personal notes', 'Note personali')}</b><span>${L('Private, except those you select.', 'Private, salvo quelle che selezioni.')}</span></section>
+      <div class="foot">
+        <button class="btn btn-outline btn-block" data-action="pause-sharing">${st().sharingPaused ? L('Resume sharing', 'Riprendi la condivisione') : L('Pause sharing', 'Sospendi la condivisione')}</button>
+        <button class="btn btn-outline btn-block" data-action="delete-data">${L('Delete data…', 'Elimina i dati…')}</button>
+        <p class="tiny left">${L('Deletion asks for confirmation. You can cancel it before going ahead.', 'L’eliminazione richiede una conferma. Puoi annullarla prima di procedere.')}</p>
+      </div>
+    </div>`;
+
+  /* ================= YOUR SOMA (design 40) ================= */
+  S.screens.mysoma = () => {
+    const on = st().online !== false;
+    return `
+    <div class="scr">
+      ${head(null, L('Your SOMA.', 'Il tuo SOMA.'), L('The paired device.', 'Il dispositivo associato.'), 'space-back')}
+      <div class="big-circle ${on ? '' : 'off'}">${on ? S.device.battery + '%' : '—'}</div>
+      <p class="center-text"><b>SOMA · ${on ? L('connected', 'connesso') : L('not connected', 'non collegato')}</b></p>
+      <section class="card data-card"><b>${L('Your shell', 'Il tuo guscio')}</b><span>${L(S.color().en, S.color().it)}</span>
+        <div class="swatches small">${S.COLORS.map(c => `<button class="swatch ${c.id === st().color ? 'is-on' : ''}" style="--c:${c.hex}" data-action="color" data-color="${c.id}" aria-label="${L(c.en, c.it)}"><span></span></button>`).join('')}</div>
+      </section>
+      <section class="card data-card"><b>${L('Bluetooth connection', 'Connessione Bluetooth')}</b><span>${on ? L('The device is paired.', 'Il dispositivo è associato.') : L('Bring SOMA closer to the phone.', 'Avvicina SOMA al telefono.')}</span></section>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="space-back">${L('Back to your space', 'Torna al tuo spazio')}</button></div>
+    </div>`;
+  };
+
+  /* ================= DAILY RHYTHM (design 41) ================= */
+  S.screens.rhythm = () => `
+    <div class="scr">
+      ${head(null, L('The daily rhythm.', 'Il ritmo quotidiano.'), L('Reminders agreed in therapy.', 'Promemoria concordati in terapia.'), 'space-back')}
+      <section class="card card-green data-card"><b>${L('Lunch · 13:00', 'Pranzo · 13:00')}</b><span>${L('An invitation to take a moment for yourself.', 'Un invito a dedicarti un momento.')}</span></section>
+      <section class="card data-card"><b>${L('Practice · ', 'Pratica · ')}${st().practiceTime}</b><span>${L('Breathe with SOMA · 3 minutes', 'Respira con SOMA · 3 minuti')}</span></section>
+      ${toggle('reminders', st().reminders, L('Receive reminders', 'Ricevi promemoria'), L('You can turn them off whenever you want.', 'Puoi disattivarli quando vuoi.'), 'data-setting').replace('row toggle-row', 'card toggle-card')}
+      <p class="tiny left">${L('The rhythm of meals is defined together with the professional, with no counting or goals in the app.', 'Il ritmo dei pasti si definisce insieme alla professionista, senza conteggi o obiettivi nell’app.')}</p>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="space-back">${L('Save and go back to your space', 'Salva e torna al tuo spazio')}</button></div>
+    </div>`;
+
+  /* ================= PHONE PAUSE (design 38) ================= */
+  S.screens.phonepause = () => {
+    const until = st().phonePauseUntil ? new Date(st().phonePauseUntil) : new Date(Date.now() + 20 * 60000);
+    return `
+    <div class="scr">
+      ${head(null, L('Phone pause.', 'Pausa del telefono.'), L('For the apps you chose.', 'Per le app che hai scelto.'), 'home')}
+      <div class="big-circle">${S.fmt.time(until)}</div>
+      <p class="center-text"><b>${L('The pause is on.', 'La pausa è attiva.')}</b><br><span class="muted small">${L('Food delivery · Social', 'Consegna cibo · Social')}</span></p>
+      <p class="center-text small-text">${L('You can put the phone down<br>and give your attention to the present moment.', 'Puoi appoggiare il telefono<br>e dedicarti al momento presente.')}</p>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="pause-stop">${L('Stop the pause', 'Interrompi la pausa')}</button></div>
     </div>`;
   };
 
@@ -664,34 +763,24 @@
     </div>`;
   };
 
-  /* ================= MORNING AFTER ================= */
+  /* ================= THE DAY AFTER (design 32) ================= */
   S.screens.morning = () => {
-    const s = st().history.find(x => x.id === st().pendingMorning) || [...st().history].pop();
+    const s = st().history.find(x => x.id === st().pendingMorning) || lastSession();
     const d = new Date(s.at);
-    const answered = s.outcome && s._answered;
+    const names = { breathe: L('Breathe', 'Respira'), ground: 'Grounding', surf: L('Watch the wave', 'Osserva l’onda'), move: L('Walk', 'Camminata'), rest: L('Rest', 'Riposo') };
+    const done = (s.done && s.done.length ? s.done : ['breathe', 'ground', 'surf', 'move']).concat('rest');
     return `
-    <div class="scr scr-morning">
-      ${head(L('This morning', 'Stamattina'), L('Good morning.', 'Buongiorno.'), null, 'home')}
-      <div class="morning-body">
-        <p class="big-text">${d.toDateString() === new Date().toDateString()
-          ? L(`Earlier today at ${S.fmt.time(d)}, Soma was with you for ${s.minutes} minutes.`, `Oggi alle ${S.fmt.time(d)}, Soma è stato con te per ${s.minutes} minuti.`)
-          : L(`Last night at ${S.fmt.time(d)}, Soma was with you for ${s.minutes} minutes.`, `Ieri sera alle ${S.fmt.time(d)}, Soma è stato con te per ${s.minutes} minuti.`)}</p>
-        ${s.settle ? `<p class="big-text soft">${L(`Your body settled after about ${Math.round(s.settle)} minutes.`, `Il tuo corpo si è calmato dopo circa ${Math.round(s.settle)} minuti.`)}</p>` : ''}
-        <p class="big-text soft">${L('You stayed with yourself.', 'Hai scelto di restare con te.')}</p>
+    <div class="scr">
+      ${head(null, L('The day after.', 'Il giorno dopo.'), L('When you feel ready.', 'Quando ti senti pronta.'), 'home')}
+      <section class="card card-green day-card"><b>${dayWord(d)} · ${L('at', 'ore')} ${S.fmt.time(d)}</b><span>${L(`A ${s.minutes}-minute guidance.`, `Una guida di ${s.minutes} minuti.`)}</span></section>
+      <h3 class="sec-title strong">${L('The path you followed', 'Il percorso seguito')}</h3>
+      <p class="body-text">${done.map(k => names[k] || k).join(' · ')}</p>
+      <h3 class="sec-title strong">${L('How would you describe that moment?', 'Come descriveresti quel momento?')}</h3>
+      <div class="answers">
+        <button class="btn btn-primary btn-block" data-action="outcome" data-out="rode">${L('It was a wave', 'Era un’onda')}</button>
+        <button class="btn btn-outline btn-block" data-action="outcome" data-out="notwave">${L('It wasn’t a wave', 'Non era un’onda')}</button>
+        <button class="link-btn" data-action="outcome" data-out="skip">${L('Skip for now', 'Salta per ora')}</button>
       </div>
-      ${answered ? `
-        <div class="card thanks">${I('heart')}<p>${L('Thank you. This helps Soma learn your waves — nothing else to do today.', 'Grazie. La tua risposta aiuta Soma a riconoscere meglio le tue onde. Per oggi non serve altro.')}</p></div>
-        <div class="foot"><button class="btn btn-primary btn-block" data-action="home">${L('Close', 'Chiudi')}</button></div>
-      ` : `
-        <div class="list-label">${L('If you want, one tap about last night:', 'Se vuoi, un tocco su ieri sera:')}</div>
-        <div class="taps">
-          <button class="tap" data-action="outcome" data-out="rode">${L('The wave passed', 'L’onda è passata')}</button>
-          <button class="tap" data-action="outcome" data-out="ate">${L('I ate, and that’s okay', 'Ho mangiato, e va bene così')}</button>
-          <button class="tap" data-action="outcome" data-out="notwave">${L('It wasn’t a wave', 'Non era un’onda')}</button>
-          <button class="tap ghost" data-action="outcome" data-out="skip">${L('I’d rather not say', 'Preferisco non dirlo')}</button>
-        </div>
-        <p class="tiny">${st().consent.notes ? L('Your notes are shared with ' + S.drName() + '.', 'Le tue note sono condivise con ' + S.drName() + '.') : L('Your notes stay private unless you choose to share them.', 'Le tue note restano private, a meno che tu non scelga di condividerle.')}</p>
-      `}
     </div>`;
   };
 
@@ -818,4 +907,171 @@
       <div class="foot"><button class="btn btn-primary btn-block" data-action="gen-report">${I('spark')} ${L('Prepare the report', 'Prepara il report')}</button></div>
     </div>`;
   };
+  /* =====================================================================
+     THERAPIST AREA (designs "terapista" 1–10)
+     ===================================================================== */
+  S.th = S.th || { pick: 'surf', step: 1, dur: null, words: null };
+  const pname = () => esc(st().name);
+  const stepPill = (n, t) => `<div class="step-pill">${n} ${L('of 4', 'di 4')} · ${t}</div>`;
+  const TH_LIB = () => [
+    ['breathe', L('Breathing', 'Respirazione'), L('Slow breathing and release', 'Respiro lento e rilascio')],
+    ['ground', 'Grounding', L('Attention to the five senses', 'Attenzione ai cinque sensi')],
+    ['surf', L('Watch the wave', 'Osserva l’onda'), L('Urge surfing · observing the urge', 'Urge surfing · osservare l’impulso')],
+    ['move', L('Walk', 'Camminata'), L('Mindful movement', 'Movimento consapevole')],
+    ['meal', L('Mindful meal', 'Pasto consapevole'), L('Listening to sensations', 'Ascolto delle sensazioni')],
+    ['kind', L('Self-compassion', 'Autocompassione'), L('Gentle language towards oneself', 'Un linguaggio gentile verso di sé')]
+  ];
+  const thSeq = (draft) => [
+    ['breathe', L('Breathe', 'Respira'), L('90 seconds', '90 secondi')],
+    ['ground', 'Grounding', L('3 minutes', '3 minuti')],
+    ['surf', L('Watch the wave', 'Osserva l’onda'), draft ? `${S.th.dur} ${L('minutes', 'minuti')} · ${L('changed', 'modificato')}` : `${st().surfMin} ${L('minutes', 'minuti')}`],
+    ['move', L('Walk', 'Camminata'), L('10 minutes', '10 minuti')],
+    ['rest', L('Rest', 'Riposo'), L('1 minute', '1 minuto')]
+  ];
+  S.thTabbar = (active) => `
+    <nav class="tabbar th-tabbar" aria-label="${L('Therapist area', 'Area terapista')}">
+      ${[['th-patients', L('Patients', 'Pazienti'), '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'],
+         ['th-programmes', L('Programmes', 'Programmi'), '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'],
+         ['th-library', L('Library', 'Libreria'), '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6"/>']].map(([id, label, path]) =>
+        `<button class="tab ${active === id ? 'is-on' : ''}" data-action="go" data-to="${id}"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg><span>${label}</span></button>`).join('')}
+    </nav>`;
+
+  // T1 · People you follow
+  S.screens['th-patients'] = () => `
+    <div class="scr scr-tab">
+      ${head(null, L('The people you follow.', 'Le persone che segui.'), L('Therapist area', 'Area terapista'))}
+      <label class="field"><input placeholder="${L('Search by name', 'Cerca per nome')}" aria-label="${L('Search by name', 'Cerca per nome')}"></label>
+      <h3 class="sec-title strong">${L('Linked journeys', 'Percorsi collegati')}</h3>
+      <button class="card row-card" data-action="go" data-to="th-patient"><span class="row-text"><span class="row-title strong">${pname()}</span><span class="row-sub">${L('Programme: Evening waves', 'Programma: Onde serali')}</span></span>${I('chev')}</button>
+      <button class="card row-card" data-action="toast" data-msg="${L('Demo: only Laura’s journey is available.', 'Demo: è disponibile solo il percorso di Laura.')}"><span class="row-text"><span class="row-title strong">Giulia</span><span class="row-sub">${L('Programme: Finding the rhythm again', 'Programma: Ritrovare il ritmo')}</span></span>${I('chev')}</button>
+      <button class="card row-card" data-action="toast" data-msg="${L('Demo: only Laura’s journey is available.', 'Demo: è disponibile solo il percorso di Laura.')}"><span class="row-text"><span class="row-title strong">Andrea</span><span class="row-sub">${L('Initial setup', 'Configurazione iniziale')}</span></span>${I('chev')}</button>
+      <p class="tiny left">${L('Select a person to open their journey.', 'Seleziona una persona per aprire il percorso.')}</p>
+    </div>`;
+
+  // T2 · Laura
+  S.screens['th-patient'] = () => `
+    <div class="scr">
+      ${head(null, pname(), L('The journey · therapist area', 'Il percorso · area terapista'), 'go-th-patients')}
+      <div class="step-pill">${L('Linked · sharing authorised', 'Collegata · condivisione autorizzata')}</div>
+      <button class="card card-green row-card big-row" data-action="go" data-to="th-program"><span class="row-text"><span class="row-title strong">${L('Evening waves', 'Onde serali')}</span><span class="row-sub">${L('The programme currently shared.', 'Il programma attualmente condiviso.')}</span></span>${I('chev')}</button>
+      <button class="btn btn-primary btn-block" data-action="th-start">${L('Prepare an update', 'Prepara un aggiornamento')}</button>
+      <h3 class="sec-title strong">${L('For the next session', 'Per la prossima seduta')}</h3>
+      <button class="card row-card big-row" data-action="go" data-to="th-sessions"><span class="row-text"><span class="row-title strong">${L('Shared sessions', 'Sessioni condivise')}</span><span class="row-sub">${L('See times, duration and practices.', 'Consulta orari, durata e pratiche.')}</span></span>${I('chev')}</button>
+      <button class="card row-card big-row" data-action="go" data-to="th-notes"><span class="row-text"><span class="row-title strong">${L('Notes for the session', 'Note per la seduta')}</span><span class="row-sub">${L('Read only what ' + st().name + ' has shared.', 'Leggi solo ciò che ' + st().name + ' ha condiviso.')}</span></span>${I('chev')}</button>
+      <button class="card row-card big-row" data-action="go" data-to="trends"><span class="row-text"><span class="row-title strong">${L('Waves over time', 'Andamento delle onde')}</span><span class="row-sub">${L('Charts from the agreed data.', 'Grafici dai dati concordati.')}</span></span>${I('chev')}</button>
+    </div>`;
+
+  // T3 · Current programme
+  S.screens['th-program'] = () => `
+    <div class="scr">
+      ${head(null, L('The current programme.', 'Il programma attuale.'), pname() + ' · ' + L('Evening waves', 'Onde serali'), 'go-th-patient')}
+      <div class="step-pill">${L('Version shared with ', 'Versione condivisa con ')}${pname()}</div>
+      <h3 class="sec-title strong">${L('Guidance sequence', 'Sequenza della guida')}</h3>
+      <ol class="prog-list">${thSeq(false).map(([id, t, s], i) => `<li class="prog-item"><span class="num">${i + 1}</span><span class="row-text"><span class="row-title strong">${t}</span><span class="row-sub">${s}</span></span></li>`).join('')}</ol>
+      <div class="foot">
+        <button class="btn btn-primary btn-block" data-action="th-start" data-pick="surf">${L('Edit Watch the wave', 'Modifica Osserva l’onda')}</button>
+        <button class="link-btn" data-action="go" data-to="th-patient">${L('Back to the journey', 'Torna al percorso')}</button>
+      </div>
+    </div>`;
+
+  // T4 · Choose the practice (1 of 4)
+  S.screens['th-pick'] = () => `
+    <div class="scr">
+      ${head(null, L('Choose the practice.', 'Scegli la pratica.'), pname() + ' · ' + L('programme change', 'modifica del programma'), 'go-th-patient')}
+      ${stepPill(1, L('Choose from the library', 'Scelta dalla libreria'))}
+      ${TH_LIB().map(([id, t, s]) => `<button class="card row-card ${S.th.pick === id ? 'card-green' : ''}" data-action="th-pick" data-pick="${id}"><span class="row-text"><span class="row-title strong">${t}</span><span class="row-sub">${s}</span></span>${I('chev')}</button>`).join('')}
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="go" data-to="th-config">${L('Set up', 'Configura')} ${TH_LIB().find(x => x[0] === S.th.pick)[1]}</button></div>
+    </div>`;
+
+  // T5 · Configure (2 of 4)
+  S.screens['th-config'] = () => `
+    <div class="scr">
+      ${head(null, L('Set up the practice.', 'Configura la pratica.'), pname() + ' · ' + TH_LIB().find(x => x[0] === S.th.pick)[1], 'go-th-pick')}
+      ${stepPill(2, L('Duration and words', 'Durata e parole'))}
+      <label class="field"><span>${L('Indicative duration', 'Durata indicativa')}</span><input id="thDur" inputmode="numeric" value="${S.th.dur} ${L('minutes', 'minuti')}"></label>
+      <label class="field"><span>${L('Words of the guidance', 'Parole della guida')}</span><textarea class="note big" id="thWords" rows="5">${esc(S.th.words)}</textarea></label>
+      <p class="tiny left">${L('Technique: urge surfing', 'Tecnica: urge surfing')}<br>${L('Reference', 'Riferimento')}: Bowen &amp; Marlatt, 2009</p>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="th-draft">${L('Add to the draft', 'Inserisci nella bozza')}</button></div>
+    </div>`;
+
+  // T6 · Draft (3 of 4)
+  S.screens['th-draft'] = () => `
+    <div class="scr">
+      ${head(null, L('The programme draft.', 'La bozza del programma.'), pname() + ' · ' + L('Evening waves', 'Onde serali'), 'go-th-config')}
+      ${stepPill(3, L('Order of the sequence', 'Ordine della sequenza'))}
+      <ol class="prog-list">${thSeq(true).map(([id, t, s], i) => `<li class="prog-item ${id === 'surf' ? 'is-new' : ''}"><span class="num">${i + 1}</span><span class="row-text"><span class="row-title strong">${t}</span><span class="row-sub">${s}</span></span><span class="drag" aria-hidden="true">☰</span></li>`).join('')}</ol>
+      <p class="tiny left">${L('Drag the rows to change the order.', 'Trascina le righe per cambiare l’ordine.')}</p>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="go" data-to="th-review">${L('Review before sharing', 'Rivedi prima di condividere')}</button></div>
+    </div>`;
+
+  // T7 · Review (4 of 4)
+  S.screens['th-review'] = () => `
+    <div class="scr">
+      ${head(null, L('Check the changes.', 'Controlla le modifiche.'), pname() + ' · ' + L('Evening waves', 'Onde serali'), 'go-th-draft')}
+      ${stepPill(4, L('Final check', 'Verifica finale'))}
+      <section class="card card-green data-card"><b>${L('Watch the wave', 'Osserva l’onda')}</b><span>${L('Duration', 'Durata')}: ${L('from', 'da')} ${st().surfMin} ${L('to', 'a')} ${S.th.dur} ${L('minutes', 'minuti')}</span></section>
+      <h3 class="sec-title strong">${L('The text ', 'Il testo che riceverà ')}${pname()}${L(' will receive', '')}</h3>
+      <section class="card quote-card">${esc(S.th.words)}</section>
+      <p class="tiny left">${L('The other steps stay the same. ' + st().name + ' will see the new programme in the app.', 'Gli altri passaggi restano invariati. ' + st().name + ' vedrà il nuovo programma nell’app.')}</p>
+      <div class="foot">
+        <button class="btn btn-primary btn-block" data-action="th-share">${L('Share with ', 'Condividi con ')}${pname()}</button>
+        <button class="link-btn" data-action="go" data-to="th-draft">${L('Back to the draft', 'Torna alla bozza')}</button>
+      </div>
+    </div>`;
+
+  // T8 · Shared
+  S.screens['th-shared'] = () => `
+    <div class="scr">
+      ${head(null, L('Programme shared.', 'Programma condiviso.'), pname() + ' · ' + L('Evening waves', 'Onde serali'), 'go-th-patient')}
+      <div class="soft-circle big check">${I('check')}</div>
+      <p class="center-text"><b>${pname()} ${L('will see the update.', 'vedrà l’aggiornamento.')}</b><br><span class="olive">${L('Watch the wave', 'Osserva l’onda')} · ${st().surfMin} ${L('minutes', 'minuti')}</span></p>
+      <p class="center-text muted small">${L('The programme is available<br>in their SOMA app.', 'Il programma è disponibile<br>nella sua app SOMA.')}</p>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="go" data-to="th-patient">${L('Back to ', 'Torna al percorso di ')}${pname()}${L('’s journey', '')}</button></div>
+    </div>`;
+
+  // T9 · Sessions
+  S.screens['th-sessions'] = () => {
+    const names = { breathe: L('breathing', 'respira'), ground: 'grounding', surf: L('watch the wave', 'osserva l’onda'), move: L('walk', 'camminata') };
+    const list = [...st().history].filter(x => !x.falseStart).sort((a, b) => new Date(b.at) - new Date(a.at)).slice(0, 4);
+    return `
+    <div class="scr">
+      ${head(null, L('Sessions of ', 'Sessioni di ') + pname(), L('Authorised data · last week', 'Dati autorizzati · ultima settimana'), 'go-th-patient')}
+      <div class="step-pill">${L('Consultation · from ', 'Consultazione · dal percorso di ')}${pname()}${L('’s journey', '')}</div>
+      ${st().consent.times ? list.map(x => { const d = new Date(x.at); const steps = (x.done && x.done.length ? x.done : ['breathe', 'ground', 'move'].slice(0, Math.max(1, Math.min(3, x.steps)))).map(k => names[k]).join(', ');
+        return `<section class="card data-card"><b>${d.toLocaleDateString(S.lang === 'it' ? 'it-IT' : 'en-GB', { weekday: 'long' }).replace(/^./, c => c.toUpperCase())} · ${S.fmt.time(d)}</b><span>${x.minutes} min · ${st().consent.exercises ? steps.replace(/^./, c => c.toUpperCase()) : L('practices not shared', 'pratiche non condivise')}</span></section>`; }).join('')
+        : `<div class="note note-peach">${L(st().name + ' is not sharing times and duration at the moment.', st().name + ' al momento non condivide orari e durata.')}</div>`}
+      <p class="tiny left">${L('These data describe how the guidance is used. Reading them is part of the conversation in session.', 'Questi dati descrivono l’uso della guida. La loro lettura resta parte del colloquio.')}</p>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="go" data-to="th-patient">${L('Back to ', 'Torna al percorso di ')}${pname()}${L('’s journey', '')}</button></div>
+    </div>`;
+  };
+
+  // T10 · Notes for the session
+  S.screens['th-notes'] = () => {
+    const shared = st().reflections.filter(r => r.share);
+    const r = shared[shared.length - 1];
+    return `
+    <div class="scr">
+      ${head(null, L('Notes for the session', 'Note per la seduta'), pname() + ' · ' + L('shared by them', 'condivise da lei'), 'go-th-patient')}
+      <div class="step-pill">${L('Consultation · from ', 'Consultazione · dal percorso di ')}${pname()}${L('’s journey', '')}</div>
+      ${r ? `
+      <section class="card card-green data-card"><b>${esc(L(r.dayEn, r.dayIt)).replace(/^./, c => c.toUpperCase())} · ${esc(L(r.titleEn, r.titleIt)).toLowerCase()}</b><span>${L('Note selected by ', 'Nota selezionata da ')}${pname()}</span></section>
+      <section class="card quote-card">“${esc(L(r.textEn, r.textIt))}”</section>` : `<div class="note note-green">${L('No shared notes yet.', 'Ancora nessuna nota condivisa.')}</div>`}
+      <p class="tiny left">${L('Private notes don’t appear here.<br>' + st().name + ' chooses what to bring to the session.', 'Le note private non compaiono qui.<br>' + st().name + ' sceglie cosa portare in seduta.')}</p>
+      <div class="foot"><button class="btn btn-primary btn-block" data-action="go" data-to="th-patient">${L('Back to ', 'Torna al percorso di ')}${pname()}${L('’s journey', '')}</button></div>
+    </div>`;
+  };
+
+  S.screens['th-programmes'] = () => `
+    <div class="scr scr-tab">
+      ${head(null, L('Programmes.', 'Programmi.'), L('Shared with the people you follow', 'Condivisi con le persone che segui'))}
+      <button class="card row-card" data-action="go" data-to="th-program"><span class="row-text"><span class="row-title strong">${L('Evening waves', 'Onde serali')}</span><span class="row-sub">${pname()} · ${L('5 steps', '5 passi')}</span></span>${I('chev')}</button>
+      <button class="card row-card" data-action="toast" data-msg="${L('Demo: only Evening waves is available.', 'Demo: è disponibile solo Onde serali.')}"><span class="row-text"><span class="row-title strong">${L('Finding the rhythm again', 'Ritrovare il ritmo')}</span><span class="row-sub">Giulia · ${L('4 steps', '4 passi')}</span></span>${I('chev')}</button>
+    </div>`;
+
+  S.screens['th-library'] = () => `
+    <div class="scr scr-tab">
+      ${head(null, L('Library.', 'Libreria.'), L('Evidence-based practices to compose a programme', 'Pratiche basate sull’evidenza per comporre un programma'))}
+      ${TH_LIB().map(([id, t, s]) => `<section class="card data-card"><b>${t}</b><span>${s}</span></section>`).join('')}
+    </div>`;
+
 })();
