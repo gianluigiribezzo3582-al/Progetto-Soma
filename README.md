@@ -1,5 +1,7 @@
 # SOMA — Holding the Wave · App prototype
 
+> **Per presentare la demo senza conoscenze tecniche, leggi [GUIDA.md](GUIDA.md).**
+
 Companion app for **SOMA**, a product-service system for people living with Binge Eating Disorder (BED).
 Master's thesis in Industrial Design, *Care Ability – Sense Making Future*, Politecnico di Bari (dArCoD), A.Y. 2025–2026.
 Students: Francesca Cognetti, Azzurra Francesca Doronzo, Alessandro Perna.
