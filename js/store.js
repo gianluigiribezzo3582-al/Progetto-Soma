@@ -2,7 +2,7 @@
  * Nothing leaves the browser: everything lives in memory + localStorage.
  */
 (function () {
-  const KEY = 'soma-prototype-v5';
+  const KEY = 'soma-prototype-v6';
 
   /* ---------- Static content ---------- */
 
@@ -39,11 +39,11 @@
       howEn: 'First explore the texture of SOMA. Then notice what you see, touch, hear, smell or taste, without forcing anything.', howIt: 'Prima esplora la texture di SOMA. Poi osserva ciò che vedi, tocchi, senti, annusi o gusti, senza forzare nulla.',
       ctaEn: 'Start grounding', ctaIt: 'Inizia il grounding' },
     { id: 'surf', icon: 'surf', en: 'Watch the wave', it: 'Osserva l’onda', subEn: 'Touch the two textures · 10 min', subIt: 'Sfiora le due texture · 10 min', min: 10, prescribed: true,
-      titleEn: 'Watch the wave.', titleIt: 'Osserva l’onda.', metaEn: 'Urge surfing · up to 10 minutes', metaIt: 'Urge surfing · fino a 10 minuti',
-      cardEn: 'It rises, then it passes', cardIt: 'Sale, poi passa', capEn: 'Touch side A, then side B.', capIt: 'Sfiora il lato A, poi il lato B.',
+      titleEn: 'Watch the wave.', titleIt: 'Osserva l’onda.', metaEn: 'Urge surfing · guided practice', metaIt: 'Urge surfing · pratica guidata',
+      cardEn: 'Stay in the present', cardIt: 'Resta nel presente', capEn: 'The urge can change.', capIt: 'L’impulso può cambiare.',
       howTitleEn: 'How it works', howTitleIt: 'Come funziona',
-      howEn: 'An urge is like a wave: it rises, reaches a peak and passes. You don’t have to do anything, just watch it while your fingers move across the textures.', howIt: 'Un impulso è come un’onda: sale, arriva al picco e passa. Non devi fare nulla, solo osservarla mentre le dita scorrono sulle texture.',
-      ctaEn: 'Start the practice', ctaIt: 'Inizia la pratica' },
+      howEn: 'Hold SOMA in your palm and slowly explore a texture. Notice the urge as it changes, without having to act on it right away.', howIt: 'Tieni SOMA nel palmo ed esplora lentamente una texture. Nota l’impulso mentre cambia, senza dover agire subito.',
+      noteEn: 'The duration is agreed in your programme.', noteIt: 'La durata è concordata nel tuo programma.', noteKind: 'green', ctaEn: 'Start the practice', ctaIt: 'Inizia la pratica' },
     { id: 'move', icon: 'move', en: 'Move', it: 'Muoviti', subEn: 'Rock SOMA', subIt: 'Fai oscillare SOMA', min: 5, prescribed: false,
       titleEn: 'Move.', titleIt: 'Muoviti.', metaEn: 'A short walk · 5–10 minutes', metaIt: 'Passeggiata breve · 5–10 minuti',
       cardEn: 'A slow rhythm', cardIt: 'Un ritmo lento', capEn: 'Rock SOMA, then walk.', capIt: 'Fai oscillare SOMA, poi cammina.',
@@ -136,6 +136,15 @@
       haptics: true,
       online: true,
       moods: [],
+      role: 'patient',
+      surfMin: 5,
+      progUpdated: false,
+      guideWords: { it: 'Nota l’impulso, senza seguirlo. Può salire, raggiungere un picco e poi cambiare intensità.', en: 'Notice the urge, without following it. It can rise, reach a peak and then change in intensity.' },
+      phonePauseUntil: null,
+      reflections: [
+        { id: 'r1', titleIt: 'Dopo una giornata intensa', titleEn: 'After an intense day', textIt: 'Oggi ho mangiato in fretta, senza accorgermene. Dopo il respiro guidato mi sono sentita più calma.', textEn: 'Today I ate in a hurry, without noticing. After the guided breathing I felt calmer.', share: false, dayIt: 'lunedì', dayEn: 'Monday' },
+        { id: 'r2', titleIt: 'Da portare in seduta', titleEn: 'To bring to the session', textIt: 'La sera mi sono sentita più in tensione. Fermarmi e fare qualche passo mi ha aiutata a prendere un momento per me.', textEn: 'In the evening I felt more tense. Stopping and taking a few steps helped me take a moment for myself.', share: true, dayIt: 'venerdì', dayEn: 'Friday' }
+      ],
       messages: [],
       onboardStep: 'welcome',
       name: 'Laura',
@@ -145,7 +154,7 @@
       paired: false,
       week: 1,
       voice: true,
-      consent: { autoStart: true, times: true, exercises: true, settle: true, notes: false, raw: false },
+      consent: { autoStart: false, times: true, exercises: true, settle: true, notes: false, raw: false },
       settings: { sensitivity: 'medium', quietFrom: '00:30', quietTo: '07:00', maxSessions: 3 },
       practiceTime: '18:00',
       history: h.sessions,
