@@ -34,13 +34,18 @@ Per una presentazione su proiettore conviene mettere il browser a **schermo inte
 
 ### Da telefono
 
-L'app occupa tutto lo schermo. In basso a destra c'è un **pulsante ovale**: si apre un pannello con due schede, **"Oggetto SOMA"** e **"IA e demo"**, dove si trovano l'oggetto e i comandi demo.
+L'app occupa tutto lo schermo. In basso a destra c'è il pulsante **"Demo"**: apre un pannello con tre schede:
+- **Demo**: i comandi per la presentazione, compreso il passaggio alla vista della terapista;
+- **Oggetto SOMA**: l'oggetto disegnato, con i suoi gesti;
+- **Console IA**: i segnali del corpo e "Simula un impulso che sale".
+
+La presentazione si può fare tutta dal telefono. Durante le sessioni guidate il pulsante "Demo" si nasconde, per non coprire i comandi.
 
 ---
 
 ## I comandi demo
 
-Si trovano nel pannello di destra (su telefono: pulsante ovale → "IA e demo"), scorrendo fino a **"Comandi demo"**. Servono solo a chi presenta: nell'app vera non esistono.
+Da computer si trovano nel pannello di destra, scorrendo fino a **"Comandi demo"**. Da telefono: pulsante **"Demo"** in basso a destra. Servono solo a chi presenta: nell'app vera non esistono.
 
 | Comando | Cosa fa |
 |---|---|
@@ -51,6 +56,7 @@ Si trovano nel pannello di destra (su telefono: pulsante ovale → "IA e demo"),
 | **Scollega SOMA / Ricollega SOMA** | Mostra come appare l'app quando l'oggetto non è collegato. |
 | **Rivedi la configurazione iniziale** | Torna alle prime schermate (benvenuto, associazione, accordi). |
 | **Azzera la demo** | Riporta tutto allo stato iniziale. Da usare prima di ogni presentazione. |
+| **Modalità test** | Nasconde il pulsante "Demo" e la frequenza cardiaca simulata: serve per il test con la persona (vedi sotto). |
 
 Più in alto, sempre nel pannello di destra:
 
@@ -86,7 +92,7 @@ I campi da compilare (email, password, codici) sono già riempiti: basta premere
 - La campanella in alto mostra i promemoria, sempre senza pressione.
 
 ### 3. Il momento difficile (3 minuti)
-- Nei comandi demo premi **"Sett. 9 · Guida"**, poi **"Simula un impulso che sale"**.
+- Nei comandi demo premi **"Sett. 9 · Guida"**, poi **"Simula un impulso che sale"** (da telefono è nella scheda "Console IA").
 - Fai notare al pubblico i segnali che salgono nel pannello di destra. Dopo qualche secondo SOMA vibra, si accende l'anello ambra e sul telefono parte la guida.
 - La sequenza: **Respira → Grounding 5-4-3-2-1 → Osserva l'onda → Cammina con calma → Resta con te**. Con i pulsanti in basso si va avanti; non serve aspettare.
 - Da dire: *non c'è nessuna domanda, nessun giudizio: SOMA accompagna e basta.*
@@ -113,6 +119,14 @@ I campi da compilare (email, password, codici) sono già riempiti: basta premere
 - **Gesto "Avvicina il telefono"** sull'oggetto a sinistra: attiva la pausa delle app.
 
 ---
+
+## Per il test con la persona (protocollo, fase 1)
+
+Il protocollo chiede che la persona usi l'app senza elementi di presentazione.
+
+- **Prima del test** apri l'app con questo indirizzo: https://gianluigiribezzo3582-al.github.io/Progetto-Soma/?test=1 e aggiungila alla schermata Home da lì. Il pulsante "Demo" e la frequenza cardiaca simulata non compaiono.
+- **Dopo il test**, per riavere il pulsante "Demo": https://gianluigiribezzo3582-al.github.io/Progetto-Soma/?test=0
+- **"Respira"** dura davvero 3 minuti, con 4 secondi per stringere e 6 per rilasciare, come chiede il protocollo. Nelle presentazioni si può andare avanti con **"Salta"**.
 
 ## Se qualcosa non va
 

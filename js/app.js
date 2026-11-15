@@ -43,6 +43,7 @@
 
   A.setDark = function (on) {
     $('phone').classList.toggle('is-dark', on);
+    document.body.classList.toggle('in-session', on);
     statusbar();
   };
 
@@ -158,6 +159,25 @@
   ];
   const STAGES = [['SIGNALS', 'SEGNALI'], ['FEATURES', 'FEATURE'], ['BASELINE', 'BASELINE'], ['SIGNATURE', 'FIRMA'], ['INDEX', 'INDICE'], ['START', 'AVVIO']];
 
+  function demoBox() {
+    return `
+      <div class="demo-box">
+        <div class="eyebrow">${L('Demo controls', 'Comandi demo')}</div>
+        <div class="demo-row"><button data-action="role" class="is-on role-btn">${S.state.role === 'therapist' ? L('← Back to the patient app', '← Torna all’app paziente') : L('Open the therapist area →', 'Apri l’area terapista →')}</button></div>
+        <div class="demo-row"><span>${L('Jump to', 'Vai a')}</span>
+          ${[[2, L('Week 2 · Listening', 'Sett. 2 · Ascolto')], [5, L('Week 5 · Learning', 'Sett. 5 · Apprendimento')], [9, L('Week 9 · Guiding', 'Sett. 9 · Guida')]].map(([w, l]) => `<button data-action="week" data-week="${w}" class="${S.state.week === w ? 'is-on' : ''}">${l}</button>`).join('')}
+        </div>
+        <div class="demo-row"><button data-action="morning-demo">${L('The day after', 'Il giorno dopo')}</button><button data-action="pause-start">${L('Phone pause', 'Pausa telefono')}</button><button data-action="toggle-online">${S.state.online === false ? L('Reconnect SOMA', 'Ricollega SOMA') : L('Disconnect SOMA', 'Scollega SOMA')}</button><button data-action="restart-ob">${L('Replay onboarding', 'Rivedi la configurazione iniziale')}</button><button data-action="reset">${L('Reset demo', 'Azzera la demo')}</button></div>
+        <div class="demo-row"><button data-action="test-mode">${L('Test mode (hide the Demo button)', 'Modalità test (nasconde il pulsante Demo)')}</button></div>
+      </div>`;
+  }
+
+  /* Re-draw every copy of the AI panel and of the demo controls */
+  function remountPanels() {
+    document.querySelectorAll('[data-mount="ai"]').forEach(mountAI);
+    document.querySelectorAll('[data-mount="demo"]').forEach(el => { el.innerHTML = '<div class="demo-sheet">' + demoBox() + '</div>'; });
+  }
+
   function aiPanel() {
     return `
     <div class="ai">
@@ -184,14 +204,7 @@
         <button data-action="sim-calm">${L('Calm', 'Calma')}</button>
       </div>
       <div class="ai-log" data-k="log"></div>
-      <div class="demo-box">
-        <div class="eyebrow">${L('Demo controls', 'Comandi demo')}</div>
-        <div class="demo-row"><button data-action="role" class="is-on role-btn">${S.state.role === 'therapist' ? L('← Back to the patient app', '← Torna all’app paziente') : L('Open the therapist area →', 'Apri l’area terapista →')}</button></div>
-        <div class="demo-row"><span>${L('Jump to', 'Vai a')}</span>
-          ${[[2, L('Week 2 · Listening', 'Sett. 2 · Ascolto')], [5, L('Week 5 · Learning', 'Sett. 5 · Apprendimento')], [9, L('Week 9 · Guiding', 'Sett. 9 · Guida')]].map(([w, l]) => `<button data-action="week" data-week="${w}" class="${S.state.week === w ? 'is-on' : ''}">${l}</button>`).join('')}
-        </div>
-        <div class="demo-row"><button data-action="morning-demo">${L('The day after', 'Il giorno dopo')}</button><button data-action="pause-start">${L('Phone pause', 'Pausa telefono')}</button><button data-action="toggle-online">${S.state.online === false ? L('Reconnect SOMA', 'Ricollega SOMA') : L('Disconnect SOMA', 'Scollega SOMA')}</button><button data-action="restart-ob">${L('Replay onboarding', 'Rivedi la configurazione iniziale')}</button><button data-action="reset">${L('Reset demo', 'Azzera la demo')}</button></div>
-      </div>
+      ${demoBox()}
       <p class="side-note">${L('Values are synthetic. The model compares your signals with your own baseline: no single signal is ever read as a binge episode.', 'I valori sono sintetici. Il modello confronta i segnali con i tuoi valori abituali: nessun singolo segnale viene mai interpretato come un episodio di abbuffata.')}</p>
     </div>`;
   }
@@ -229,15 +242,17 @@
   }
 
   /* ---------------- Mobile sheet ---------------- */
-  let sheetTab = 'device';
+  let sheetTab = 'demo';
   function sheetRender() {
     document.querySelectorAll('[data-sheet-tab]').forEach(b => {
       b.classList.toggle('is-on', b.dataset.sheetTab === sheetTab);
-      b.textContent = b.dataset.sheetTab === 'device' ? L('SOMA object', 'Oggetto SOMA') : L('AI & demo', 'IA e demo');
+      b.textContent = { demo: 'Demo', device: L('SOMA object', 'Oggetto SOMA'), ai: L('AI console', 'Console IA') }[b.dataset.sheetTab];
     });
     const c = $('sheetContent');
     c.removeAttribute('data-mount');
-    if (sheetTab === 'device') S.device.mount(c); else mountAI(c);
+    if (sheetTab === 'device') S.device.mount(c);
+    else if (sheetTab === 'ai') mountAI(c);
+    else { c.setAttribute('data-mount', 'demo'); c.innerHTML = '<div class="demo-sheet">' + demoBox() + '</div>'; }
     c.scrollTop = 0;
   }
   function openSheet(tab) {
@@ -392,7 +407,7 @@
       A.go('today'); A.toast(L('Saved. Listening to yourself is already a step.', 'Salvato. Ascoltarsi è già un passo.'));
     },
     reconnect: () => { A.toast(L('Looking for SOMA…', 'Cerco SOMA…')); setTimeout(() => { S.state.online = true; S.save(); S.device.refresh(); A.render(); A.toast(L('SOMA connected', 'SOMA collegato')); }, 1200); },
-    'toggle-online': () => { S.state.online = S.state.online === false; S.save(); S.device.refresh(); document.querySelectorAll('[data-mount="ai"]').forEach(mountAI); if (!S.session.active) A.render(); A.toast(S.state.online ? L('SOMA connected', 'SOMA collegato') : L('SOMA disconnected', 'SOMA scollegato')); },
+    'toggle-online': () => { S.state.online = S.state.online === false; S.save(); S.device.refresh(); remountPanels(); if (!S.session.active) A.render(); A.toast(S.state.online ? L('SOMA connected', 'SOMA collegato') : L('SOMA disconnected', 'SOMA scollegato')); },
     'sess-next': () => S.session.nextAction(),
     'sess-stop': () => S.session.toRest(),
     'sess-pause': () => S.session.togglePause(),
@@ -461,7 +476,7 @@
       S.save(); A.go('waves');
       A.toast(share ? L('Saved · it will be in your notes for the session.', 'Salvata · sarà tra le note per la seduta.') : L('Saved · it stays private.', 'Salvata · resta privata.'));
     },
-    'pause-start': () => { S.state.phonePauseUntil = new Date(Date.now() + 20 * 60000).toISOString(); S.save(); A.go('phonepause'); },
+    'pause-start': () => { if (isMobile()) closeSheet(); S.state.phonePauseUntil = new Date(Date.now() + 20 * 60000).toISOString(); S.save(); A.go('phonepause'); },
     'pause-stop': () => { S.state.phonePauseUntil = null; S.save(); A.go('today'); A.toast(L('Pause stopped. Apps are available again.', 'Pausa interrotta. Le app sono di nuovo disponibili.')); },
     /* therapist */
     'th-start': (el) => { S.th.pick = el.dataset.pick || 'surf'; S.th.dur = S.state.surfMin === 5 ? 10 : S.state.surfMin; S.th.words = L(S.state.guideWords.en, S.state.guideWords.it); A.go(el.dataset.pick ? 'th-config' : 'th-pick'); },
@@ -480,11 +495,16 @@
         S.save(); A.go('th-shared');
       }, 900);
     },
+    'test-mode': () => {
+      setTestMode(true); closeSheet();
+      A.toast(L('Test mode on. To show the Demo button again, open the link with ?test=0 at the end.', 'Modalità test attiva. Per far ricomparire il pulsante Demo, apri il link aggiungendo ?test=0 in fondo.'));
+    },
     role: () => {
       if (S.session.active) return;
+      if (isMobile()) closeSheet();
       S.state.role = S.state.role === 'therapist' ? 'patient' : 'therapist'; S.save();
       view = S.state.role === 'therapist' ? 'th-patients' : (S.state.progUpdated ? 'notifications' : 'today');
-      document.querySelectorAll('[data-mount="ai"]').forEach(mountAI);
+      remountPanels();
       A.go(view);
       A.toast(S.state.role === 'therapist' ? L('Therapist view · ', 'Vista terapista · ') + S.drName() : L('Patient view · ', 'Vista paziente · ') + S.state.name);
     },
@@ -493,6 +513,7 @@
     'try-gesture': (el) => {
       const g = S.device.GESTURES.find(x => x.id === el.dataset.g);
       S.device.preview(g.id);
+      if (S.state.testMode) { A.toast(`<b>${L(g.en, g.it)}</b> · ${L(g.fbEn, g.fbIt)}`); return; }
       A.toast(`<b>${L(g.en, g.it)}</b> · ${L(g.fbEn, g.fbIt)} ` + (isMobile() ? L('Open the SOMA object from the round button to try it.', 'Apri l’oggetto SOMA dal pulsante rotondo per provarlo.') : L('Watch the object on the left.', 'Guarda l’oggetto a sinistra.')));
     },
     message: () => A.go('message'),
@@ -512,7 +533,7 @@
       <button class="btn btn-danger btn-block" data-action="call-112">${L('Emergency services · 112', 'Servizi di emergenza · 112')}</button>
       <button class="btn btn-soft btn-block" data-action="modal-close">${S.session.active ? L('Continue with Soma', 'Continua con Soma') : L('Close', 'Chiudi')}</button>`),
     'modal-close': (el) => { A.closeModal(); if (el && el.dataset.toast) A.toast(el.dataset.toast); },
-    'morning-demo': () => {
+    'morning-demo': () => { if (isMobile()) closeSheet();
       if (!S.state.onboarded) return;
       if (!S.state.pendingMorning) {
         const last = [...S.state.history].reverse().find(x => !x.falseStart);
@@ -521,11 +542,11 @@
       if (S.session.active) return;
       S.save(); A.go('morning');
     },
-    week: (el) => { S.state.week = +el.dataset.week; S.state.consent.autoStart = S.state.week >= 6; S.save(); document.querySelectorAll('[data-mount="ai"]').forEach(mountAI); if (!S.session.active) A.render(); A.toast(L('Now at week ', 'Ora alla settimana ') + S.state.week); },
+    week: (el) => { S.state.week = +el.dataset.week; S.state.consent.autoStart = S.state.week >= 6; S.save(); remountPanels(); if (!S.session.active) A.render(); A.toast(L('Now at week ', 'Ora alla settimana ') + S.state.week); },
     'sim-wave': () => simulate('rising'),
     'sim-stress': () => simulate('stress'),
     'sim-calm': () => simulate('calm'),
-    'restart-ob': () => { if (S.session.active) return; S.state.onboarded = false; S.state.onboardStep = 'welcome'; S.state.paired = false; S.state.linked = false; S.save(); S.device.refresh(); A.render(); },
+    'restart-ob': () => { if (isMobile()) closeSheet(); if (S.session.active) return; S.state.onboarded = false; S.state.onboardStep = 'welcome'; S.state.paired = false; S.state.linked = false; S.save(); S.device.refresh(); A.render(); },
     reset: () => {
       if (!confirm(L('Reset the prototype to its initial state?', 'Riportare il prototipo allo stato iniziale?'))) return;
       S.reset(); S.save(); view = 'today'; S.device.refresh(); refreshChrome(); A.render();
@@ -541,9 +562,9 @@
   function refreshChrome() {
     document.documentElement.lang = S.lang;
     S.device.refresh();
-    document.querySelectorAll('[data-mount="ai"]').forEach(mountAI);
+    remountPanels();
     if ($('sheet').classList.contains('open')) sheetRender();
-    $('fab').setAttribute('aria-label', L('Open SOMA object and AI console', 'Apri oggetto SOMA e console IA'));
+    $('fab').setAttribute('aria-label', L('Demo controls', 'Comandi demo'));
     $('credits').textContent = L('SOMA · Master’s thesis in Industrial Design · Politecnico di Bari · F. Cognetti, A. F. Doronzo, A. Perna', 'SOMA · Tesi di Laurea Magistrale in Industrial Design · Politecnico di Bari · F. Cognetti, A. F. Doronzo, A. Perna');
   }
 
@@ -611,8 +632,17 @@
     setInterval(statusbar, 15000);
   }
 
+  /* Test mode (protocol, phase 1): no Demo button, no simulated heart rate */
+  function setTestMode(on) {
+    S.state.testMode = !!on; S.save();
+    document.body.classList.toggle('test-mode', !!on);
+  }
+
   /* ---------------- Boot ---------------- */
   function boot() {
+    const q = new URLSearchParams(location.search).get('test');
+    if (q !== null) S.state.testMode = q !== '0';
+    document.body.classList.toggle('test-mode', !!S.state.testMode);
     document.documentElement.lang = S.lang;
     S.device.mount($('devicePanel'));
     mountAI($('aiPanel'));
