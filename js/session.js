@@ -282,11 +282,12 @@
 
   SETUP.breathe = (a) => {
     S.device.setLight('breathe');
-    const total = 18; let cycle = 0, phase = 0, sec = 4, elapsed = 0; // 18 × (4 s + 6 s) = 3 min (protocol, Appendix H.1)
+    // 4 s squeeze + 6 s release (protocol, Appendix H.1): 18 cycles = 3 min as a practice, 9 cycles = 90 s inside the programme
+    const total = a.kind === 'full' ? 9 : 18; let cycle = 0, phase = 0, sec = 4, elapsed = 0;
     const el = document.getElementById('breath');
     const word = document.getElementById('breathWord'), sub = document.getElementById('breathSub'), time = document.getElementById('breathTime');
     const shownSec = () => elapsed;
-    const shown = () => S.fmt.mmss(shownSec()).padStart(5, '0') + ' / 03:00';
+    const shown = () => S.fmt.mmss(shownSec()).padStart(5, '0') + ' / ' + S.fmt.mmss(total * 10).padStart(5, '0');
     const setPhase = () => {
       el.classList.toggle('swell', phase === 0);
       el.classList.toggle('soften', phase === 1);
@@ -329,15 +330,19 @@
     const path = document.getElementById('wavePath'), dot = document.getElementById('waveDot');
     const tm = document.getElementById('waveTimer');
     const len = path.getTotalLength();
-    let t = 0, secs = 0;
+    let t = 0, secs = 0, done = false;
+    const target = S.state.surfMin * 60; // duration agreed in the programme
+    const show = () => { tm.textContent = S.fmt.mmss(secs).padStart(5, '0') + ' / ' + S.fmt.mmss(target).padStart(5, '0'); };
+    show();
     a.surfBoost = 0;
     every(() => {
-      if (a.paused) return;
+      if (a.paused || done) return;
       t = (t + 1 / 400 + a.surfBoost) % 1; a.surfBoost = 0;
-      secs += 0.1 * 6;
+      secs = Math.min(target, secs + 0.1);
       const p = path.getPointAtLength(len * t);
       dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
-      tm.textContent = S.fmt.mmss(secs).padStart(5, '0');
+      show();
+      if (secs >= target) { done = true; later(() => SS.next(), 1500); }
     }, 100);
   };
 

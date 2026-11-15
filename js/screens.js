@@ -421,7 +421,7 @@
       ${S.SKILLS.map((s, i) => `
         <button class="card row-card skill-row" data-action="skill" data-skill="${s.id}">
           <span class="dot-circle ${i % 3 === 0 ? 'peach' : i % 3 === 1 ? 'green' : 'grey'}"></span>
-          <span class="row-text"><span class="row-title">${L(s.en, s.it)}</span><span class="row-sub">${L(s.subEn, s.subIt)}</span></span>${I('chev')}
+          <span class="row-text"><span class="row-title">${L(s.en, s.it)}</span><span class="row-sub">${s.id === 'surf' ? L('Touch the two textures · ', 'Sfiora le due texture · ') + st().surfMin + ' min' : L(s.subEn, s.subIt)}</span></span>${I('chev')}
         </button>`).join('')}
       <section class="card prog-mini">
         <div class="card-row"><div><div class="eyebrow">${L('Your programme', 'Il tuo programma')}</div><b class="card-title">${L('Evening waves', 'Onde serali')}</b></div>
