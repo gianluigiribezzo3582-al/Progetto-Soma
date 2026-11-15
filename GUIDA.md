@@ -34,7 +34,7 @@ Per una presentazione su proiettore conviene mettere il browser a **schermo inte
 
 ### Da telefono
 
-L'app occupa tutto lo schermo. In basso a destra c'è il pulsante **"Demo"**: apre un pannello con tre schede:
+L'app occupa tutto lo schermo. In alto al centro c'è il pulsante **"Demo"**: apre un pannello con tre schede:
 - **Demo**: i comandi per la presentazione, compreso il passaggio alla vista della terapista;
 - **Oggetto SOMA**: l'oggetto disegnato, con i suoi gesti;
 - **Console IA**: i segnali del corpo e "Simula un impulso che sale".
@@ -45,7 +45,7 @@ La presentazione si può fare tutta dal telefono. Durante le sessioni guidate il
 
 ## I comandi demo
 
-Da computer si trovano nel pannello di destra, scorrendo fino a **"Comandi demo"**. Da telefono: pulsante **"Demo"** in basso a destra. Servono solo a chi presenta: nell'app vera non esistono.
+Da computer si trovano nel pannello di destra, scorrendo fino a **"Comandi demo"**. Da telefono: pulsante **"Demo"** in alto al centro. Servono solo a chi presenta: nell'app vera non esistono.
 
 | Comando | Cosa fa |
 |---|---|

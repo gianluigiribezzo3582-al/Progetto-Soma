@@ -514,7 +514,7 @@
       const g = S.device.GESTURES.find(x => x.id === el.dataset.g);
       S.device.preview(g.id);
       if (S.state.testMode) { A.toast(`<b>${L(g.en, g.it)}</b> · ${L(g.fbEn, g.fbIt)}`); return; }
-      A.toast(`<b>${L(g.en, g.it)}</b> · ${L(g.fbEn, g.fbIt)} ` + (isMobile() ? L('Open the SOMA object from the round button to try it.', 'Apri l’oggetto SOMA dal pulsante rotondo per provarlo.') : L('Watch the object on the left.', 'Guarda l’oggetto a sinistra.')));
+      A.toast(`<b>${L(g.en, g.it)}</b> · ${L(g.fbEn, g.fbIt)} ` + (isMobile() ? L('Open Demo → SOMA object to see it.', 'Apri Demo → Oggetto SOMA per vederlo.') : L('Watch the object on the left.', 'Guarda l’oggetto a sinistra.')));
     },
     message: () => A.go('message'),
     'send-message': () => {
