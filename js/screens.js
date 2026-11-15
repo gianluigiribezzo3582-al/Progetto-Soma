@@ -299,7 +299,7 @@
     if (S.phase() === 'listening' && st().week <= 2) {
       list.push(L('Not much to say yet — and that’s expected. Soma needs a few weeks of ordinary days to know your baseline.', 'Ancora poco da dire — ed è normale. Soma ha bisogno di qualche settimana di giornate normali per conoscere i tuoi valori abituali.'));
     }
-    if (h.length > 4) {
+    if (h.length > 4 && !(S.phase() === 'listening' && st().week <= 2)) {
       const ev = h.filter(s => new Date(s.at).getHours() >= 20).length / h.length;
       list.push(L(`${Math.round(ev * 100)}% of your waves began after 20:00, often after a long time on the phone.`, `${S.artPct(Math.round(ev * 100))} delle tue onde sono iniziate dopo le 20:00, spesso dopo molto tempo passato al telefono.`));
     }
@@ -478,7 +478,12 @@
     skip: L('no answer', 'nessuna risposta')
   })[o] || L('no answer yet', 'ancora nessuna risposta');
 
+  /* The therapist sees the whole 9-week history, whatever week the patient demo is at */
   S.screens.trends = () => {
+    const real = st().week; st().week = Math.max(real, 9);
+    try { return trendsView(); } finally { st().week = real; }
+  };
+  const trendsView = () => {
     const w = st().week;
     const s = S.weekStats();
     const vis = S.sessionsVisible();
@@ -813,11 +818,11 @@
     const first = d.ws.settle.find(v => v != null), last = [...d.ws.settle].reverse().find(v => v != null);
     const pct = x => d.total ? Math.round((x / d.total) * 100) : 0;
     const summary = L(
-      `Over weeks ${d.from}–${d.to}, ${st().name} used SOMA's guidance ${d.total} times` + (c.times ? `, mostly in the evening (median start ${d.mt || '–'})` : '') + '.' +
+      `${d.from === d.to ? 'In week ' + d.to : 'Over weeks ' + d.from + '–' + d.to}, ${st().name} used SOMA's guidance ${d.total} times` + (c.times ? `, mostly in the evening (median start ${d.mt || '–'})` : '') + '.' +
       (c.settle && first && last ? ` The median time for the body to settle went from ${Math.round(first)} to ${Math.round(last)} minutes.` : '') +
       ` ${pct(d.passed)}% of the mornings after, ${st().name} reported that the wave passed; ${d.ate} time${d.ate === 1 ? '' : 's'} they reported eating, described without judgement.` +
       (c.exercises ? ` Daily practice was completed on ${d.prDays} of ${d.prMax} days.` : ''),
-      `Nelle settimane ${d.from}–${d.to}, ${st().name} ha usato la guida di SOMA ${d.total} volte` + (c.times ? `, soprattutto la sera (inizio mediano ${d.mt || '–'})` : '') + '.' +
+      `${d.from === d.to ? 'Nella settimana ' + d.to : 'Nelle settimane ' + d.from + '–' + d.to}, ${st().name} ha usato la guida di SOMA ${d.total} volte` + (c.times ? `, soprattutto la sera (inizio mediano ${d.mt || '–'})` : '') + '.' +
       (c.settle && first && last ? ` Il tempo mediano necessario al corpo per calmarsi è passato da ${Math.round(first)} a ${Math.round(last)} minuti.` : '') +
       ` ${/^(8|11|1$)/.test(String(pct(d.passed))) ? 'Nell’' : 'Nel '}${pct(d.passed)}% dei mattini successivi, ${st().name} ha riferito che l'onda è passata; ${d.ate} volt${d.ate === 1 ? 'a' : 'e'} ha riferito di aver mangiato: un dato registrato senza giudizio.` +
       (c.exercises ? ` La pratica quotidiana è stata svolta in ${d.prDays} giorni su ${d.prMax}.` : '')
@@ -837,7 +842,7 @@
     <article class="report-doc ${forPrint ? 'for-print' : ''}">
       <header class="rd-head">
         <div class="rd-brand">${S.logoMark('rd-mark')}<span>soma</span></div>
-        <div class="rd-meta"><b>${L('Report for', 'Report per')} ${esc(S.drName())}</b><span>${esc(st().name)} R. · ${L('weeks', 'settimane')} ${d.from}–${d.to}</span><span>${L('Generated', 'Generato il')} ${S.fmt.date(today)}</span></div>
+        <div class="rd-meta"><b>${L('Report for', 'Report per')} ${esc(S.drName())}</b><span>${esc(st().name)} R. · ${d.from === d.to ? L('week', 'settimana') + ' ' + d.to : L('weeks', 'settimane') + ' ' + d.from + '–' + d.to}</span><span>${L('Generated', 'Generato il')} ${S.fmt.date(today)}</span></div>
       </header>
       <section><h4>${I('spark', 'ico-inline')} ${L('Summary in plain words', 'Sintesi in parole semplici')}</h4><p>${summary}</p></section>
       <section class="rd-tiles">
