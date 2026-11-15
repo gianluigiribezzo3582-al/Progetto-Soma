@@ -282,10 +282,10 @@
 
   SETUP.breathe = (a) => {
     S.device.setLight('breathe');
-    const total = 6; let cycle = 0, phase = 0, sec = 4, elapsed = 0;
+    const total = 18; let cycle = 0, phase = 0, sec = 4, elapsed = 0; // 18 × (4 s + 6 s) = 3 min (protocol, Appendix H.1)
     const el = document.getElementById('breath');
     const word = document.getElementById('breathWord'), sub = document.getElementById('breathSub'), time = document.getElementById('breathTime');
-    const shownSec = () => Math.round(elapsed * 180 / (total * 8));
+    const shownSec = () => elapsed;
     const shown = () => S.fmt.mmss(shownSec()).padStart(5, '0') + ' / 03:00';
     const setPhase = () => {
       el.classList.toggle('swell', phase === 0);
@@ -297,7 +297,7 @@
     every(() => {
       if (a.paused) return;
       sec--; elapsed++;
-      if (sec <= 0) { phase = 1 - phase; sec = 4; if (phase === 0) cycle++; setPhase(); }
+      if (sec <= 0) { phase = 1 - phase; sec = phase === 0 ? 4 : 6; if (phase === 0) cycle++; setPhase(); }
       time.textContent = shown();
       if (a.kind !== 'full') { const sg = document.getElementById('segs'); if (sg) sg.outerHTML = segBar(3, Math.min(3, 1 + Math.floor(shownSec() / 60))); }
       if (cycle >= total) SS.next();

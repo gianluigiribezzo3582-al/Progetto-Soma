@@ -967,3 +967,20 @@ textarea.note.big { min-height: 170px; border-radius: 16px; padding: 14px 16px; 
 .scr-dark .intro-pebble { width: 150px; margin-bottom: 30px; }
 .scr-dark .big-timer { font-size: 22px; font-weight: 400; margin-top: 14px; }
 .dark-foot .link-next { color: #B9BDCC; font-size: 12px; }
+
+/* Respira: 4 s squeeze, 6 s release (protocol, Appendix H.1) */
+.breath-illus.soften .il-body, .breath-illus.soften .ar-l, .breath-illus.soften .ar-r { transition-duration: 6s; }
+
+/* Mobile: labelled "Demo" button and demo tab */
+.fab { width: auto; height: 44px; border-radius: 99px; padding: 0 14px 0 8px; gap: 8px; grid-auto-flow: column; align-items: center; bottom: calc(100px + env(safe-area-inset-bottom)); right: 14px; }
+.fab-pebble { width: 34px; height: 28px; }
+.fab-pebble::before { inset: 5px 6px; }
+.fab-pebble::after { inset: 9px 12px; }
+.fab-label { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: .02em; }
+.demo-sheet .demo-box { margin-top: 0; border-style: solid; background: var(--card); }
+.demo-sheet .role-btn { width: 100%; padding: 12px; font-size: 14px; }
+
+/* Test mode: hide presentation-only elements */
+body.test-mode .fab, body.test-mode .sheet { display: none !important; }
+body.test-mode .hr-live { visibility: hidden; }
+body.in-session .fab { display: none !important; }

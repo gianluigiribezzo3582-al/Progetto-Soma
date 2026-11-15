@@ -40,14 +40,15 @@
 
   <!-- Mobile: device + AI live in a bottom sheet -->
   <button class="fab" id="fab" aria-label="Open SOMA object and AI console">
-    <span class="fab-pebble"></span>
+    <span class="fab-pebble"></span><span class="fab-label">Demo</span>
   </button>
   <div class="sheet" id="sheet" aria-hidden="true">
     <div class="sheet-backdrop" data-sheet-close></div>
     <div class="sheet-body">
       <div class="sheet-grip" data-sheet-close></div>
       <div class="sheet-tabs">
-        <button class="sheet-tab is-on" data-sheet-tab="device"></button>
+        <button class="sheet-tab is-on" data-sheet-tab="demo"></button>
+        <button class="sheet-tab" data-sheet-tab="device"></button>
         <button class="sheet-tab" data-sheet-tab="ai"></button>
       </div>
       <div class="sheet-content" id="sheetContent"></div>
