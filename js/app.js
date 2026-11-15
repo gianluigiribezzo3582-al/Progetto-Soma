@@ -7,6 +7,7 @@
   const OB_BACK = { login: 'welcome', signup: 'welcome', verify: 'signup', together: 'welcome', pair: 'together', paired: 'pair', prefs: 'paired', agree: 'prefs', support: 'agree', programme: 'support', phases: 'programme' };
   const obStep = () => (OB.includes(S.state.onboardStep) ? S.state.onboardStep : 'welcome');
   const TABS = ['today', 'practice', 'waves', 'me'];
+  const TH_TABS = ['th-patients', 'th-programmes', 'th-library'];
   let view = 'today';
   const $ = (id) => document.getElementById(id);
 
@@ -15,7 +16,11 @@
     if (S.session.active) { S.session.render(); return; }
     const st = S.state;
     let html;
-    if (!st.onboarded) {
+    if (st.role === 'therapist') {
+      if (!view.startsWith('th-') && view !== 'trends') view = 'th-patients';
+      html = S.screens[view]();
+      if (TH_TABS.includes(view)) html += S.thTabbar(view);
+    } else if (!st.onboarded) {
       html = S.screens[obStep()]();
     } else {
       html = S.screens[view]();
@@ -38,6 +43,7 @@
 
   A.setDark = function (on) {
     $('phone').classList.toggle('is-dark', on);
+    document.body.classList.toggle('in-session', on);
     statusbar();
   };
 
@@ -85,15 +91,34 @@
       c = {
         today: L('Today · phase of the personal model, daily practice, insights', 'Oggi · fase del modello personale, pratica quotidiana, spunti'),
         practice: L('Practice · evidence-based skills (CBT, DBT, mindfulness)', 'Pratica · abilità basate sull’evidenza scientifica (CBT, DBT, mindfulness)'),
-        waves: L('Waves · what the data shows, in plain words', 'Onde · cosa mostrano i dati, in parole semplici'),
-        me: L('Me · device, consent, settings set with the therapist', 'Io · dispositivo, consenso, impostazioni concordate'),
-        morning: L('Morning after · plain words, one optional tap', 'Il mattino dopo · parole semplici, un tocco facoltativo'),
         report: L('Report · AI summary for the therapist, only agreed data', 'Report · sintesi IA per il terapeuta, solo dati concordati'),
         message: L('Care team · secure messages with the therapist (not for emergencies)', 'Team di cura · messaggi protetti con il terapeuta (non per le emergenze)'),
         guide: L('How to use SOMA · the gestures from “Movements of the hand”', 'Come si usa SOMA · i gesti di “Movements of the hand”'),
         mood: L('How do you feel? · observe without judging', 'Come ti senti? · osservarsi senza giudicarsi'),
         notifications: L('Messages · only useful reminders, no pressure', 'Messaggi · solo promemoria utili, senza pressione'),
-        skill: L('Practice · how it works, before starting', 'Pratica · come funziona, prima di iniziare')
+        skill: L('Practice · how it works, before starting', 'Pratica · come funziona, prima di iniziare'),
+        waves: L('Waves · your experiences and reflections, no numbers', 'Onde · esperienze e riflessioni, senza numeri'),
+        me: L('Your space · preferences, agreements, device, reminders', 'Il tuo spazio · preferenze, accordi, dispositivo, promemoria'),
+        morning: L('The day after · one optional answer', 'Il giorno dopo · una risposta facoltativa'),
+        reflect: L('A reflection · private, or shared for the session', 'Una riflessione · privata, o condivisa per la seduta'),
+        myprog: L('Your programme · agreed with the therapist', 'Il tuo programma · concordato con la terapista'),
+        voice: L('Voice and quiet', 'Voce e tranquillità'),
+        agree: L('Agreements · what the therapist can see', 'Accordi · cosa può vedere la terapista'),
+        data: L('Your data · you stay in control', 'I tuoi dati · il controllo resta a te'),
+        mysoma: L('Your SOMA · battery, shell, connection', 'Il tuo SOMA · batteria, guscio, connessione'),
+        rhythm: L('Daily rhythm · reminders agreed in therapy, no counting', 'Ritmo quotidiano · promemoria concordati, senza conteggi'),
+        phonepause: L('Phone pause · tap the phone on SOMA', 'Pausa telefono · avvicina il telefono a SOMA'),
+        'th-patients': L('Therapist area · the people she follows', 'Area terapista · le persone che segue'),
+        'th-patient': L('Therapist area · Laura’s journey', 'Area terapista · il percorso di Laura'),
+        'th-program': L('Therapist area · the shared programme', 'Area terapista · il programma condiviso'),
+        'th-pick': L('Programme update · 1 of 4, choose the practice', 'Aggiornamento · 1 di 4, scelta della pratica'),
+        'th-config': L('Programme update · 2 of 4, duration and words', 'Aggiornamento · 2 di 4, durata e parole'),
+        'th-draft': L('Programme update · 3 of 4, order of the sequence', 'Aggiornamento · 3 di 4, ordine della sequenza'),
+        'th-review': L('Programme update · 4 of 4, final check', 'Aggiornamento · 4 di 4, verifica finale'),
+        'th-shared': L('Shared: Laura receives the new programme in her app', 'Condiviso: Laura riceve il nuovo programma nell’app'),
+        'th-sessions': L('Therapist area · only the data Laura authorised', 'Area terapista · solo i dati autorizzati da Laura'),
+        'th-notes': L('Therapist area · only the notes Laura chose to share', 'Area terapista · solo le note che Laura ha scelto di condividere'),
+        trends: L('Therapist area · waves over time (AI analysis)', 'Area terapista · andamento delle onde (analisi IA)')
       }[view];
     }
     $('caption').textContent = c || '';
@@ -134,6 +159,25 @@
   ];
   const STAGES = [['SIGNALS', 'SEGNALI'], ['FEATURES', 'FEATURE'], ['BASELINE', 'BASELINE'], ['SIGNATURE', 'FIRMA'], ['INDEX', 'INDICE'], ['START', 'AVVIO']];
 
+  function demoBox() {
+    return `
+      <div class="demo-box">
+        <div class="eyebrow">${L('Demo controls', 'Comandi demo')}</div>
+        <div class="demo-row"><button data-action="role" class="is-on role-btn">${S.state.role === 'therapist' ? L('← Back to the patient app', '← Torna all’app paziente') : L('Open the therapist area →', 'Apri l’area terapista →')}</button></div>
+        <div class="demo-row"><span>${L('Jump to', 'Vai a')}</span>
+          ${[[2, L('Week 2 · Listening', 'Sett. 2 · Ascolto')], [5, L('Week 5 · Learning', 'Sett. 5 · Apprendimento')], [9, L('Week 9 · Guiding', 'Sett. 9 · Guida')]].map(([w, l]) => `<button data-action="week" data-week="${w}" class="${S.state.week === w ? 'is-on' : ''}">${l}</button>`).join('')}
+        </div>
+        <div class="demo-row"><button data-action="morning-demo">${L('The day after', 'Il giorno dopo')}</button><button data-action="pause-start">${L('Phone pause', 'Pausa telefono')}</button><button data-action="toggle-online">${S.state.online === false ? L('Reconnect SOMA', 'Ricollega SOMA') : L('Disconnect SOMA', 'Scollega SOMA')}</button><button data-action="restart-ob">${L('Replay onboarding', 'Rivedi la configurazione iniziale')}</button><button data-action="reset">${L('Reset demo', 'Azzera la demo')}</button></div>
+        <div class="demo-row"><button data-action="test-mode">${L('Test mode (hide the Demo button)', 'Modalità test (nasconde il pulsante Demo)')}</button></div>
+      </div>`;
+  }
+
+  /* Re-draw every copy of the AI panel and of the demo controls */
+  function remountPanels() {
+    document.querySelectorAll('[data-mount="ai"]').forEach(mountAI);
+    document.querySelectorAll('[data-mount="demo"]').forEach(el => { el.innerHTML = '<div class="demo-sheet">' + demoBox() + '</div>'; });
+  }
+
   function aiPanel() {
     return `
     <div class="ai">
@@ -160,13 +204,7 @@
         <button data-action="sim-calm">${L('Calm', 'Calma')}</button>
       </div>
       <div class="ai-log" data-k="log"></div>
-      <div class="demo-box">
-        <div class="eyebrow">${L('Demo controls', 'Comandi demo')}</div>
-        <div class="demo-row"><span>${L('Jump to', 'Vai a')}</span>
-          ${[[2, L('Week 2 · Listening', 'Sett. 2 · Ascolto')], [5, L('Week 5 · Learning', 'Sett. 5 · Apprendimento')], [9, L('Week 9 · Guiding', 'Sett. 9 · Guida')]].map(([w, l]) => `<button data-action="week" data-week="${w}" class="${S.state.week === w ? 'is-on' : ''}">${l}</button>`).join('')}
-        </div>
-        <div class="demo-row"><button data-action="morning-demo">${L('Morning after', 'Il mattino dopo')}</button><button data-action="toggle-online">${S.state.online === false ? L('Reconnect SOMA', 'Ricollega SOMA') : L('Disconnect SOMA', 'Scollega SOMA')}</button><button data-action="restart-ob">${L('Replay onboarding', 'Rivedi la configurazione iniziale')}</button><button data-action="reset">${L('Reset demo', 'Azzera la demo')}</button></div>
-      </div>
+      ${demoBox()}
       <p class="side-note">${L('Values are synthetic. The model compares your signals with your own baseline: no single signal is ever read as a binge episode.', 'I valori sono sintetici. Il modello confronta i segnali con i tuoi valori abituali: nessun singolo segnale viene mai interpretato come un episodio di abbuffata.')}</p>
     </div>`;
   }
@@ -204,15 +242,17 @@
   }
 
   /* ---------------- Mobile sheet ---------------- */
-  let sheetTab = 'device';
+  let sheetTab = 'demo';
   function sheetRender() {
     document.querySelectorAll('[data-sheet-tab]').forEach(b => {
       b.classList.toggle('is-on', b.dataset.sheetTab === sheetTab);
-      b.textContent = b.dataset.sheetTab === 'device' ? L('SOMA object', 'Oggetto SOMA') : L('AI & demo', 'IA e demo');
+      b.textContent = { demo: 'Demo', device: L('SOMA object', 'Oggetto SOMA'), ai: L('AI console', 'Console IA') }[b.dataset.sheetTab];
     });
     const c = $('sheetContent');
     c.removeAttribute('data-mount');
-    if (sheetTab === 'device') S.device.mount(c); else mountAI(c);
+    if (sheetTab === 'device') S.device.mount(c);
+    else if (sheetTab === 'ai') mountAI(c);
+    else { c.setAttribute('data-mount', 'demo'); c.innerHTML = '<div class="demo-sheet">' + demoBox() + '</div>'; }
     c.scrollTop = 0;
   }
   function openSheet(tab) {
@@ -277,7 +317,7 @@
     if (!st.onboarded) return;
     const meta = S.device.GESTURES.find(x => x.id === g);
     if (g === 'press') { A.toast(L('Dial pressed for 2 s · guidance starts', 'Centro premuto per 2 s · parte la guida')); if (isMobile()) closeSheet(); S.session.start({ kind: 'full', trigger: 'manual' }); return; }
-    if (g === 'phone') { A.toast(L('Phone pause on · delivery apps paused for 20 min', 'Pausa telefono attiva · app di consegna a domicilio in pausa per 20 min')); return; }
+    if (g === 'phone') { if (isMobile()) closeSheet(); ACT['pause-start'](); return; }
     if (g === 'facedown') { A.toast(L('Face down · Soma rests', 'SOMA capovolto · la guida si ferma')); return; }
     if (meta) A.toast(`<b>${L(meta.en, meta.it)}</b> · ${L(meta.fbEn, meta.fbIt)}`);
   }
@@ -367,18 +407,21 @@
       A.go('today'); A.toast(L('Saved. Listening to yourself is already a step.', 'Salvato. Ascoltarsi è già un passo.'));
     },
     reconnect: () => { A.toast(L('Looking for SOMA…', 'Cerco SOMA…')); setTimeout(() => { S.state.online = true; S.save(); S.device.refresh(); A.render(); A.toast(L('SOMA connected', 'SOMA collegato')); }, 1200); },
-    'toggle-online': () => { S.state.online = S.state.online === false; S.save(); S.device.refresh(); document.querySelectorAll('[data-mount="ai"]').forEach(mountAI); if (!S.session.active) A.render(); A.toast(S.state.online ? L('SOMA connected', 'SOMA collegato') : L('SOMA disconnected', 'SOMA scollegato')); },
+    'toggle-online': () => { S.state.online = S.state.online === false; S.save(); S.device.refresh(); remountPanels(); if (!S.session.active) A.render(); A.toast(S.state.online ? L('SOMA connected', 'SOMA collegato') : L('SOMA disconnected', 'SOMA scollegato')); },
     'sess-next': () => S.session.nextAction(),
     'sess-stop': () => S.session.toRest(),
     'sess-pause': () => S.session.togglePause(),
-    'sess-finish': () => S.session.finish(),
+    'sess-finish': (el) => S.session.finish(el.dataset.to),
     voice: () => onGesture('double'),
     morning: () => A.go('morning'),
     outcome: (el) => {
       const s = S.state.history.find(x => x.id === S.state.pendingMorning);
-      if (s) { s.outcome = el.dataset.out; s._answered = true; s.falseStart = el.dataset.out === 'notwave' && s.trigger === 'auto'; }
-      S.save(); A.render();
-      setTimeout(() => { S.state.pendingMorning = null; S.save(); }, 50);
+      const out = el.dataset.out;
+      if (s && out !== 'skip') { s.outcome = out; s._answered = true; s.falseStart = out === 'notwave' && s.trigger === 'auto'; }
+      S.state.pendingMorning = null; S.save();
+      if (out === 'skip') { A.go('today'); return; }
+      A.go('waves');
+      A.toast(L('Thank you. Your answer helps Soma recognise your waves.', 'Grazie. La tua risposta aiuta Soma a riconoscere le tue onde.'));
     },
     report: () => { S.reportDraft.stage = 'config'; A.go('report'); },
     'report-back': () => { S.reportDraft.stage = 'config'; A.render(); },
@@ -401,12 +444,77 @@
       setTimeout(() => { S.state.linked = true; S.save(); A.toast(L('Connected with ', 'Collegato con ') + S.drName()); obGo('programme'); }, 1100);
     },
     'tab-me': () => A.go('me'),
+    'tab-waves': () => A.go('waves'),
+    go: (el) => { if (el.dataset.to === 'guide') S.guideBack = view; if (el.dataset.to === 'message') S.msgBack = view; A.go(el.dataset.to); },
+    'space-back': () => A.go('me'),
+    'go-agree': () => A.go('agree'),
+    'go-th-patients': () => A.go('th-patients'),
+    'go-th-patient': () => A.go('th-patient'),
+    'go-th-pick': () => A.go('th-pick'),
+    'go-th-config': () => A.go('th-config'),
+    'go-th-draft': () => A.go('th-draft'),
+    'agree-save': () => { A.go('me'); A.toast(L('Agreements saved. Your therapist will see only what you chose.', 'Accordi salvati. La terapista vedrà solo ciò che hai scelto.')); },
+    'pause-sharing': () => { S.state.sharingPaused = !S.state.sharingPaused; S.save(); A.render(); A.toast(S.state.sharingPaused ? L('Sharing paused. Nothing new is sent.', 'Condivisione sospesa. Non viene inviato nulla di nuovo.') : L('Sharing resumed, according to your agreements.', 'Condivisione ripresa, secondo i tuoi accordi.')); },
+    'delete-data': () => A.modal(`
+      <div class="modal-ico">${S.icon('shield')}</div>
+      <h3>${L('Delete your data?', 'Eliminare i tuoi dati?')}</h3>
+      <p>${L('Sessions, reflections and summaries will be removed from the phone and from SOMA. Your therapist keeps only what was already shared.', 'Sessioni, riflessioni e riepiloghi verranno rimossi dal telefono e da SOMA. La terapista conserva solo ciò che era già stato condiviso.')}</p>
+      <button class="btn btn-danger btn-block" data-action="modal-close" data-toast="${L('Demo: no data was deleted.', 'Demo: nessun dato è stato eliminato.')}">${L('Delete', 'Elimina')}</button>
+      <button class="btn btn-soft btn-block" data-action="modal-close">${L('Cancel', 'Annulla')}</button>`),
+    'reflect-new': () => { S.reflectEdit = null; A.go('reflect'); },
+    'reflect-open': (el) => { S.reflectEdit = S.state.reflections.find(r => r.id === el.dataset.id) || null; A.go('reflect'); },
+    'reflect-save': () => {
+      const txt = (($('reflText') || {}).value || '').trim();
+      const share = !!($('reflShare') || {}).checked;
+      if (S.reflectEdit) {
+        S.reflectEdit.textIt = S.reflectEdit.textEn = txt || S.reflectEdit.textIt; S.reflectEdit.share = share;
+      } else if (txt) {
+        const day = new Date().toLocaleDateString('it-IT', { weekday: 'long' }), dayEn = new Date().toLocaleDateString('en-GB', { weekday: 'long' });
+        const title = txt.split(/[.!?\n]/)[0].slice(0, 40);
+        S.state.reflections.push({ id: 'r' + Date.now(), titleIt: title, titleEn: title, textIt: txt, textEn: txt, share, dayIt: day, dayEn });
+      }
+      S.save(); A.go('waves');
+      A.toast(share ? L('Saved · it will be in your notes for the session.', 'Salvata · sarà tra le note per la seduta.') : L('Saved · it stays private.', 'Salvata · resta privata.'));
+    },
+    'pause-start': () => { if (isMobile()) closeSheet(); S.state.phonePauseUntil = new Date(Date.now() + 20 * 60000).toISOString(); S.save(); A.go('phonepause'); },
+    'pause-stop': () => { S.state.phonePauseUntil = null; S.save(); A.go('today'); A.toast(L('Pause stopped. Apps are available again.', 'Pausa interrotta. Le app sono di nuovo disponibili.')); },
+    /* therapist */
+    'th-start': (el) => { S.th.pick = el.dataset.pick || 'surf'; S.th.dur = S.state.surfMin === 5 ? 10 : S.state.surfMin; S.th.words = L(S.state.guideWords.en, S.state.guideWords.it); A.go(el.dataset.pick ? 'th-config' : 'th-pick'); },
+    'th-pick': (el) => { S.th.pick = el.dataset.pick; if (S.th.pick !== 'surf') { A.toast(L('Demo: the editable practice is Watch the wave.', 'Demo: la pratica modificabile è Osserva l’onda.')); S.th.pick = 'surf'; } A.render(); },
+    'th-draft': () => {
+      const d = parseInt((($('thDur') || {}).value || '').replace(/\D/g, ''), 10);
+      if (d >= 1 && d <= 30) S.th.dur = d;
+      const w = (($('thWords') || {}).value || '').trim(); if (w) S.th.words = w;
+      A.go('th-draft');
+    },
+    'th-share': (el) => {
+      el.disabled = true; el.innerHTML = '<span class="spinner"></span> ' + L('Sharing…', 'Condivisione…');
+      setTimeout(() => {
+        S.state.surfMin = S.th.dur; S.state.progUpdated = true;
+        if (S.lang === 'it') S.state.guideWords.it = S.th.words; else S.state.guideWords.en = S.th.words;
+        S.save(); A.go('th-shared');
+      }, 900);
+    },
+    'test-mode': () => {
+      setTestMode(true); closeSheet();
+      A.toast(L('Test mode on. To show the Demo button again, open the link with ?test=0 at the end.', 'Modalità test attiva. Per far ricomparire il pulsante Demo, apri il link aggiungendo ?test=0 in fondo.'));
+    },
+    role: () => {
+      if (S.session.active) return;
+      if (isMobile()) closeSheet();
+      S.state.role = S.state.role === 'therapist' ? 'patient' : 'therapist'; S.save();
+      view = S.state.role === 'therapist' ? 'th-patients' : (S.state.progUpdated ? 'notifications' : 'today');
+      remountPanels();
+      A.go(view);
+      A.toast(S.state.role === 'therapist' ? L('Therapist view · ', 'Vista terapista · ') + S.drName() : L('Patient view · ', 'Vista paziente · ') + S.state.name);
+    },
     guide: () => { S.guideBack = TABS.includes(view) ? view : 'practice'; A.go('guide'); },
     'guide-back': () => A.go(S.guideBack || 'practice'),
     'try-gesture': (el) => {
       const g = S.device.GESTURES.find(x => x.id === el.dataset.g);
       S.device.preview(g.id);
-      A.toast(`<b>${L(g.en, g.it)}</b> · ${L(g.fbEn, g.fbIt)} ` + (isMobile() ? L('Open the SOMA object from the round button to try it.', 'Apri l’oggetto SOMA dal pulsante rotondo per provarlo.') : L('Watch the object on the left.', 'Guarda l’oggetto a sinistra.')));
+      if (S.state.testMode) { A.toast(`<b>${L(g.en, g.it)}</b> · ${L(g.fbEn, g.fbIt)}`); return; }
+      A.toast(`<b>${L(g.en, g.it)}</b> · ${L(g.fbEn, g.fbIt)} ` + (isMobile() ? L('Open Demo → SOMA object to see it.', 'Apri Demo → Oggetto SOMA per vederlo.') : L('Watch the object on the left.', 'Guarda l’oggetto a sinistra.')));
     },
     message: () => A.go('message'),
     'send-message': () => {
@@ -424,8 +532,8 @@
       <button class="btn btn-primary btn-block" data-action="call-clinic">${S.icon('phone')} ${L('Call', 'Chiama')} ${S.esc(S.state.clinic)}</button>
       <button class="btn btn-danger btn-block" data-action="call-112">${L('Emergency services · 112', 'Servizi di emergenza · 112')}</button>
       <button class="btn btn-soft btn-block" data-action="modal-close">${S.session.active ? L('Continue with Soma', 'Continua con Soma') : L('Close', 'Chiudi')}</button>`),
-    'modal-close': () => A.closeModal(),
-    'morning-demo': () => {
+    'modal-close': (el) => { A.closeModal(); if (el && el.dataset.toast) A.toast(el.dataset.toast); },
+    'morning-demo': () => { if (isMobile()) closeSheet();
       if (!S.state.onboarded) return;
       if (!S.state.pendingMorning) {
         const last = [...S.state.history].reverse().find(x => !x.falseStart);
@@ -434,11 +542,11 @@
       if (S.session.active) return;
       S.save(); A.go('morning');
     },
-    week: (el) => { S.state.week = +el.dataset.week; S.save(); document.querySelectorAll('[data-mount="ai"]').forEach(mountAI); if (!S.session.active) A.render(); A.toast(L('Now at week ', 'Ora alla settimana ') + S.state.week); },
+    week: (el) => { S.state.week = +el.dataset.week; S.state.consent.autoStart = S.state.week >= 6; S.save(); remountPanels(); if (!S.session.active) A.render(); A.toast(L('Now at week ', 'Ora alla settimana ') + S.state.week); },
     'sim-wave': () => simulate('rising'),
     'sim-stress': () => simulate('stress'),
     'sim-calm': () => simulate('calm'),
-    'restart-ob': () => { if (S.session.active) return; S.state.onboarded = false; S.state.onboardStep = 'welcome'; S.state.paired = false; S.state.linked = false; S.save(); S.device.refresh(); A.render(); },
+    'restart-ob': () => { if (isMobile()) closeSheet(); if (S.session.active) return; S.state.onboarded = false; S.state.onboardStep = 'welcome'; S.state.paired = false; S.state.linked = false; S.save(); S.device.refresh(); A.render(); },
     reset: () => {
       if (!confirm(L('Reset the prototype to its initial state?', 'Riportare il prototipo allo stato iniziale?'))) return;
       S.reset(); S.save(); view = 'today'; S.device.refresh(); refreshChrome(); A.render();
@@ -454,9 +562,9 @@
   function refreshChrome() {
     document.documentElement.lang = S.lang;
     S.device.refresh();
-    document.querySelectorAll('[data-mount="ai"]').forEach(mountAI);
+    remountPanels();
     if ($('sheet').classList.contains('open')) sheetRender();
-    $('fab').setAttribute('aria-label', L('Open SOMA object and AI console', 'Apri oggetto SOMA e console IA'));
+    $('fab').setAttribute('aria-label', L('Demo controls', 'Comandi demo'));
     $('credits').textContent = L('SOMA · Master’s thesis in Industrial Design · Politecnico di Bari · F. Cognetti, A. F. Doronzo, A. Perna', 'SOMA · Tesi di Laurea Magistrale in Industrial Design · Politecnico di Bari · F. Cognetti, A. F. Doronzo, A. Perna');
   }
 
@@ -524,8 +632,17 @@
     setInterval(statusbar, 15000);
   }
 
+  /* Test mode (protocol, phase 1): no Demo button, no simulated heart rate */
+  function setTestMode(on) {
+    S.state.testMode = !!on; S.save();
+    document.body.classList.toggle('test-mode', !!on);
+  }
+
   /* ---------------- Boot ---------------- */
   function boot() {
+    const q = new URLSearchParams(location.search).get('test');
+    if (q !== null) S.state.testMode = q !== '0';
+    document.body.classList.toggle('test-mode', !!S.state.testMode);
     document.documentElement.lang = S.lang;
     S.device.mount($('devicePanel'));
     mountAI($('aiPanel'));
